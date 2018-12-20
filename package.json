@@ -12,12 +12,7 @@
   "devDependencies": {
     "autod": "^3.0.1",
     "autod-egg": "^1.0.0",
-    "egg-bin": "^4.3.5",
-    "egg-ci": "^1.8.0",
-    "egg-mock": "^3.14.0",
-    "eslint": "^4.11.0",
-    "eslint-config-egg": "^6.0.0",
-    "webstorm-disable-index": "^1.2.0"
+    "egg-bin": "^4.3.5"
   },
   "engines": {
     "node": ">=8.9.0"
@@ -26,9 +21,6 @@
     "start": "egg-scripts start --daemon --title=elephante-api",
     "stop": "egg-scripts stop --title=elephante-api",
     "dev": "egg-bin dev"
-  },
-  "ci": {
-    "version": "8"
   },
   "repository": {
     "type": "git",
