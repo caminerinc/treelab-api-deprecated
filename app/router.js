@@ -1,6 +1,7 @@
 'use strict';
 
 module.exports = app => {
+  const { router, controller } = app;
   //api
-  app.router.get('/api/health-check', app.controller.api.healthCheck);
+  router.get('/api/health-check', controller.app.healthCheck);
 };

@@ -18,7 +18,7 @@ module.exports = appInfo => {
       maxDays: 3
     },
     session: {
-      key: 'intelligarm',
+      key: 'elephante',
       maxAge: 24 * 3600 * 1000,
     },
     middleware: ['errorHandler'],
