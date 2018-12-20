@@ -1,0 +1,11 @@
+
+node_modules
+
+*.DS_Store
+
+logs
+<<<<<<< HEAD
+.idea
+=======
+.idea
+>>>>>>> remotes/origin/master
