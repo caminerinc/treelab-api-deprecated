@@ -1,0 +1,8 @@
+logs
+*.log
+node_modules
+.idea
+tests
+run
+package-lock.json
+test.js
