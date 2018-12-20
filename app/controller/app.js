@@ -2,10 +2,10 @@
 
 const Controller = require('egg').Controller;
 
-class ApiController extends Controller {
+class AppController extends Controller {
   async healthCheck() {
     this.ctx.body = 'Connection established';
   }
 }
 
-module.exports = ApiController;
+module.exports = AppController;
