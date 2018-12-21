@@ -1,0 +1,8 @@
+logs
+*.log
+node_modules
+.idea
+.idea/
+tests/
+package-lock.json
+.vscode/
