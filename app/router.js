@@ -1,5 +1,6 @@
 'use strict';
+module.exports = app => {
+    const { router, ctx } = app;
 
-module.exports = router => {
-    router.get('/api/health-check', ctx => {ctx.body = 'Connection established'});
+    router.get('/api/health-check', ctx => {ctx.body = 'Connection establishedsadadsdsd3345345'});
 };

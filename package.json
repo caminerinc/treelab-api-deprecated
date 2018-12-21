@@ -6,13 +6,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "assert": "^1.4.1",
     "extend2": "^1.0.0",
-    "is-type-of": "^1.2.1",
     "koa": "^2.6.2",
     "koa-router": "^7.4.0"
   },
   "scripts": {
-    "dev": "node bin/www"
+    "start": "node bin/www",
+    "dev": "nodemon bin/www"
   }
 }
