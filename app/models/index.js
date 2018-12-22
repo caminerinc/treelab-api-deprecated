@@ -3,18 +3,16 @@ const path = require('path');
 const Sequelize = require('sequelize');
 const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'develop';
-const app = require('../../lib/core/app');
-// const config = require(__dirname + '/../../config/config.json');
-console.log('WHAT IS THE CONFIG IN APP', app);
+const config = require(__dirname + '/../../config/db-config.json');
 const db = {};
 
 let sequelize;
 
 sequelize = new Sequelize(
-  config.postgres.database,
-  config.postgres.username,
-  config.postgres.password,
-  config.postgres,
+  config.database,
+  config.username,
+  config.password,
+  config,
 );
 
 fs.readdirSync(__dirname)
