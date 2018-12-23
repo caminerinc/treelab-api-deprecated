@@ -9,6 +9,7 @@ router.get('/api/health-check', ctx => {
 });
 
 // Base
+// @[DEREK] Delete this after real ones have been implemented
 router.get('/api/bases/:baseId', basesResolver.getBaseById);
 
 module.exports = router;

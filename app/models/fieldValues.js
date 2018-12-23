@@ -20,7 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   fieldValues.associate = function(models) {
-    fieldValues.hasOne(models.textValues, {
+    fieldValues.belongsTo(models.textValues, {
       foreignKey: 'textValueId',
       as: 'value',
     });

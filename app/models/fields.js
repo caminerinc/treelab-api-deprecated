@@ -29,12 +29,12 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   fields.associate = function(models) {
-    fields.hasOne(models.fieldTypes, {
+    fields.belongsTo(models.fieldTypes, {
       foreignKey: 'fieldTypeId',
       as: 'type',
     });
     fields.hasMany(models.fieldValues, {
-      foreignKey: 'fieldsId',
+      foreignKey: 'fieldId',
       as: 'fieldValues',
     });
   };
