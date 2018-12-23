@@ -1,0 +1,7 @@
+{
+  "username": "postgres",
+  "password": "psql_password",
+  "database": "elephante_db",
+  "host": "0.0.0.0",  
+  "dialect": "postgres"
+}
