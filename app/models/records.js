@@ -3,27 +3,27 @@ const { createUid } = require('../util/helper');
 const { PREFIX_TYPE } = require('../constants/app');
 
 module.exports = (sequelize, DataTypes) => {
-  const bases = sequelize.define(
-    'bases',
+  const records = sequelize.define(
+    'records',
     {
       id: {
         allowNull: false,
-        defaultValue: createUid(PREFIX_TYPE.BASE),
+        defaultValue: createUid(PREFIX_TYPE.RECORD),
         primaryKey: true,
         type: DataTypes.STRING,
       },
-      name: {
+      tableId: {
         allowNull: false,
         type: DataTypes.STRING,
       },
     },
     {},
   );
-  bases.associate = function(models) {
-    bases.hasMany(models.tables, {
-      foreignKey: 'baseId',
-      as: 'tables',
+  records.associate = function(models) {
+    records.hasMany(models.fieldValues, {
+      foreignKey: 'recordId',
+      as: 'fieldValues',
     });
   };
-  return bases;
+  return records;
 };

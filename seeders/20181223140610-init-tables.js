@@ -3,17 +3,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'bases',
+      'tables',
       [
         {
-          id: 'bse1jT7ZIHLmjH4',
-          name: 'Pygmy',
+          id: 'tblNGUPdSs9Va4X5u',
+          name: 'Orders',
+          baseId: 'bse1jT7ZIHLmjH4',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 'bse1jT7ZIDLmjH4',
-          name: 'Dumbo',
+          id: 'tblsnmRLfttLmAYQ8',
+          name: 'PO',
+          baseId: 'bse1jT7ZIHLmjH4',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
@@ -23,6 +25,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('bases', null, {});
+    return queryInterface.bulkDelete('tables', null, {});
   },
 };

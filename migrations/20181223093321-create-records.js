@@ -1,12 +1,12 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('bases', {
+    return queryInterface.createTable('records', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING,
       },
-      name: {
+      tableId: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -21,6 +21,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('bases');
+    return queryInterface.dropTable('records');
   },
 };

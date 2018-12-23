@@ -1,12 +1,13 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('bases', {
+    return queryInterface.createTable('textValues', {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
       },
-      name: {
+      value: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -21,6 +22,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('bases');
+    return queryInterface.dropTable('textValues');
   },
 };

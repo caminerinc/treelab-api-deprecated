@@ -3,17 +3,10 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'bases',
+      'fieldTypes',
       [
         {
-          id: 'bse1jT7ZIHLmjH4',
-          name: 'Pygmy',
-          createdAt: '2018-05-05T04:09:06.024Z',
-          updatedAt: '2018-05-05T04:09:06.024Z',
-        },
-        {
-          id: 'bse1jT7ZIDLmjH4',
-          name: 'Dumbo',
+          name: 'text',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
@@ -23,6 +16,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('bases', null, {});
+    return queryInterface.bulkDelete('fieldTypes', null, {});
   },
 };
