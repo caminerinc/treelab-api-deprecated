@@ -6,14 +6,4 @@ module.exports = {
     const users = await usersController.findAllUser();
     ctx.body = users;
   },
-
-  async user(ctx) {
-    helper.checkKeyExists(
-      ctx.params,
-      'firstName',
-      'lastName',
-      'password',
-      'email',
-    );
-  },
 };

@@ -17,10 +17,4 @@ router.post('/api/base', basesResolver.createBase);
 //Users
 router.get('/api/users', usersResolver.users);
 
-//Users
-// @[DEREK] 获取所有用户的用户信息
-router.get('/api/users', usersResolver.users);
-// @[DEREK] 创建用户
-router.post('/api/user', usersResolver.user);
-
 module.exports = router;
