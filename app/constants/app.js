@@ -3,6 +3,7 @@ const PREFIX_TYPE = {
   TABLE: 'tbl',
   FIELD: 'fld',
   RECORD: 'rec',
+  USR: 'usr',
 };
 
 module.exports = {
