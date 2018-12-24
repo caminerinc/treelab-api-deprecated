@@ -1,5 +1,10 @@
 const path = require('path');
 const fs = require('fs');
+const CryptoJS = require('crypto-js');
+const { U64, I64 } = require('n64');
+
+const PID = 1;
+let SEQUENCE = 0;
 
 const { PREFIX_TYPE } = require('../constants/app');
 
@@ -22,7 +27,7 @@ const load = (root, files = {}) => {
         if (extname && !require.extensions[extname]) {
           files[path.basename(_root)] = fs.readFileSync(_root).toString();
         } else {
-          files[path.basename(root)] = require(root);
+          files[path.basename(_root)] = require(_root);
         }
       }
     });
@@ -34,10 +39,30 @@ const sha1 = text => {
   return CryptoJS.SHA1(text.toString()).toString();
 };
 
-const createUid = type =>
-  `${PREFIX_TYPE[type]}${(+new Date()).toString(36)}${Math.random()
-    .toString(36)
-    .substring(2, 15)}`;
+const createUid = type => {
+  if (!type) {
+    throw new Error('createUid failure, prefix missing');
+  }
+  type = type.toString();
+  let djb33 = function() {
+    let lwrcase = Array.from(type.toLowerCase());
+    return lwrcase.reduce(function(h, v) {
+      h = (h << 5) + h + v.charCodeAt(0);
+      return h & 0xffffffff;
+    }, 5381);
+  };
+  let TM20180101 = 1514764800000;
+  let id = U64(Date.now() - TM20180101);
+  return (
+    type +
+    id
+      .ishln(22)
+      .iorn((PID & 0xff) << 14)
+      .iorn((SEQUENCE++ & 0x3ff) << 4)
+      .iorn(djb33(type) & 0x0f)
+      .toString(16)
+  );
+};
 
 module.exports = {
   load,

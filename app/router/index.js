@@ -9,7 +9,8 @@ router.get('/api/health-check', ctx => {
 });
 
 // Base
-// @[DEREK] Delete this after real ones have been implemented
+router.get('/api/bases', basesResolver.getBases);
 router.get('/api/base/:baseId', basesResolver.getBaseById);
+router.post('/api/base', basesResolver.createBase);
 
 module.exports = router;
