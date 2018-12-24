@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
         primaryKey: true,
         type: DataTypes.CHAR(18),
       },
-      first_name: {
+      firstName: {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      last_name: {
+      lastName: {
         allowNull: false,
         type: DataTypes.STRING,
       },
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      password_digest: {
+      passwordDigest: {
         allowNull: false,
         type: DataTypes.STRING,
       },

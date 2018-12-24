@@ -1,6 +1,7 @@
 const bases = require('./bases');
+const users = require('./users');
 
 module.exports = {
   bases,
-  users: require('./users'),
+  users,
 };

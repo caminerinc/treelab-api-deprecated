@@ -14,6 +14,9 @@ router.get('/api/health-check', ctx => {
 router.get('/api/base/:baseId', basesResolver.getBaseById);
 
 //Users
+// @[DEREK] 获取所有用户的用户信息
 router.get('/api/users', usersResolver.users);
+// @[DEREK] 创建用户
+router.post('/api/user', usersResolver.user);
 
 module.exports = router;

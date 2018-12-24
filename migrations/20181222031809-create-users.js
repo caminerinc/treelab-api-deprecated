@@ -6,11 +6,11 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.CHAR(18),
       },
-      first_name: {
+      firstName: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      last_name: {
+      lastName: {
         allowNull: false,
         type: Sequelize.STRING,
       },
@@ -18,7 +18,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      password_digest: {
+      passwordDigest: {
         allowNull: false,
         type: Sequelize.STRING,
       },
