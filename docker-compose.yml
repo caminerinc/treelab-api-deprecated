@@ -1,9 +1,0 @@
-version: '3'
-services:
-  postgres:
-    ports:
-    - "5432:5432"
-    image: postgres:9.6.8-alpine
-    container_name: elephante_psql
-    environment:
-      POSTGRES_PASSWORD: psql_password

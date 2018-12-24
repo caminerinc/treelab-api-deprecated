@@ -1,5 +1,0 @@
-#!/usr/bin/env node
-
-const WebApp = require('./../lib/core/app');
-
-new WebApp().run();
