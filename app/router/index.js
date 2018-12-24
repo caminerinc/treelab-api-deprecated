@@ -3,6 +3,7 @@ const router = new Router();
 
 const basesResolver = require('../resolvers').bases;
 const tablesResolver = require('../resolvers').tables;
+const usersResolver = require('../resolvers').users;
 
 // App
 router.get('/api/health-check', ctx => {
@@ -16,5 +17,8 @@ router.post('/api/base', basesResolver.createBase);
 
 //Table
 router.get('/api/getTables/:baseId', tablesResolver.getTables);
+
+//Users
+router.get('/api/users', usersResolver.users);
 
 module.exports = router;
