@@ -10,8 +10,12 @@ router.get('/api/health-check', ctx => {
 });
 
 // Base
-// @[DEREK] Delete this after real ones have been implemented
+router.get('/api/bases', basesResolver.getBases);
 router.get('/api/base/:baseId', basesResolver.getBaseById);
+router.post('/api/base', basesResolver.createBase);
+
+//Users
+router.get('/api/users', usersResolver.users);
 
 //Users
 // @[DEREK] 获取所有用户的用户信息
