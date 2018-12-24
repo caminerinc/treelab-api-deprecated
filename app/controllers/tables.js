@@ -1,4 +1,3 @@
-const Sequelize = require('sequelize');
 const Bases = require('../models').bases;
 const Tables = require('../models').tables;
 const Fields = require('../models').fields;
