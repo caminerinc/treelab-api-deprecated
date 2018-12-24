@@ -6,4 +6,3 @@ node_modules
 tests/
 package-lock.json
 .vscode/
-*.DS_Store
