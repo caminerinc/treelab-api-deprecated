@@ -2,15 +2,22 @@ const basesController = require('../controllers').bases;
 
 module.exports = {
   async getBaseById(ctx) {
-    try {
-      const base = await basesController.findByBaseId(ctx.params.baseId);
-      ctx.body = base;
-    } catch (err) {
-      ctx.status = 400;
-      ctx.body = {
-        status: 'error',
-        message: err.message || 'Sorry, an error has occurred.',
-      };
+    const base = await basesController.findByBaseId(ctx.params.baseId);
+    ctx.body = base;
+  },
+
+  async getBases(ctx) {
+    const bases = await basesController.findBases();
+    ctx.body = { bases: bases };
+  },
+
+  async createBase(ctx) {
+    const params = ctx.request.body;
+    if (!params.name) {
+      ctx.status = 422;
+      return (ctx.body = { message: 'the name of base is necessary' });
     }
+    const bases = await basesController.createBase(params);
+    ctx.body = bases;
   },
 };
