@@ -1,5 +1,5 @@
 #!/bin/bash
-export PGPASSWORD="psql_password"
+export PGPASSWORD="node_password"
 
 echo "Configuring elephante_db"
 
