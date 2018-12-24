@@ -64,16 +64,8 @@ const createUid = type => {
   );
 };
 
-const checkKeyExists = (map, ...keys) => {
-  for (let key of keys) {
-    if (!(key in map)) throw new Error(`${key} is undefined`, 400);
-  }
-  return map;
-};
-
 module.exports = {
   load,
   sha1,
   createUid,
-  checkKeyExists,
 };
