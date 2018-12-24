@@ -1,11 +1,9 @@
-
-node_modules
-
-*.DS_Store
-
 logs
-<<<<<<< HEAD
+*.log
+node_modules
 .idea
-=======
-.idea
->>>>>>> remotes/origin/master
+.idea/
+tests/
+package-lock.json
+.vscode/
+*.DS_Store
