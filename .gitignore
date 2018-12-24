@@ -6,6 +6,5 @@ node_modules
 tests/
 package-lock.json
 .vscode/
-/config/db-config.json
 config/db-config.json
 .env
