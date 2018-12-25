@@ -1,5 +1,6 @@
 const { pick } = require('lodash');
 const { helper, fields } = require('../util');
+const tablesController = require('../controllers').tables;
 
 const adaptTables = tables => {
   return {
@@ -46,26 +47,26 @@ module.exports = {
   },
 
   async getTable(ctx) {
-    const params = ctx.params;
-    helper.checkKeyExists(params, 'tableId');
-    const table = await tablesController.findTable(params.tableId);
-    if (!table) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'table does not exist' });
-    }
-    ctx.body = adaptTable(table);
+    ctx.body = adaptTable(ctx.table);
   },
 
   async createField(ctx) {
     const params = ctx.request.body;
-    helper.checkKeyExists(params, 'tableId', 'name', 'type');
-    const fieldTypes = await fields.getFieldTypes();
-    console.log(fieldTypes);
-    if (fieldTypes.indexOf(params.type) === -1) {
-      ctx.status = 422;
-      return (ctx.body = { error: `unsupported type ${params.type}` });
+    helper.checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
+    let fieldTypes = await fields.getFieldTypes();
+    if (!fieldTypes.idNameMapping[params.fieldTypeId]) {
+      ctx.status = 400;
+      return (ctx.body = {
+        error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
+      });
     }
     await tablesController.createField(params);
+    ctx.body = { message: 'success' };
+  },
+
+  async createRecord(ctx) {
+    const params = ctx.request.body;
+    await tablesController.createRecord(params);
     ctx.body = { message: 'success' };
   },
 };

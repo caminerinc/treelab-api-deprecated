@@ -9,7 +9,17 @@ const getFieldTypes = async () => {
     return fieldTypes;
   }
   const result = await tablesController.findFieldTypes();
-  fieldTypes = Array.from(result, i => i.name);
+  fieldTypes = {
+    types: Array.from(result, i => i.name),
+    idNameMapping: result.reduce((obj, item) => {
+      obj[item.id] = item.name;
+      return obj;
+    }, {}),
+    nameIdMapping: result.reduce((obj, item) => {
+      obj[item.name] = item.id;
+      return obj;
+    }, {}),
+  };
   LAST_CACHE_TIME = Date.now();
   return fieldTypes;
 };

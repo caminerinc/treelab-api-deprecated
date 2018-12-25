@@ -67,4 +67,10 @@ module.exports = {
       fieldTypeId: params.fieldTypeId,
     });
   },
+
+  createRecord(params) {
+    return Records.create({
+      tableId: params.tableId,
+    });
+  },
 };

@@ -5,6 +5,8 @@ const basesResolver = require('../resolvers').bases;
 const tablesResolver = require('../resolvers').tables;
 const usersResolver = require('../resolvers').users;
 
+const { tables } = require('../middlewares');
+
 // App
 router.get('/api/public/health-check', ctx => {
   ctx.body = 'Connection established';
@@ -17,8 +19,13 @@ router.post('/api/base', basesResolver.createBase);
 
 //Table
 router.get('/api/tables/:baseId', tablesResolver.getTables);
-router.get('/api/table/:tableId', tablesResolver.getTable);
-router.post('/api/field', tablesResolver.createField);
+router.get(
+  '/api/table/:tableId',
+  tables.checkTableExist,
+  tablesResolver.getTable,
+);
+router.post('/api/field', tables.checkTableExist, tablesResolver.createField);
+router.post('/api/record', tables.checkTableExist, tablesResolver.createRecord);
 
 //Users
 router.get('/api/users', usersResolver.users);
