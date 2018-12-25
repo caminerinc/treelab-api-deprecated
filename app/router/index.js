@@ -18,6 +18,7 @@ router.post('/api/base', basesResolver.createBase);
 //Table
 router.get('/api/tables/:baseId', tablesResolver.getTables);
 router.get('/api/table/:tableId', tablesResolver.getTable);
+router.post('/api/field', tablesResolver.createField);
 
 //Users
 router.get('/api/users', usersResolver.users);

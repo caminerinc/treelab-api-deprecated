@@ -63,7 +63,7 @@ const createUid = type => {
 
 const checkKeyExists = (map, ...keys) => {
   for (let key of keys) {
-    let error = new Error(`${key} is undefined`);
+    let error = new Error(`${key} is required`);
     error.status = 422;
     if (!(key in map)) throw error;
   }

@@ -55,4 +55,16 @@ module.exports = {
       ],
     });
   },
+
+  findFieldTypes() {
+    return FieldTypes.findAll({ attributes: ['id', 'name'] });
+  },
+
+  createField(params) {
+    return Fields.create({
+      name: params.name,
+      tableId: params.tableId,
+      fieldTypeId: params.fieldTypeId,
+    });
+  },
 };

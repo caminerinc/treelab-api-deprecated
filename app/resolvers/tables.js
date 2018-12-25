@@ -1,6 +1,5 @@
 const { pick } = require('lodash');
-
-const tablesController = require('../controllers').tables;
+const { helper, fields } = require('../util');
 
 const adaptTables = tables => {
   return {
@@ -41,25 +40,32 @@ const getCellValuesByColumnId = fieldValues =>
 module.exports = {
   async getTables(ctx) {
     const params = ctx.params;
-    if (!params.baseId) {
-      ctx.status = 422;
-      return (ctx.body = { message: 'baseId is required' });
-    }
+    helper.checkKeyExists(params, 'baseId');
     const tables = await tablesController.findTables(params.baseId);
     ctx.body = adaptTables(tables);
   },
 
   async getTable(ctx) {
     const params = ctx.params;
-    if (!params.tableId) {
-      ctx.status = 422;
-      return (ctx.body = { message: 'tableId is required' });
-    }
+    helper.checkKeyExists(params, 'tableId');
     const table = await tablesController.findTable(params.tableId);
     if (!table) {
       ctx.status = 400;
-      return (ctx.body = { message: 'table does not exist' });
+      return (ctx.body = { error: 'table does not exist' });
     }
     ctx.body = adaptTable(table);
+  },
+
+  async createField(ctx) {
+    const params = ctx.request.body;
+    helper.checkKeyExists(params, 'tableId', 'name', 'type');
+    const fieldTypes = await fields.getFieldTypes();
+    console.log(fieldTypes);
+    if (fieldTypes.indexOf(params.type) === -1) {
+      ctx.status = 422;
+      return (ctx.body = { error: `unsupported type ${params.type}` });
+    }
+    await tablesController.createField(params);
+    ctx.body = { message: 'success' };
   },
 };

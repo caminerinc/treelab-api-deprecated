@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         allowNull: false,
-        defaultValue: createUid(PREFIX_TYPE.FIELD),
+        defaultValue: () => createUid(PREFIX_TYPE.FIELD),
         primaryKey: true,
         type: DataTypes.STRING,
       },
