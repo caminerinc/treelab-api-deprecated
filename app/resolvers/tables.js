@@ -1,13 +1,13 @@
-const _ = require('lodash');
+const pick = require('lodash.pick');
 
 const tablesController = require('../controllers').tables;
 
 const adaptTables = tables => {
   return {
     tableSchemas: tables.map(table => ({
-      ..._.pick(table, ['id', 'name']),
+      ...pick(table, ['id', 'name']),
       columns: table.fields.map(field => ({
-        ..._.pick(field, ['id', 'name']),
+        ...pick(field, ['id', 'name']),
         type: field.type.name,
       })),
     })),
