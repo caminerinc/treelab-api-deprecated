@@ -22,5 +22,6 @@ router.get('/api/getTables/:baseId', tablesResolver.getTables);
 router.get('/api/users', usersResolver.users);
 router.post('/api/user', usersResolver.user);
 router.post('/api/login', usersResolver.login);
+router.get('/api/test-auth', usersResolver.testAuth);
 
 module.exports = router;

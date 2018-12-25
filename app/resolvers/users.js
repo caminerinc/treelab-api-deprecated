@@ -45,6 +45,23 @@ module.exports = {
       return (ctx.body = { message: 'wrong password' });
     }
 
+    let token = await usersController.getToken({
+      payload: {
+        userId: user.id,
+      },
+    });
+
+    ctx.body = { token };
+  },
+  testAuth(ctx) {
+    try {
+      usersController.authToken({
+        token: ctx.headers.authorization,
+      });
+    } catch (e) {
+      ctx.status = 401;
+      return (ctx.body = { message: e.message });
+    }
     ctx.body = { message: 'success' };
   },
 };
