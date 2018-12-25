@@ -17,24 +17,26 @@ const adaptTables = tables => {
 const adaptTable = table => {
   return {
     tableDatas: {
-      id: table.id,
-      rowsById: table.records.reduce((obj, record) => {
-        obj[record.id] = {
-          id: record.id,
-          createdAt: record.createdAt,
-          cellValuesByColumnId: record.fieldValues.reduce(
-            (_obj, fieldValue) => {
-              _obj[fieldValue.fieldId] = fieldValue.value.value;
-              return _obj;
-            },
-            {},
-          ),
-        };
-        return obj;
-      }, {}),
+      ...pick(table, ['id']),
+      rowsById: getRowsById(table.records),
     },
   };
 };
+
+const getRowsById = records =>
+  records.reduce((rowAccum, record) => {
+    rowAccum[record.id] = {
+      ...pick(record, ['id', 'createdAt']),
+      cellValuesByColumnId: getCellValuesByColumnId(record.fieldValues),
+    };
+    return rowAccum;
+  }, {});
+
+const getCellValuesByColumnId = fieldValues =>
+  fieldValues.reduce((cellAccum, fieldValue) => {
+    cellAccum[fieldValue.fieldId] = fieldValue.value.value;
+    return cellAccum;
+  }, {});
 
 module.exports = {
   async getTables(ctx) {
