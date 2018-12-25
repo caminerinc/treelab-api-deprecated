@@ -27,4 +27,32 @@ module.exports = {
       ],
     });
   },
+
+  findTable(id) {
+    return Tables.findOne({
+      attributes: ['id'],
+      where: { id },
+      include: [
+        {
+          attributes: ['id', 'createdAt'],
+          model: Records,
+          as: 'records',
+          include: [
+            {
+              attributes: ['fieldId'],
+              model: FieldValues,
+              as: 'fieldValues',
+              include: [
+                {
+                  attributes: ['value'],
+                  model: TextValues,
+                  as: 'value',
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  },
 };
