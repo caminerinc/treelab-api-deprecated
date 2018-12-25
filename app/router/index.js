@@ -16,6 +16,5 @@ router.post('/api/base', basesResolver.createBase);
 
 //Users
 router.get('/api/users', usersResolver.users);
-router.post('/api/user', usersResolver.user);
 
 module.exports = router;
