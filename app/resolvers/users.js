@@ -1,5 +1,6 @@
 const usersController = require('../controllers').users;
 const helper = require('../util/helper');
+const auth = require('../util/auth');
 const email_regex = /^([A-Za-z0-9_\-\.\u4e00-\u9fa5])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,8})$/;
 
 module.exports = {
@@ -26,26 +27,23 @@ module.exports = {
   async login(ctx) {
     helper.checkKeyExists(ctx.request.body, 'email', 'password');
 
-    if (!email_regex.test(ctx.request.body.email)) {
-      ctx.status = 400;
-      return (ctx.body = { message: 'Incorrect email format' });
-    }
-    let user = await usersController.findOneUser(ctx.request.body);
+    const { email, password } = ctx.request.body;
+    let user = await usersController.findOneUser({ email });
 
     if (!user) {
       ctx.status = 401;
-      return (ctx.body = { message: 'Did not find this mailbox' });
+      return (ctx.body = { message: 'This email does not exist' });
     }
-    let auth = await usersController.authenticate({
-      password: ctx.request.body.password,
+    let _auth = auth.authenticate({
+      password,
       passwordDigest: user.passwordDigest,
     });
-    if (!auth) {
+    if (!_auth) {
       ctx.status = 402;
       return (ctx.body = { message: 'wrong password' });
     }
 
-    let token = await usersController.getToken({
+    const token = auth.getToken({
       payload: {
         userId: user.id,
       },
@@ -55,7 +53,7 @@ module.exports = {
   },
   testAuth(ctx) {
     try {
-      usersController.authToken({
+      auth.authToken({
         token: ctx.headers.authorization,
       });
     } catch (e) {
