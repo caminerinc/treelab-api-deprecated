@@ -16,4 +16,12 @@ module.exports = {
       email,
     });
   },
+  findOneUser({ email }) {
+    return Users.findOne({
+      where: {
+        email,
+      },
+      raw: true,
+    });
+  },
 };
