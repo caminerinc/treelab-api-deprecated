@@ -19,7 +19,7 @@ module.exports = {
 
     if (!email_regex.test(ctx.request.body.email)) {
       ctx.status = 400;
-      return (ctx.body = { message: 'Incorrect email format' });
+      return (ctx.body = { error: 'Incorrect email format' });
     }
     await usersController.createUser(ctx.request.body);
     ctx.body = { message: 'success' };
@@ -32,7 +32,7 @@ module.exports = {
 
     if (!user) {
       ctx.status = 401;
-      return (ctx.body = { message: 'This email does not exist' });
+      return (ctx.body = { error: 'This email does not exist' });
     }
     let _auth = auth.authenticate({
       password,
@@ -40,7 +40,7 @@ module.exports = {
     });
     if (!_auth) {
       ctx.status = 402;
-      return (ctx.body = { message: 'wrong password' });
+      return (ctx.body = { error: 'wrong password' });
     }
 
     const token = auth.getToken({
@@ -58,7 +58,7 @@ module.exports = {
       });
     } catch (e) {
       ctx.status = 401;
-      return (ctx.body = { message: e.message });
+      return (ctx.body = { error: e.message });
     }
     ctx.body = { message: 'success' };
   },
