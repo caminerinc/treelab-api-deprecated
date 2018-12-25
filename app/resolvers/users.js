@@ -18,7 +18,7 @@ module.exports = {
 
     if (!email_regex.test(ctx.request.body.email)) {
       ctx.status = 400;
-      return (ctx.body = { message: 'The mailbox is incorrect' });
+      return (ctx.body = { message: 'Incorrect email format' });
     }
     await usersController.createUser(ctx.request.body);
     ctx.body = { message: 'success' };
