@@ -1,4 +1,4 @@
-const pick = require('lodash.pick');
+const { pick } = require('lodash');
 
 const tablesController = require('../controllers').tables;
 
