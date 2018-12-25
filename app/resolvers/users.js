@@ -29,17 +29,13 @@ module.exports = {
 
     const { email, password } = ctx.request.body;
 
-    const user = usersController.findOneUser({ email });
+    const user = await usersController.findOneUser({ email });
     if (!user) {
       ctx.status = 401;
       return (ctx.body = { error: 'This email does not exist' });
     }
 
-    let _auth = auth.authenticate({
-      password,
-      passwordDigest: user.passwordDigest,
-    });
-    if (!_auth) {
+    if (!auth.authenticate({ password, passwordDigest: user.passwordDigest })) {
       ctx.status = 402;
       return (ctx.body = { error: 'wrong password' });
     }

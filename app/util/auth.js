@@ -6,11 +6,11 @@ module.exports = {
     return helper.sha1(password) === passwordDigest;
   },
   getToken({ payload = {} }) {
-    return jwt.sign(payload, process.env.sharedSecret, {
+    return jwt.sign(payload, process.env.shared_secret, {
       expiresIn: '4h',
     });
   },
   authToken({ token }) {
-    return jwt.verify(token.split(' ')[1], process.env.sharedSecret);
+    return jwt.verify(token.split(' ')[1], process.env.shared_secret);
   },
 };
