@@ -6,15 +6,12 @@ const { U64, I64 } = require('n64');
 const PID = 1;
 let SEQUENCE = 0;
 
-const { PREFIX_TYPE } = require('../constants/app');
-
 const load = (root, files = {}) => {
   if (fs.statSync(root).isFile()) {
     let extname = path.extname(root);
     if (extname && !require.extensions[extname]) {
       files[path.basename(root)] = fs.readFileSync(root).toString();
     } else {
-      console.log(root);
       files[path.basename(root)] = require(root);
     }
   } else {
