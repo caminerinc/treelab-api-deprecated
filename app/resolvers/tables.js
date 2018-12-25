@@ -40,22 +40,22 @@ const getCellValuesByColumnId = fieldValues =>
 
 module.exports = {
   async getTables(ctx) {
-    let params = ctx.params;
+    const params = ctx.params;
     if (!params.baseId) {
       ctx.status = 422;
       return (ctx.body = { message: 'baseId is required' });
     }
-    let tables = await tablesController.findTables(params.baseId);
+    const tables = await tablesController.findTables(params.baseId);
     ctx.body = adaptTables(tables);
   },
 
   async getTable(ctx) {
-    let params = ctx.params;
+    const params = ctx.params;
     if (!params.tableId) {
       ctx.status = 422;
       return (ctx.body = { message: 'tableId is required' });
     }
-    let table = await tablesController.findTable(params.tableId);
+    const table = await tablesController.findTable(params.tableId);
     if (!table) {
       ctx.status = 400;
       return (ctx.body = { message: 'table does not exist' });
