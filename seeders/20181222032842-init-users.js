@@ -11,6 +11,8 @@ module.exports = {
           lastName: 'cai',
           email: 'carson@caminer.io',
           passwordDigest: 'aaa',
+          createdAt: '2018-12-24T04:09:06.024Z',
+          updatedAt: '2018-12-24T04:09:06.024Z',
         },
         {
           id: 'usr1jT7ZIHLmjH4112',
@@ -18,6 +20,8 @@ module.exports = {
           lastName: '王',
           email: 'xiaoming@caminer.io',
           passwordDigest: 'bbb',
+          createdAt: '2018-12-24T04:09:06.024Z',
+          updatedAt: '2018-12-24T04:09:06.024Z',
         },
       ],
       {},
