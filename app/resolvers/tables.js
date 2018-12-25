@@ -58,7 +58,6 @@ module.exports = {
       ctx.status = 400;
       return (ctx.body = { message: 'table does not exist' });
     }
-    table = JSON.parse(JSON.stringify(table));
     ctx.body = adaptTable(table);
   },
 };
