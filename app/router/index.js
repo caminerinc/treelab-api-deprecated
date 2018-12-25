@@ -6,7 +6,7 @@ const tablesResolver = require('../resolvers').tables;
 const usersResolver = require('../resolvers').users;
 
 // App
-router.get('/api/health-check', ctx => {
+router.get('/api/public/health-check', ctx => {
   ctx.body = 'Connection established';
 });
 
@@ -21,6 +21,8 @@ router.get('/api/table/:tableId', tablesResolver.getTable);
 
 //Users
 router.get('/api/users', usersResolver.users);
-router.post('/api/user', usersResolver.user);
+router.post('/api/public/user', usersResolver.user);
+router.post('/api/public/login', usersResolver.login);
+router.get('/api/public/test-auth', usersResolver.testAuth);
 
 module.exports = router;
