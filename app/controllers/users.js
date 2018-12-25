@@ -16,4 +16,15 @@ module.exports = {
       email,
     });
   },
+  findOneUser({ email }) {
+    return Users.findOne({
+      where: {
+        email,
+      },
+      raw: true,
+    });
+  },
+  authenticate({ passwordDigest, password }) {
+    return helper.sha1(password) === passwordDigest;
+  },
 };
