@@ -40,7 +40,9 @@ module.exports = {
       return (ctx.body = { error: 'wrong password' });
     }
 
-    const token = auth.getToken({});
+    const token = auth.getToken({
+      userId: user.id,
+    });
 
     ctx.body = { token };
   },
