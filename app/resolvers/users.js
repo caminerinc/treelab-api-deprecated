@@ -28,12 +28,13 @@ module.exports = {
     helper.checkKeyExists(ctx.request.body, 'email', 'password');
 
     const { email, password } = ctx.request.body;
-    let user = await usersController.findOneUser({ email });
 
+    const user = usersController.findOneUser({ email });
     if (!user) {
       ctx.status = 401;
       return (ctx.body = { error: 'This email does not exist' });
     }
+
     let _auth = auth.authenticate({
       password,
       passwordDigest: user.passwordDigest,
@@ -43,11 +44,7 @@ module.exports = {
       return (ctx.body = { error: 'wrong password' });
     }
 
-    const token = auth.getToken({
-      payload: {
-        userId: user.id,
-      },
-    });
+    const token = auth.getToken({});
 
     ctx.body = { token };
   },
