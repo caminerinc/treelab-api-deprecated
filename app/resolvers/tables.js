@@ -1,5 +1,5 @@
 const pick = require('lodash').pick;
-const helper = require('../util').helper;
+const helperUtil = require('../util').helper;
 const tablesController = require('../controllers').tables;
 
 const adaptTables = tables => {
@@ -40,7 +40,7 @@ const getCellValuesByColumnId = fieldValues =>
 module.exports = {
   async getTables(ctx) {
     const params = ctx.params;
-    helper.checkKeyExists(params, 'baseId');
+    helperUtil.checkKeyExists(params, 'baseId');
     const tables = await tablesController.findTables(params.baseId);
     ctx.body = adaptTables(tables);
   },

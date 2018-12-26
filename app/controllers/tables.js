@@ -1,4 +1,3 @@
-const Bases = require('../models').bases;
 const Tables = require('../models').tables;
 const Fields = require('../models').fields;
 const Records = require('../models').records;
@@ -45,20 +44,6 @@ module.exports = {
           ],
         },
       ],
-    });
-  },
-
-  createField(params) {
-    return Fields.create({
-      name: params.name,
-      tableId: params.tableId,
-      fieldTypeId: params.fieldTypeId,
-    });
-  },
-
-  createRecord(params) {
-    return Records.create({
-      tableId: params.tableId,
     });
   },
 };

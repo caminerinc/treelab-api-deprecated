@@ -1,4 +1,4 @@
-const { helper } = require('../util');
+const helperUtil = require('../util').helper;
 const basesController = require('../controllers').bases;
 
 module.exports = {
@@ -14,7 +14,7 @@ module.exports = {
 
   async createBase(ctx) {
     const params = ctx.request.body;
-    helper.checkKeyExists(params, 'name');
+    helperUtil.checkKeyExists(params, 'name');
     const bases = await basesController.createBase(params);
     ctx.body = bases;
   },
