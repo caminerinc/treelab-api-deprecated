@@ -10,6 +10,7 @@
     "dotenv": "^6.2.0",
     "extend2": "^1.0.0",
     "fs": "0.0.1-security",
+    "kcors": "^2.2.2",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
     "koa-jwt": "^3.5.1",
