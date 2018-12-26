@@ -17,6 +17,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       textValueId: DataTypes.INTEGER,
       numberValueId: DataTypes.INTEGER,
+      numberValueId: DataTypes.INTEGER,
+      foreignKeyValueId: DataTypes.INTEGER,
     },
     {},
   );
@@ -28,6 +30,10 @@ module.exports = (sequelize, DataTypes) => {
     fieldValues.belongsTo(models.numberValues, {
       foreignKey: 'numberValueId',
       as: 'numberValue',
+    });
+    fieldValues.belongsTo(models.foreignKeyValues, {
+      foreignKey: 'foreignKeyValueId',
+      as: 'foreignKeyValue',
     });
   };
   return fieldValues;

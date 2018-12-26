@@ -4,6 +4,10 @@ module.exports = (sequelize, DataTypes) => {
     'typeOptions',
     {
       numberTypeId: DataTypes.INTEGER,
+      foreignKeyTypeId: DataTypes.INTEGER,
+      multiSelectTypeId: DataTypes.INTEGER,
+      rollupTypeId: DataTypes.INTEGER,
+      formulaTypeId: DataTypes.INTEGER,
     },
     {},
   );
@@ -11,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
     typeOptions.belongsTo(models.numberTypes, {
       foreignKey: 'numberTypeId',
       as: 'numberType',
+    });
+    typeOptions.belongsTo(models.foreignKeyTypes, {
+      foreignKey: 'foreignKeyTypeId',
+      as: 'foreignKeyType',
     });
   };
   return typeOptions;
