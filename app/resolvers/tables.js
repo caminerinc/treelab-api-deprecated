@@ -1,5 +1,5 @@
-const { pick } = require('lodash');
-const { helper, fields } = require('../util');
+const pick = require('lodash').pick;
+const helper = require('../util').helper;
 const tablesController = require('../controllers').tables;
 
 const adaptTables = tables => {
@@ -8,7 +8,6 @@ const adaptTables = tables => {
       ...pick(table, ['id', 'name']),
       columns: table.fields.map(field => ({
         ...pick(field, ['id', 'name']),
-        type: field.type.name,
       })),
     })),
   };
@@ -48,25 +47,5 @@ module.exports = {
 
   async getTable(ctx) {
     ctx.body = adaptTable(ctx.table);
-  },
-
-  async createField(ctx) {
-    const params = ctx.request.body;
-    helper.checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
-    let fieldTypes = await fields.getFieldTypes();
-    if (!fieldTypes.idNameMapping[params.fieldTypeId]) {
-      ctx.status = 400;
-      return (ctx.body = {
-        error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
-      });
-    }
-    await tablesController.createField(params);
-    ctx.body = { message: 'success' };
-  },
-
-  async createRecord(ctx) {
-    const params = ctx.request.body;
-    await tablesController.createRecord(params);
-    ctx.body = { message: 'success' };
   },
 };

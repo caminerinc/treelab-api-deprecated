@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
-const { U64, I64 } = require('n64');
+const U64 = require('n64').U64;
 
 const PID = 1;
 let SEQUENCE = 0;
