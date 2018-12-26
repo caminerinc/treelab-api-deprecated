@@ -1,3 +1,4 @@
+const pick = require('lodash').pick;
 const helperUtil = require('../util').helper;
 const basesController = require('../controllers').bases;
 
@@ -16,6 +17,6 @@ module.exports = {
     const params = ctx.request.body;
     helperUtil.checkKeyExists(params, 'name');
     const bases = await basesController.createBase(params);
-    ctx.body = bases;
+    ctx.body = pick(bases, ['id', 'name', 'createdAt']);
   },
 };
