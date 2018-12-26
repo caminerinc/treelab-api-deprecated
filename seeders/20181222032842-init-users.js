@@ -6,20 +6,11 @@ module.exports = {
       'users',
       [
         {
-          id: 'usr1jT7ZIHLmjH4111',
+          id: 'usr1ce47a1a900403f',
           firstName: 'carson',
           lastName: 'cai',
-          email: 'carson@caminer.io',
-          passwordDigest: 'aaa',
-          createdAt: '2018-12-24T04:09:06.024Z',
-          updatedAt: '2018-12-24T04:09:06.024Z',
-        },
-        {
-          id: 'usr1jT7ZIHLmjH4112',
-          firstName: '小明',
-          lastName: '王',
-          email: 'xiaoming@caminer.io',
-          passwordDigest: 'bbb',
+          email: 'test@caminer.io',
+          passwordDigest: '3d4f2bf07dc1be38b20cd6e46949a1071f9d0e3d',
           createdAt: '2018-12-24T04:09:06.024Z',
           updatedAt: '2018-12-24T04:09:06.024Z',
         },

@@ -39,7 +39,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     fields.belongsTo(models.typeOptions, {
       foreignKey: 'typeOptionsId',
-      as: 'option',
+      as: 'typeOptions',
     });
   };
   return fields;

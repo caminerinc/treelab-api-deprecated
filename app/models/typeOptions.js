@@ -1,17 +1,9 @@
-const { createUid } = require('../util/helper');
-
-const { PREFIX_TYPE } = require('../constants/app');
-
+'use strict';
 module.exports = (sequelize, DataTypes) => {
   const typeOptions = sequelize.define(
     'typeOptions',
     {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.INTEGER,
-      },
-      numberTypeId: DataTypes.INTEGER.UNSIGNED,
+      numberTypeId: DataTypes.INTEGER,
     },
     {},
   );
