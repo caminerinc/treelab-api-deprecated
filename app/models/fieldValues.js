@@ -17,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
       },
       textValueId: DataTypes.INTEGER,
       numberValueId: DataTypes.INTEGER,
-      numberValueId: DataTypes.INTEGER,
       foreignKeyValueId: DataTypes.INTEGER,
     },
     {},

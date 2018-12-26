@@ -3,23 +3,15 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'records',
+      'typeOptions',
       [
         {
-          id: 'recwEKHeMhcDnLnfc',
-          tableId: 'tblNGUPdSs9Va4X5u',
-          createdAt: '018-05-05T04:09:06.024Z',
-          updatedAt: '2018-05-05T04:09:06.024Z',
-        },
-        {
-          id: 'recfPInitd1QpZ6aV',
-          tableId: 'tblNGUPdSs9Va4X5u',
+          numberTypeId: 1,
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 'recfPInitd1QpZ6aa',
-          tableId: 'tblsnmRLfttLmAYQ8',
+          foreignKeyTypeId: 1,
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
@@ -29,6 +21,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('records', null, {});
+    return queryInterface.bulkDelete('typeOptions', null, {});
   },
 };

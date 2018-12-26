@@ -21,6 +21,9 @@ module.exports = {
       numberValueId: {
         type: Sequelize.INTEGER,
       },
+      foreignKeyValueId: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

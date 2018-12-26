@@ -4,8 +4,8 @@ module.exports = (sequelize, DataTypes) => {
     'foreignKeyTypes',
     {
       relationship: DataTypes.STRING,
-      foreignTableId: DataTypes.INTEGER,
-      symmetricFieldId: DataTypes.INTEGER,
+      foreignTableId: DataTypes.STRING,
+      symmetricFieldId: DataTypes.STRING,
     },
     {},
   );
