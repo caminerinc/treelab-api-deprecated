@@ -6,11 +6,7 @@ const FieldValues = require('../models').fieldValues;
 const TextValues = require('../models').textValues;
 
 module.exports = {
-  createField(params) {
-    return Fields.create({
-      name: params.name,
-      tableId: params.tableId,
-      fieldTypeId: params.fieldTypeId,
-    });
+  create(params) {
+    return Fields.create(params);
   },
 };
