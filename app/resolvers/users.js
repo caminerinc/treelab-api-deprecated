@@ -1,6 +1,6 @@
 const usersController = require('../controllers').users;
-const helper = require('../util/helper');
-const auth = require('../util/auth');
+const helperUtil = require('../util').helper;
+const authUtil = require('../util').auth;
 const email_regex = /^([A-Za-z0-9_\-\.\u4e00-\u9fa5])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,8})$/;
 
 module.exports = {
@@ -9,7 +9,7 @@ module.exports = {
     ctx.body = users;
   },
   async user(ctx) {
-    helper.checkKeyExists(
+    helperUtil.checkKeyExists(
       ctx.request.body,
       'firstName',
       'lastName',
@@ -25,7 +25,7 @@ module.exports = {
     ctx.body = { message: 'success' };
   },
   async login(ctx) {
-    helper.checkKeyExists(ctx.request.body, 'email', 'password');
+    helperUtil.checkKeyExists(ctx.request.body, 'email', 'password');
 
     const { email, password } = ctx.request.body;
 
@@ -35,12 +35,14 @@ module.exports = {
       return (ctx.body = { error: 'This email does not exist' });
     }
 
-    if (!auth.authenticate({ password, passwordDigest: user.passwordDigest })) {
+    if (
+      !authUtil.authenticate({ password, passwordDigest: user.passwordDigest })
+    ) {
       ctx.status = 402;
       return (ctx.body = { error: 'wrong password' });
     }
 
-    const token = auth.getToken({
+    const token = authUtil.getToken({
       userId: user.id,
     });
 
@@ -48,7 +50,7 @@ module.exports = {
   },
   testAuth(ctx) {
     try {
-      auth.authToken({
+      authUtil.authToken({
         token: ctx.headers.authorization,
       });
     } catch (e) {

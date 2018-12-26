@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
-const { U64, I64 } = require('n64');
+const U64 = require('n64').U64;
 
 const PID = 1;
 let SEQUENCE = 0;
@@ -63,7 +63,7 @@ const createUid = type => {
 
 const checkKeyExists = (map, ...keys) => {
   for (let key of keys) {
-    let error = new Error(`${key} is undefined`);
+    let error = new Error(`${key} is required`);
     error.status = 422;
     if (!(key in map)) throw error;
   }

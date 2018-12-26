@@ -1,5 +1,5 @@
 const Users = require('../models').users;
-const helper = require('../util/helper');
+const helper = require('../util').helper;
 
 module.exports = {
   findAllUser() {
