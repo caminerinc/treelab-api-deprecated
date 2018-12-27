@@ -16,7 +16,6 @@ router.get('/api/public/health-check', ctx => {
 
 // Base
 router.get('/api/bases', basesResolver.getBases);
-router.get('/api/base/:baseId', basesResolver.getBaseById);
 router.post('/api/base', basesResolver.createBase);
 
 //Table
