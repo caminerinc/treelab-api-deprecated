@@ -30,10 +30,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'numberValueId',
       as: 'numberValue',
     });
-    fieldValues.belongsTo(models.foreignKeyValues, {
-      foreignKey: 'foreignKeyValueId',
-      as: 'foreignKeyValue',
-    });
   };
   return fieldValues;
 };

@@ -2,8 +2,8 @@ const jwt = require('jsonwebtoken');
 const helper = require('./helper');
 
 module.exports = {
-  authenticate({ passwordDigest, password }) {
-    return helper.sha1(password) === passwordDigest;
+  authenticate({ userPassword, password }) {
+    return helper.sha1(password) === userPassword;
   },
   getToken(payload) {
     return jwt.sign(payload, process.env.SHARED_SECRET, {

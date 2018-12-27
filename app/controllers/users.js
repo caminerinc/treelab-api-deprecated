@@ -12,7 +12,7 @@ module.exports = {
     return Users.create({
       firstName,
       lastName,
-      passwordDigest: helper.sha1(password),
+      password: helper.sha1(password),
       email,
     });
   },
