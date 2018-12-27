@@ -31,15 +31,6 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
-        {
-          id: 'fld6tojhqApRQfJpe',
-          name: 'Last Name',
-          fieldTypeId: 1,
-          typeOptionsId: 2,
-          tableId: 'tblsnmRLfttLmAYQ8',
-          createdAt: '2018-05-05T04:09:06.024Z',
-          updatedAt: '2018-05-05T04:09:06.024Z',
-        },
       ],
       {},
     );

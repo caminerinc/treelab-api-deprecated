@@ -16,10 +16,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'numberTypeId',
       as: 'numberType',
     });
-    typeOptions.belongsTo(models.foreignKeyTypes, {
-      foreignKey: 'foreignKeyTypeId',
-      as: 'foreignKeyType',
-    });
   };
   return typeOptions;
 };
