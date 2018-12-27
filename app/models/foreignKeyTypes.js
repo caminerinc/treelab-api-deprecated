@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     foreignKeyTypes.belongsTo(models.fields, {
       foreignKey: 'symmetricFieldId',
-      as: 'symmetricFie',
+      as: 'symmetricField',
     });
   };
   return foreignKeyTypes;
