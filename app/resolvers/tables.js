@@ -7,7 +7,7 @@ const adaptTables = tables => {
     tableSchemas: tables.map(table => ({
       ...pick(table, ['id', 'name']),
       columns: table.fields.map(field => ({
-        ...pick(field, ['id', 'name']),
+        ...pick(field, ['id', 'name', 'fieldTypeId']),
       })),
     })),
   };

@@ -13,7 +13,7 @@ module.exports = {
         {
           model: Fields,
           as: 'fields',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'fieldTypeId'],
         },
       ],
     });
