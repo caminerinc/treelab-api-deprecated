@@ -1,8 +1,12 @@
 const FIELD_TYPES = {
-  1: 'text',
-  2: 'number',
-  3: 'foreignKey',
-  4: 'multipleAttachment',
+  1: {
+    name: 'text',
+    valueModel: 'textValues',
+  },
+  2: {
+    name: 'multipleAttachment',
+    valueModel: 'multipleAttachmentValues',
+  },
 };
 
 module.exports = {

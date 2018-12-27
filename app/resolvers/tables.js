@@ -1,6 +1,7 @@
 const pick = require('lodash').pick;
 const helperUtil = require('../util').helper;
 const tablesController = require('../controllers').tables;
+const { FIELD_TYPES } = require('../constants').fieldTypes;
 
 const adaptTables = tables => {
   return {
@@ -33,7 +34,11 @@ const getRowsById = records =>
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    cellAccum[fieldValue.fieldId] = fieldValue.value.value;
+    cellAccum[fieldValue.fieldId] =
+      fieldValue[
+        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel
+      ];
+    // cellAccum[fieldValue.fieldId] = fieldValue.value.value;
     return cellAccum;
   }, {});
 
