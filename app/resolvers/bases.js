@@ -1,3 +1,4 @@
+const helperUtil = require('../util').helper;
 const basesController = require('../controllers').bases;
 
 module.exports = {
@@ -13,10 +14,7 @@ module.exports = {
 
   async createBase(ctx) {
     const params = ctx.request.body;
-    if (!params.name) {
-      ctx.status = 422;
-      return (ctx.body = { message: 'the name of base is necessary' });
-    }
+    helperUtil.checkKeyExists(params, 'name');
     const bases = await basesController.createBase(params);
     ctx.body = bases;
   },

@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         allowNull: false,
-        defaultValue: createUid(PREFIX_TYPE.FIELD),
+        defaultValue: () => createUid(PREFIX_TYPE.FIELD),
         primaryKey: true,
         type: DataTypes.STRING,
       },
@@ -29,10 +29,6 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   fields.associate = function(models) {
-    fields.belongsTo(models.fieldTypes, {
-      foreignKey: 'fieldTypeId',
-      as: 'type',
-    });
     fields.hasMany(models.fieldValues, {
       foreignKey: 'fieldId',
       as: 'fieldValues',

@@ -9,3 +9,4 @@ package-lock.json
 config/db-config.json
 .env
 *.DS_Store
+config/config.js
