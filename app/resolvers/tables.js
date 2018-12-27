@@ -1,5 +1,5 @@
-const { pick } = require('lodash');
-
+const pick = require('lodash').pick;
+const helperUtil = require('../util').helper;
 const tablesController = require('../controllers').tables;
 
 const adaptTables = tables => {
@@ -8,7 +8,6 @@ const adaptTables = tables => {
       ...pick(table, ['id', 'name']),
       columns: table.fields.map(field => ({
         ...pick(field, ['id', 'name']),
-        type: field.type.name,
       })),
     })),
   };
@@ -41,25 +40,12 @@ const getCellValuesByColumnId = fieldValues =>
 module.exports = {
   async getTables(ctx) {
     const params = ctx.params;
-    if (!params.baseId) {
-      ctx.status = 422;
-      return (ctx.body = { message: 'baseId is required' });
-    }
+    helperUtil.checkKeyExists(params, 'baseId');
     const tables = await tablesController.findTables(params.baseId);
     ctx.body = adaptTables(tables);
   },
 
   async getTable(ctx) {
-    const params = ctx.params;
-    if (!params.tableId) {
-      ctx.status = 422;
-      return (ctx.body = { message: 'tableId is required' });
-    }
-    const table = await tablesController.findTable(params.tableId);
-    if (!table) {
-      ctx.status = 400;
-      return (ctx.body = { message: 'table does not exist' });
-    }
-    ctx.body = adaptTable(table);
+    ctx.body = adaptTable(ctx.table);
   },
 };

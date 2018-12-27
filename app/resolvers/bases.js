@@ -1,11 +1,8 @@
+const pick = require('lodash').pick;
+const helperUtil = require('../util').helper;
 const basesController = require('../controllers').bases;
 
 module.exports = {
-  async getBaseById(ctx) {
-    const base = await basesController.findByBaseId(ctx.params.baseId);
-    ctx.body = base;
-  },
-
   async getBases(ctx) {
     const bases = await basesController.findBases();
     ctx.body = { bases: bases };
@@ -13,11 +10,8 @@ module.exports = {
 
   async createBase(ctx) {
     const params = ctx.request.body;
-    if (!params.name) {
-      ctx.status = 422;
-      return (ctx.body = { message: 'the name of base is necessary' });
-    }
+    helperUtil.checkKeyExists(params, 'name');
     const bases = await basesController.createBase(params);
-    ctx.body = bases;
+    ctx.body = pick(bases, ['id', 'name', 'createdAt']);
   },
 };
