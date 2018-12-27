@@ -4,10 +4,6 @@ module.exports = (sequelize, DataTypes) => {
     'typeOptions',
     {
       numberTypeId: DataTypes.INTEGER,
-      foreignKeyTypeId: DataTypes.INTEGER,
-      multiSelectTypeId: DataTypes.INTEGER,
-      rollupTypeId: DataTypes.INTEGER,
-      formulaTypeId: DataTypes.INTEGER,
     },
     {},
   );

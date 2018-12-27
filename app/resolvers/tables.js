@@ -8,16 +8,12 @@ const adaptTables = tables => {
       ...pick(table, ['id', 'name']),
       columns: table.fields.map(field => {
         let other = {
-          type: FIELD_TYPES[field.fieldTypeId],
+          type: FIELD_TYPES[field.fieldTypeId].name,
         };
         if (field.typeOptions) {
-          if (
-            field.typeOptions.hasOwnProperty(
-              `${FIELD_TYPES[field.fieldTypeId]}Type`,
-            )
-          ) {
+          if (field.typeOptions[FIELD_TYPES[field.fieldTypeId].field]) {
             other.typeOptions = pick(
-              field.typeOptions[`${FIELD_TYPES[field.fieldTypeId]}Type`],
+              field.typeOptions[FIELD_TYPES[field.fieldTypeId].field],
               ['format', 'precision', 'negative'],
             );
           }
@@ -53,7 +49,7 @@ const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
     cellAccum[fieldValue.fieldId] =
       fieldValue[
-        `${FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId]}Value`
+        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel
       ].value;
     return cellAccum;
   }, {});
