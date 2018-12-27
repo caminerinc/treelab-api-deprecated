@@ -1,14 +1,32 @@
 const pick = require('lodash').pick;
 const helperUtil = require('../util').helper;
 const tablesController = require('../controllers').tables;
-
+const { FIELD_TYPES } = require('../constants').fieldTypes;
 const adaptTables = tables => {
   return {
     tableSchemas: tables.map(table => ({
       ...pick(table, ['id', 'name']),
-      columns: table.fields.map(field => ({
-        ...pick(field, ['id', 'name']),
-      })),
+      columns: table.fields.map(field => {
+        let other = {
+          type: FIELD_TYPES[field.fieldTypeId],
+        };
+        if (field.typeOptions) {
+          if (
+            field.typeOptions.hasOwnProperty(
+              `${FIELD_TYPES[field.fieldTypeId]}Type`,
+            )
+          ) {
+            other.typeOptions = pick(
+              field.typeOptions[`${FIELD_TYPES[field.fieldTypeId]}Type`],
+              ['format', 'precision', 'negative'],
+            );
+          }
+        }
+        return {
+          ...pick(field, ['id', 'name']),
+          ...other,
+        };
+      }),
     })),
   };
 };
@@ -33,7 +51,11 @@ const getRowsById = records =>
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    cellAccum[fieldValue.fieldId] = fieldValue.value.value;
+    console.log(fieldValue.field.dataValues);
+    cellAccum[fieldValue.fieldId] =
+      fieldValue[
+        `${FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId]}Value`
+      ].value;
     return cellAccum;
   }, {});
 
