@@ -51,7 +51,6 @@ const getRowsById = records =>
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    console.log(fieldValue.field.dataValues);
     cellAccum[fieldValue.fieldId] =
       fieldValue[
         `${FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId]}Value`
