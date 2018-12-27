@@ -4,6 +4,7 @@ const PREFIX_TYPE = {
   FIELD: 'fld',
   RECORD: 'rec',
   USR: 'usr',
+  ATT: 'att',
 };
 
 module.exports = {

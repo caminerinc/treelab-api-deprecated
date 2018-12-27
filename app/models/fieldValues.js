@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       textValueId: DataTypes.INTEGER,
+      multipleAttachmentValueId: DataTypes.STRING,
     },
     {},
   );
@@ -23,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
     fieldValues.belongsTo(models.textValues, {
       foreignKey: 'textValueId',
       as: 'value',
+    });
+    fieldValues.belongsTo(models.multipleAttachmentValues, {
+      foreignKey: 'multipleAttachmentValueId',
+      as: 'multipleAttachmentValue',
     });
   };
   return fieldValues;
