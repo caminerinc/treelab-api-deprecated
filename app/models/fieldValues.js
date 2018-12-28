@@ -5,12 +5,12 @@ module.exports = (sequelize, DataTypes) => {
       recordId: {
         allowNull: false,
         type: DataTypes.STRING,
-        unique: 'uk_recordId_fieldId',
+        unique: 'ukRecordIdFieldId',
       },
       fieldId: {
         allowNull: false,
         type: DataTypes.STRING,
-        unique: 'uk_recordId_fieldId',
+        unique: 'ukRecordIdFieldId',
       },
       textValue: DataTypes.STRING,
     },
