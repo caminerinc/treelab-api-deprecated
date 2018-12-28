@@ -17,7 +17,6 @@ module.exports = {
           id: 'fld6tojhqApRQfJpc',
           name: 'Last Name',
           fieldTypeId: 1,
-          typeOptionsId: 2,
           tableId: 'tblNGUPdSs9Va4X5u',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',

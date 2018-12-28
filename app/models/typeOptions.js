@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   typeOptions.associate = function(models) {
     typeOptions.belongsTo(models.numberTypes, {
       foreignKey: 'numberTypeId',
-      as: 'numberType',
+      as: 'numberTypes',
     });
   };
   return typeOptions;

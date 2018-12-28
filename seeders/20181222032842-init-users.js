@@ -10,7 +10,7 @@ module.exports = {
           firstName: 'carson',
           lastName: 'cai',
           email: 'test@caminer.io',
-          password: '3d4f2bf07dc1be38b20cd6e46949a1071f9d0e3d',
+          passwordDigest: '3d4f2bf07dc1be38b20cd6e46949a1071f9d0e3d',
           createdAt: '2018-12-24T04:09:06.024Z',
           updatedAt: '2018-12-24T04:09:06.024Z',
         },

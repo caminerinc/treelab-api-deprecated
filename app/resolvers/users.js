@@ -35,7 +35,9 @@ module.exports = {
       return (ctx.body = { error: 'This email does not exist' });
     }
 
-    if (!authUtil.authenticate({ password, passwordDigest: user.password })) {
+    if (
+      !authUtil.authenticate({ password, passwordDigest: user.passwordDigest })
+    ) {
       ctx.status = 402;
       return (ctx.body = { error: 'wrong password' });
     }

@@ -1,15 +1,15 @@
+const DB = require('../models');
+
 const FIELD_TYPES = {
   1: {
     name: 'text',
-    model: null,
-    valueModel: 'textValues',
-    field: null,
+    valueModel: DB.textValues,
   },
   2: {
     name: 'number',
-    typeModel: 'numberTypes',
-    valueModel: 'numberValues',
-    field: 'numberTypeId',
+    typeModel: DB.numberTypes,
+    valueModel: DB.numberValues,
+    typeField: 'numberTypeId',
   },
 };
 

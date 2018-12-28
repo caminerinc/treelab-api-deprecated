@@ -24,7 +24,7 @@ module.exports = {
               include: [
                 {
                   model: NumberTypes,
-                  as: 'numberType',
+                  as: 'numberTypes',
                 },
               ],
             },
@@ -57,12 +57,12 @@ module.exports = {
                 {
                   attributes: ['value'],
                   model: TextValues,
-                  as: 'textValue',
+                  as: 'textValues',
                 },
                 {
                   model: NumberValues,
                   attributes: ['value'],
-                  as: 'numberValue',
+                  as: 'numberValues',
                 },
               ],
             },

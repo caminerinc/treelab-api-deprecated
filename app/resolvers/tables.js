@@ -11,9 +11,11 @@ const adaptTables = tables => {
           type: FIELD_TYPES[field.fieldTypeId].name,
         };
         if (field.typeOptions) {
-          if (field.typeOptions[FIELD_TYPES[field.fieldTypeId].field]) {
+          if (
+            field.typeOptions[FIELD_TYPES[field.fieldTypeId].typeModel.name]
+          ) {
             other.typeOptions = pick(
-              field.typeOptions[FIELD_TYPES[field.fieldTypeId].field],
+              field.typeOptions[FIELD_TYPES[field.fieldTypeId].typeModel.name],
               ['format', 'precision', 'negative'],
             );
           }
@@ -49,8 +51,11 @@ const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
     cellAccum[fieldValue.fieldId] =
       fieldValue[
-        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel
-      ].value;
+        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel.name
+      ].value ||
+      fieldValue[
+        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel.name
+      ];
     return cellAccum;
   }, {});
 
