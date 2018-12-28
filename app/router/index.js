@@ -6,6 +6,7 @@ const tablesResolver = require('../resolvers').tables;
 const fieldsResolver = require('../resolvers').fields;
 const recordsResolver = require('../resolvers').records;
 const usersResolver = require('../resolvers').users;
+const attachmentResolver = require('../resolvers').attachment;
 
 const tableMiddleware = require('../middlewares').tables;
 
@@ -45,5 +46,8 @@ router.get('/api/users', usersResolver.users);
 router.post('/api/public/user', usersResolver.user);
 router.post('/api/public/login', usersResolver.login);
 router.get('/api/public/test-auth', usersResolver.testAuth);
+
+//attachment
+router.post('/api/array-field', attachmentResolver.updateArrayTypeByAdding);
 
 module.exports = router;
