@@ -3,7 +3,7 @@ const FieldValues = require('../models').fieldValues;
 module.exports = {
   update(params) {
     return FieldValues.update(
-      { value: params.value },
+      { textValue: params.textValue },
       { where: { recordId: params.recordId, fieldId: params.fieldId } },
     );
   },
@@ -11,6 +11,9 @@ module.exports = {
     return FieldValues.create(params);
   },
   getFieldValue(recordId, fieldId) {
-    return FieldValues.findOne({ where: { recordId, fieldId } });
+    return FieldValues.findOne({
+      attributes: ['recordId', 'fieldId', 'textValue'],
+      where: { recordId, fieldId },
+    });
   },
 };
