@@ -30,16 +30,9 @@ module.exports = {
           as: 'records',
           include: [
             {
-              attributes: ['fieldId'],
+              attributes: ['fieldId', 'textValue'],
               model: FieldValues,
               as: 'fieldValues',
-              include: [
-                {
-                  attributes: ['value'],
-                  model: TextValues,
-                  as: 'value',
-                },
-              ],
             },
           ],
         },
