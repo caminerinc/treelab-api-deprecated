@@ -39,6 +39,11 @@ module.exports = {
                   model: TextValues,
                   as: 'value',
                 },
+                {
+                  attributes: ['value'],
+                  model: TextValues,
+                  as: 'value',
+                },
               ],
             },
           ],

@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'textValueId',
       as: 'value',
     });
-    fieldValues.belongsTo(models.multipleAttachmentValues, {
+    fieldValues.hasMany(models.multipleAttachmentValues, {
       foreignKey: 'multipleAttachmentValueId',
       as: 'multipleAttachmentValue',
     });

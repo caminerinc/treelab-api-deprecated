@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
       url: DataTypes.STRING,
       filename: DataTypes.STRING,
       filetype: DataTypes.STRING,
+      fieldValueId: DataTypes.STRING,
     },
     {},
   );
