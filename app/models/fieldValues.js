@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         primaryKey: true,
         type: DataTypes.INTEGER,
+        autoIncrement: true,
       },
       recordId: {
         allowNull: false,
@@ -15,15 +16,9 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      textValueId: DataTypes.INTEGER,
+      textValue: DataTypes.STRING,
     },
     {},
   );
-  fieldValues.associate = function(models) {
-    fieldValues.belongsTo(models.textValues, {
-      foreignKey: 'textValueId',
-      as: 'value',
-    });
-  };
   return fieldValues;
 };
