@@ -18,9 +18,6 @@ module.exports = {
       textValueId: {
         type: Sequelize.INTEGER,
       },
-      multipleAttachmentValueId: {
-        type: Sequelize.STRING,
-      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -1,17 +1,13 @@
-const Tables = require('../models').tables;
-const Fields = require('../models').fields;
-const Records = require('../models').records;
-const FieldValues = require('../models').fieldValues;
-const TextValues = require('../models').textValues;
+const DB = require('../models');
 
 module.exports = {
   findTables(baseId) {
-    return Tables.findAll({
+    return DB.tables.findAll({
       attributes: ['id', 'name'],
       where: { baseId },
       include: [
         {
-          model: Fields,
+          model: DB.fields,
           as: 'fields',
           attributes: ['id', 'name', 'fieldTypeId'],
         },
@@ -20,29 +16,28 @@ module.exports = {
   },
 
   findTable(id) {
-    return Tables.findOne({
+    return DB.tables.findOne({
       attributes: ['id'],
       where: { id },
       include: [
         {
           attributes: ['id', 'createdAt'],
-          model: Records,
+          model: DB.records,
           as: 'records',
           include: [
             {
               attributes: ['fieldId'],
-              model: FieldValues,
+              model: DB.fieldValues,
               as: 'fieldValues',
               include: [
                 {
                   attributes: ['value'],
-                  model: TextValues,
+                  model: DB.textValues,
                   as: 'value',
                 },
                 {
-                  attributes: ['value'],
-                  model: TextValues,
-                  as: 'value',
+                  model: DB.multipleAttachmentValues,
+                  as: 'multipleAttachmentValues',
                 },
               ],
             },

@@ -1,6 +1,7 @@
-'use strict';
 const { createUid } = require('../util/helper');
+
 const { PREFIX_TYPE } = require('../constants/app');
+
 module.exports = (sequelize, DataTypes) => {
   const multipleAttachmentValues = sequelize.define(
     'multipleAttachmentValues',
@@ -9,12 +10,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         defaultValue: () => createUid(PREFIX_TYPE.ATT),
         primaryKey: true,
-        type: DataTypes.CHAR(18),
+        type: DataTypes.STRING,
       },
+      fieldValueId: DataTypes.INTEGER,
       url: DataTypes.STRING,
-      filename: DataTypes.STRING,
-      filetype: DataTypes.STRING,
-      fieldValueId: DataTypes.STRING,
+      fileName: DataTypes.STRING,
+      fileType: DataTypes.STRING,
     },
     {},
   );

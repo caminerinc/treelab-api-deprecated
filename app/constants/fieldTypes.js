@@ -1,11 +1,12 @@
+const DB = require('../models');
 const FIELD_TYPES = {
   1: {
     name: 'text',
-    valueModel: 'textValues',
+    valueModel: DB.textValues,
   },
   2: {
     name: 'multipleAttachment',
-    valueModel: 'multipleAttachmentValues',
+    valueModel: DB.multipleAttachmentValues,
   },
 };
 

@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       textValueId: DataTypes.INTEGER,
-      multipleAttachmentValueId: DataTypes.STRING,
     },
     {},
   );
@@ -26,8 +25,8 @@ module.exports = (sequelize, DataTypes) => {
       as: 'value',
     });
     fieldValues.hasMany(models.multipleAttachmentValues, {
-      foreignKey: 'multipleAttachmentValueId',
-      as: 'multipleAttachmentValue',
+      foreignKey: 'fieldValueId',
+      as: 'multipleAttachmentValues',
     });
   };
   return fieldValues;
