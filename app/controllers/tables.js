@@ -31,12 +31,18 @@ module.exports = {
               as: 'fieldValues',
               include: [
                 {
+                  model: DB.fields,
+                  attributes: ['fieldTypeId'],
+                  as: 'field',
+                },
+                {
                   attributes: ['value'],
                   model: DB.textValues,
                   as: 'value',
                 },
                 {
                   model: DB.multipleAttachmentValues,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
                   as: 'multipleAttachmentValues',
                 },
               ],

@@ -24,7 +24,7 @@ module.exports = {
         {
           id: 'fldIwYLcbYWSUa4aK',
           name: 'Tech Pack',
-          fieldTypeId: 4,
+          fieldTypeId: 2,
           tableId: 'tblNGUPdSs9Va4X5u',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',

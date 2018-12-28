@@ -9,6 +9,7 @@ const adaptTables = tables => {
       ...pick(table, ['id', 'name']),
       columns: table.fields.map(field => ({
         ...pick(field, ['id', 'name', 'fieldTypeId']),
+        type: FIELD_TYPES[field.fieldTypeId].name,
       })),
     })),
   };
@@ -34,9 +35,10 @@ const getRowsById = records =>
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
+    console.log(fieldValue);
     cellAccum[fieldValue.fieldId] =
       fieldValue[
-        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel
+        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel.name
       ];
     // cellAccum[fieldValue.fieldId] = fieldValue.value.value;
     return cellAccum;
