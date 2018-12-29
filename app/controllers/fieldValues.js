@@ -1,19 +1,19 @@
 const FieldValues = require('../models').fieldValues;
-const helperUtil = require('../util').helper;
 
 module.exports = {
   update(params) {
     return FieldValues.update(
       { textValue: params.textValue },
-      { where: { id: params.id } },
+      { where: { recordId: params.recordId, fieldId: params.fieldId } },
     );
   },
   create(params) {
     return FieldValues.create(params);
   },
-  getFieldValue(id) {
+  getFieldValue(recordId, fieldId) {
     return FieldValues.findOne({
-      where: { id },
+      attributes: ['recordId', 'fieldId', 'textValue'],
+      where: { recordId, fieldId },
     });
   },
 };
