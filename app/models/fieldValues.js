@@ -11,12 +11,10 @@ module.exports = (sequelize, DataTypes) => {
       recordId: {
         allowNull: false,
         type: DataTypes.STRING,
-        unique: 'ukRecordIdFieldId',
       },
       fieldId: {
         allowNull: false,
         type: DataTypes.STRING,
-        unique: 'ukRecordIdFieldId',
       },
       textValue: DataTypes.STRING,
     },
