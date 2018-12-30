@@ -4,6 +4,7 @@ const router = new Router();
 const basesResolver = require('../resolvers').bases;
 const tablesResolver = require('../resolvers').tables;
 const fieldsResolver = require('../resolvers').fields;
+const fieldValuesResolver = require('../resolvers').fieldValues;
 const recordsResolver = require('../resolvers').records;
 const usersResolver = require('../resolvers').users;
 
@@ -38,6 +39,12 @@ router.post(
   '/api/record',
   tableMiddleware.checkTableExist,
   recordsResolver.createRecord,
+);
+
+//FieldValue
+router.put(
+  '/api/primitive-field',
+  fieldValuesResolver.createOrUpdatePrimitiveField,
 );
 
 //Users

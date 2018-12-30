@@ -33,7 +33,7 @@ const getRowsById = records =>
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    cellAccum[fieldValue.fieldId] = fieldValue.value.value;
+    cellAccum[fieldValue.fieldId] = fieldValue.textValue;
     return cellAccum;
   }, {});
 
