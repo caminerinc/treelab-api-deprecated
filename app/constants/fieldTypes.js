@@ -1,7 +1,16 @@
 const FIELD_TYPES = {
-  1: 'text',
-  2: 'number',
-  3: 'foreignKey',
+  1: {
+    name: 'text',
+    valueName: 'textValue',
+  },
+  2: {
+    name: 'number',
+    isTypeOptionsRequired: true,
+    typeName: 'numberTypes',
+    typeProps: ['format', 'precision', 'negative'],
+    typeFK: 'numberTypeId',
+    valueName: 'numberValue',
+  },
 };
 
 module.exports = {
