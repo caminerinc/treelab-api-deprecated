@@ -1,14 +1,14 @@
-const Bases = require('../models').bases;
+const { bases } = require('../models');
 
 module.exports = {
-  findBases() {
-    return Bases.findAll({
+  dbGetBases() {
+    return bases.findAll({
       attributes: ['id', 'name'],
     });
   },
 
-  createBase(params) {
-    return Bases.create({
+  dbCreateBase(params) {
+    return bases.create({
       name: params.name,
     });
   },

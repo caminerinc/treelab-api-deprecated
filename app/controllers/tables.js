@@ -1,31 +1,30 @@
-const Tables = require('../models').tables;
-const Fields = require('../models').fields;
-const TypeOptions = require('../models').typeOptions;
-const Records = require('../models').records;
-const FieldValues = require('../models').fieldValues;
-const TextValues = require('../models').textValues;
-const NumberValues = require('../models').numberValues;
-const NumberTypes = require('../models').numberTypes;
-
+const {
+  fields,
+  fieldValues,
+  numberTypes,
+  records,
+  tables,
+  typeOptions,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
-  findTables(baseId) {
-    return Tables.findAll({
+  dbGetTables(baseId) {
+    return tables.findAll({
       attributes: ['id', 'name'],
       where: { baseId },
       include: [
         {
-          model: Fields,
+          model: fields,
           as: 'fields',
           attributes: ['id', 'name', 'fieldTypeId', 'typeOptionsId'],
           include: [
             {
-              model: TypeOptions,
+              model: typeOptions,
               as: 'typeOptions',
               include: [
                 {
-                  model: NumberTypes,
+                  model: numberTypes,
                   as: FIELD_TYPES[2].typeName,
                 },
               ],
@@ -36,23 +35,23 @@ module.exports = {
     });
   },
 
-  findTable(id) {
-    return Tables.findOne({
+  dbGetTable(id) {
+    return tables.findOne({
       attributes: ['id'],
       where: { id },
       include: [
         {
           attributes: ['id', 'createdAt'],
-          model: Records,
+          model: records,
           as: 'records',
           include: [
             {
-              model: FieldValues,
+              model: fieldValues,
               attributes: ['fieldId', 'textValue', 'numberValue'],
               as: 'fieldValues',
               include: [
                 {
-                  model: Fields,
+                  model: fields,
                   attributes: ['fieldTypeId'],
                   as: 'field',
                 },
