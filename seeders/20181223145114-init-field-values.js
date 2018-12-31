@@ -37,6 +37,22 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          id: 5,
+          recordId: 'recwEKHeMhcDnLnfc',
+          fieldId: 'fld6tojhqApRQfJpd',
+          numberValue: 24,
+          createdAt: '018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
+          id: 6,
+          recordId: 'recfPInitd1QpZ6aV',
+          fieldId: 'fld6tojhqApRQfJpd',
+          numberValue: 34,
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );
