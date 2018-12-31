@@ -10,7 +10,7 @@ module.exports = {
       expiresIn: '4h',
     });
   },
-  authToken({ token }) {
+  createAuthToken({ token }) {
     return jwt.verify(token.split(' ')[1], process.env.SHARED_SECRET);
   },
 };

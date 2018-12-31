@@ -1,23 +1,23 @@
-const Users = require('../models').users;
-const helper = require('../util').helper;
+const { users } = require('../models');
+const { sha1 } = require('../util/helper');
 
 module.exports = {
-  findAllUser() {
-    return Users.findAll({
+  dbGetAllUsers() {
+    return users.findAll({
       attributes: ['id', 'firstName', 'lastName', 'email', 'passwordDigest'],
       raw: true,
     });
   },
-  createUser({ firstName, lastName, password, email }) {
-    return Users.create({
+  dbCreateUser({ firstName, lastName, password, email }) {
+    return users.create({
       firstName,
       lastName,
-      passwordDigest: helper.sha1(password),
+      passwordDigest: sha1(password),
       email,
     });
   },
-  findOneUser({ email }) {
-    return Users.findOne({
+  dbGetUser({ email }) {
+    return users.findOne({
       where: {
         email,
       },

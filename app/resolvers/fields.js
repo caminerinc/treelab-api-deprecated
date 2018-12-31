@@ -1,11 +1,11 @@
-const helperUtil = require('../util').helper;
-const fieldsController = require('../controllers').fields;
-const FIELD_TYPES = require('../constants').fieldTypes.FIELD_TYPES;
+const { checkKeyExists } = require('../util/helper');
+const { dbCreateField } = require('../controllers/fields');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
   async createField(ctx) {
     const params = ctx.request.body;
-    helperUtil.checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
+    checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
 
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     if (!fieldProps) {
@@ -21,7 +21,7 @@ module.exports = {
       });
     }
 
-    await fieldsController.createField(params);
+    await dbCreateField(params);
     ctx.body = { message: 'success' };
   },
 };

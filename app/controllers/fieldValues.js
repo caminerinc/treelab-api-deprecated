@@ -1,17 +1,17 @@
-const FieldValues = require('../models').fieldValues;
+const { fieldValues } = require('../models');
 
 module.exports = {
-  update(params) {
-    return FieldValues.update(
+  dbUpdateFieldValue(params) {
+    return fieldValues.update(
       { textValue: params.textValue },
       { where: { recordId: params.recordId, fieldId: params.fieldId } },
     );
   },
-  create(params) {
-    return FieldValues.create(params);
+  dbCreateFieldValue(params) {
+    return fieldValues.create(params);
   },
-  getFieldValue(recordId, fieldId) {
-    return FieldValues.findOne({
+  dbGetFieldValue(recordId, fieldId) {
+    return fieldValues.findOne({
       attributes: ['recordId', 'fieldId', 'textValue'],
       where: { recordId, fieldId },
     });
