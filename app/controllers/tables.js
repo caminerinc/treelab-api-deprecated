@@ -2,6 +2,7 @@ const {
   fields,
   fieldValues,
   numberTypes,
+  foreignKeyTypes,
   records,
   tables,
   typeOptions,
@@ -26,6 +27,10 @@ module.exports = {
                 {
                   model: numberTypes,
                   as: FIELD_TYPES[2].typeName,
+                },
+                {
+                  model: foreignKeyTypes,
+                  as: FIELD_TYPES[3].typeName,
                 },
               ],
             },
