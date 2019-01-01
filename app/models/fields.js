@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
-      typeOptionsId: DataTypes.INTEGER,
+      typeOptionId: DataTypes.INTEGER,
     },
     {},
   );
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       as: 'fieldValues',
     });
     fields.belongsTo(models.typeOptions, {
-      foreignKey: 'typeOptionsId',
+      foreignKey: 'typeOptionId',
       as: 'typeOptions',
     });
   };

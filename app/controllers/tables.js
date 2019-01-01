@@ -18,7 +18,7 @@ module.exports = {
         {
           model: fields,
           as: 'fields',
-          attributes: ['id', 'name', 'fieldTypeId', 'typeOptionsId'],
+          attributes: ['id', 'name', 'fieldTypeId', 'typeOptionId'],
           include: [
             {
               model: typeOptions,

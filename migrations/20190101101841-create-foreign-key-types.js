@@ -17,7 +17,6 @@ module.exports = {
         type: Sequelize.STRING,
       },
       symmetricFieldId: {
-        allowNull: false,
         type: Sequelize.STRING,
       },
       createdAt: {

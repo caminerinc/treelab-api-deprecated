@@ -12,7 +12,6 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       symmetricFieldId: {
-        allowNull: false,
         type: DataTypes.STRING,
       },
     },
