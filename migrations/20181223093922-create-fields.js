@@ -18,7 +18,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
-      typeOptionsId: {
+      typeOptionId: {
         type: Sequelize.INTEGER,
       },
       createdAt: {

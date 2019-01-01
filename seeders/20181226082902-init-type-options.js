@@ -8,6 +8,16 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          foreignKeyTypeId: 1,
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
+          foreignKeyTypeId: 2,
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );
