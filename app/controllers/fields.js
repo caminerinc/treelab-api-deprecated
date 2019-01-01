@@ -18,7 +18,7 @@ async function createGenericField(fieldParams) {
   return fields.create(fieldParams);
 }
 
-async function createNumberOptions(_, options) {
+async function createNumberOptions(fieldParams, options, fieldProps) {
   const newNumberType = await numberTypes.create(options);
   const typeOptionProps = { [fieldProps.typeFK]: newNumberType.id };
 
@@ -50,7 +50,7 @@ async function createForeignKey(fieldParams, options, fieldProps) {
     );
     const newSymmetricForeignKeyType = await foreignKeyTypes.create(
       {
-        relationship: 'many',
+        relationship: options.relationship,
         foreignTableId: fieldParams.tableId,
         symmetricFieldId: newField.id,
       },
