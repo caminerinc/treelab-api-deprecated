@@ -2,13 +2,13 @@ const { users } = require('../models');
 const { sha1 } = require('../util/helper');
 
 module.exports = {
-  dbGetAllUsers() {
+  getAllUsers() {
     return users.findAll({
       attributes: ['id', 'firstName', 'lastName', 'email', 'passwordDigest'],
       raw: true,
     });
   },
-  dbCreateUser({ firstName, lastName, password, email }) {
+  createUser({ firstName, lastName, password, email }) {
     return users.create({
       firstName,
       lastName,
@@ -16,7 +16,7 @@ module.exports = {
       email,
     });
   },
-  dbGetUser({ email }) {
+  getUser({ email }) {
     return users.findOne({
       where: {
         email,

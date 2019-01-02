@@ -1,7 +1,7 @@
 const { bases, tables } = require('../models');
 
 module.exports = {
-  dbGetBases() {
+  getBases() {
     return bases.findAll({
       attributes: ['id', 'name'],
       include: [
@@ -14,7 +14,7 @@ module.exports = {
     });
   },
 
-  dbCreateBase(params) {
+  createBase(params) {
     return bases.create({
       name: params.name,
     });

@@ -1,9 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const { dbCreateField } = require('../controllers/fields');
+const { createField } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
-  async createField(ctx) {
+  async resolveCreateField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
 
@@ -21,7 +21,7 @@ module.exports = {
       });
     }
 
-    await dbCreateField(params);
+    await createField(params);
     ctx.body = { message: 'success' };
   },
 };

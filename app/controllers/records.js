@@ -1,7 +1,7 @@
 const { records } = require('../models');
 
 module.exports = {
-  dbCreateRecord(params) {
+  createRecord(params) {
     return records.create(params);
   },
 };
