@@ -6,6 +6,7 @@ const { resolveGetTables, resolveGetTable } = require('../resolvers/tables');
 const { resolveCreateField } = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
+  resoverUpdateArrayTypeByAdding,
 } = require('../resolvers/fieldValues');
 const { resolveCreateRecord } = require('../resolvers/records');
 const {
@@ -38,14 +39,12 @@ router.post('/api/record', checkTableExist, resolveCreateRecord);
 
 //FieldValue
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
+router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
 
 //Users
 router.get('/api/users', resolveGetUsers);
 router.post('/api/public/user', resolveCreateUser);
 router.post('/api/public/login', resolveLogin);
 router.get('/api/public/test-auth', resolveTestAuth);
-
-//attachment
-router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
 
 module.exports = router;
