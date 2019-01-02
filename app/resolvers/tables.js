@@ -1,6 +1,6 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { dbGetTables } = require('../controllers/tables');
+const { getTables } = require('../controllers/tables');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 const adaptTables = tables => {
@@ -58,14 +58,14 @@ const getCellValuesByColumnId = fieldValues =>
   }, {});
 
 module.exports = {
-  async getTables(ctx) {
+  async resolveGetTables(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
-    const tables = await dbGetTables(params.baseId);
+    const tables = await getTables(params.baseId);
     ctx.body = adaptTables(tables);
   },
 
-  async getTable(ctx) {
+  async resolveGetTable(ctx) {
     ctx.body = adaptTable(ctx.table);
   },
 };

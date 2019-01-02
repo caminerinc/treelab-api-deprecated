@@ -1,20 +1,20 @@
 const { checkKeyExists } = require('../util/helper');
 const {
-  dbGetFieldValue,
-  dbCreateFieldValue,
-  dbUpdateFieldValue,
+  getFieldValue,
+  createFieldValue,
+  updateFieldValue,
 } = require('../controllers/fieldValues');
 
 module.exports = {
-  async createOrUpdatePrimitiveField(ctx) {
+  async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'textValue', 'recordId', 'fieldId');
-    const fieldValue = await dbGetFieldValue(params.recordId, params.fieldId);
+    const fieldValue = await getFieldValue(params.recordId, params.fieldId);
 
     if (!fieldValue) {
-      await dbCreateFieldValue(params);
+      await createFieldValue(params);
     } else {
-      await dbUpdateFieldValue(params);
+      await updateFieldValue(params);
     }
     ctx.body = { message: 'success' };
   },
