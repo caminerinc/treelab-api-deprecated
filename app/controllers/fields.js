@@ -12,6 +12,7 @@ const TYPE_OPTION_MAP = {
   text: createGenericField,
   number: createNumberOptions,
   foreignKey: createForeignKey,
+  multipleAttachment: createGenericField,
 };
 
 async function createGenericField(fieldParams) {

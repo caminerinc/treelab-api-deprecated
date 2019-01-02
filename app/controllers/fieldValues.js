@@ -1,5 +1,15 @@
-const { fieldValues } = require('../models');
+const { fieldValues, multipleAttachmentValues } = require('../models');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
+const TYPE_MAP = {
+  multipleAttachment: createMultipleAttachment,
+};
+async function createMultipleAttachment({ fieldValueId, value }) {
+  return multipleAttachmentValues.create({
+    fieldValueId,
+    ...value,
+  });
+}
 module.exports = {
   updateFieldValue(params) {
     return fieldValues.update(
@@ -12,8 +22,14 @@ module.exports = {
   },
   getFieldValue(recordId, fieldId) {
     return fieldValues.findOne({
-      attributes: ['recordId', 'fieldId', 'textValue'],
+      attributes: ['id', 'recordId', 'fieldId', 'textValue'],
       where: { recordId, fieldId },
     });
+  },
+  async createArrayType(params) {
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const createOption = TYPE_MAP[fieldProps.name];
+
+    return await createOption(params);
   },
 };

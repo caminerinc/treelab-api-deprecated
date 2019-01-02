@@ -6,6 +6,7 @@ const { resolveGetTables, resolveGetTable } = require('../resolvers/tables');
 const { resolveCreateField } = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
+  resoverUpdateArrayTypeByAdding,
 } = require('../resolvers/fieldValues');
 const { resolveCreateRecord } = require('../resolvers/records');
 const {
@@ -38,6 +39,7 @@ router.post('/api/record', checkTableExist, resolveCreateRecord);
 
 //FieldValue
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
+router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
 
 //Users
 router.get('/api/users', resolveGetUsers);
