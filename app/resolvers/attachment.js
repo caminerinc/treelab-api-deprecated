@@ -1,27 +1,18 @@
-const helperUtil = require('../util').helper;
-const attachmentController = require('../controllers').attachment;
+const { checkKeyExists } = require('../util/helper');
+const { findFieldValue, addFieldValue } = require('../controllers/attachment');
 
 module.exports = {
   async updateArrayTypeByAdding(ctx) {
-    helperUtil.checkKeyExists(
-      ctx.request.body,
-      'recordId',
-      'fieldId',
-      'value',
-      'typeId',
-    );
-    const fieldValue = await attachmentController.findFieldValue(
-      ctx.request.body,
-    );
+    checkKeyExists(ctx.request.body, 'recordId', 'fieldId', 'value', 'typeId');
+    const fieldValue = await findFieldValue(ctx.request.body);
     if (!fieldValue) {
       ctx.status = 400;
       return (ctx.body = {
         error: '没有找到该单元格',
       });
     }
-    await attachmentController.addFieldValue({
+    await addFieldValue({
       fieldValueId: fieldValue.id,
-      typeId: ctx.request.body.typeId,
       value: ctx.request.body.value,
     });
 

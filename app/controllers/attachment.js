@@ -1,9 +1,9 @@
-const DB = require('../models');
-const { FIELD_TYPES } = require('../constants').fieldTypes;
+const { fieldValues, multipleAttachmentValues } = require('../models');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
   findFieldValue({ recordId, fieldId, typeId }) {
-    return DB.fieldValues.findOne({
+    return fieldValues.findOne({
       where: {
         recordId,
         fieldId,
@@ -12,9 +12,8 @@ module.exports = {
       raw: true,
     });
   },
-  addFieldValue({ fieldValueId, typeId, value }) {
-    console.log(value);
-    return FIELD_TYPES[typeId].valueModel.create({
+  addFieldValue({ fieldValueId, value }) {
+    return multipleAttachmentValues.create({
       fieldValueId,
       ...value,
     });

@@ -24,7 +24,7 @@ const FIELD_TYPES = {
   },
   4: {
     name: 'multipleAttachment',
-    valueModel: DB.multipleAttachmentValues,
+    valueModel: 'multipleAttachmentValues',
   },
 };
 
