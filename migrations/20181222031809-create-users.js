@@ -17,6 +17,13 @@ module.exports = {
       email: {
         allowNull: false,
         type: Sequelize.STRING,
+        unique: true,
+        indexes: [
+          {
+            unique: true,
+            fields: ['email'],
+          },
+        ],
       },
       passwordDigest: {
         allowNull: false,

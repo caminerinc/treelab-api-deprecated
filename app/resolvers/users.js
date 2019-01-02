@@ -1,15 +1,20 @@
-const usersController = require('../controllers').users;
-const helperUtil = require('../util').helper;
-const authUtil = require('../util').auth;
-const email_regex = /^([A-Za-z0-9_\-\.\u4e00-\u9fa5])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,8})$/;
+const {
+  dbCreateUser,
+  dbGetAllUsers,
+  dbGetUser,
+} = require('../controllers/users');
+const { checkKeyExists } = require('../util/helper');
+const { EMAIL_REGEX } = require('../constants/validations');
+const { authenticate, createAuthToken, getToken } = require('../util/auth');
 
 module.exports = {
-  async users(ctx) {
-    const users = await usersController.findAllUser();
+  async getUsers(ctx) {
+    const users = await dbGetAllUsers();
     ctx.body = users;
   },
-  async user(ctx) {
-    helperUtil.checkKeyExists(
+
+  async createUser(ctx) {
+    checkKeyExists(
       ctx.request.body,
       'firstName',
       'lastName',
@@ -17,42 +22,37 @@ module.exports = {
       'email',
     );
 
-    if (!email_regex.test(ctx.request.body.email)) {
+    if (!EMAIL_REGEX.test(ctx.request.body.email)) {
       ctx.status = 400;
       return (ctx.body = { error: 'Incorrect email format' });
     }
-    await usersController.createUser(ctx.request.body);
+    await dbCreateUser(ctx.request.body);
     ctx.body = { message: 'success' };
   },
+
   async login(ctx) {
-    helperUtil.checkKeyExists(ctx.request.body, 'email', 'password');
+    checkKeyExists(ctx.request.body, 'email', 'password');
 
     const { email, password } = ctx.request.body;
-
-    const user = await usersController.findOneUser({ email });
+    const user = await dbGetUser({ email });
     if (!user) {
       ctx.status = 401;
       return (ctx.body = { error: 'This email does not exist' });
     }
 
-    if (
-      !authUtil.authenticate({ password, passwordDigest: user.passwordDigest })
-    ) {
+    if (!authenticate({ password, passwordDigest: user.passwordDigest })) {
       ctx.status = 402;
       return (ctx.body = { error: 'wrong password' });
     }
 
-    const token = authUtil.getToken({
-      userId: user.id,
-    });
+    const token = getToken({ userId: user.id });
 
     ctx.body = { token };
   },
+
   testAuth(ctx) {
     try {
-      authUtil.authToken({
-        token: ctx.headers.authorization,
-      });
+      createAuthToken({ token: ctx.headers.authorization });
     } catch (e) {
       ctx.status = 401;
       return (ctx.body = { error: e.message });

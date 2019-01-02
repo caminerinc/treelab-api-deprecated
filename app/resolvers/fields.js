@@ -1,18 +1,27 @@
-const helperUtil = require('../util').helper;
-const fieldsController = require('../controllers').fields;
-const FIELD_TYPES = require('../constants').fieldTypes.FIELD_TYPES;
+const { checkKeyExists } = require('../util/helper');
+const { dbCreateField } = require('../controllers/fields');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
   async createField(ctx) {
     const params = ctx.request.body;
-    helperUtil.checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
-    if (!FIELD_TYPES[params.fieldTypeId]) {
+    checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
+
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    if (!fieldProps) {
       ctx.status = 400;
       return (ctx.body = {
         error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
       });
     }
-    await fieldsController.createField(params);
+
+    if (fieldProps.isTypeOptionsRequired && !params.typeOptions) {
+      return (ctx.body = {
+        error: `typeOptions are required`,
+      });
+    }
+
+    await dbCreateField(params);
     ctx.body = { message: 'success' };
   },
 };

@@ -1,14 +1,22 @@
+'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('textValues', {
+    return queryInterface.createTable('foreignKeyTypes', {
       id: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      value: {
+      relationship: {
         allowNull: false,
+        type: Sequelize.STRING,
+      },
+      foreignTableId: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      symmetricFieldId: {
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -22,6 +30,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('textValues');
+    return queryInterface.dropTable('foreignKeyTypes');
   },
 };

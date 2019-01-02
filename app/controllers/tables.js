@@ -1,43 +1,64 @@
-const Tables = require('../models').tables;
-const Fields = require('../models').fields;
-const Records = require('../models').records;
-const FieldValues = require('../models').fieldValues;
-const TextValues = require('../models').textValues;
+const {
+  fields,
+  fieldValues,
+  numberTypes,
+  foreignKeyTypes,
+  records,
+  tables,
+  typeOptions,
+} = require('../models');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
-  findTables(baseId) {
-    return Tables.findAll({
+  dbGetTables(baseId) {
+    return tables.findAll({
       attributes: ['id', 'name'],
       where: { baseId },
       include: [
         {
-          model: Fields,
+          model: fields,
           as: 'fields',
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'fieldTypeId', 'typeOptionId'],
+          include: [
+            {
+              model: typeOptions,
+              as: 'typeOptions',
+              include: [
+                {
+                  model: numberTypes,
+                  as: FIELD_TYPES[2].typeName,
+                },
+                {
+                  model: foreignKeyTypes,
+                  as: FIELD_TYPES[3].typeName,
+                },
+              ],
+            },
+          ],
         },
       ],
     });
   },
 
-  findTable(id) {
-    return Tables.findOne({
+  dbGetTable(id) {
+    return tables.findOne({
       attributes: ['id'],
       where: { id },
       include: [
         {
           attributes: ['id', 'createdAt'],
-          model: Records,
+          model: records,
           as: 'records',
           include: [
             {
-              attributes: ['fieldId'],
-              model: FieldValues,
+              model: fieldValues,
+              attributes: ['fieldId', 'textValue', 'numberValue'],
               as: 'fieldValues',
               include: [
                 {
-                  attributes: ['value'],
-                  model: TextValues,
-                  as: 'value',
+                  model: fields,
+                  attributes: ['fieldTypeId'],
+                  as: 'field',
                 },
               ],
             },

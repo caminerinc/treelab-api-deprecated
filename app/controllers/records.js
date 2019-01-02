@@ -1,7 +1,7 @@
-const Records = require('../models').records;
+const { records } = require('../models');
 
 module.exports = {
-  createRecord(params) {
-    return Records.create(params);
+  dbCreateRecord(params) {
+    return records.create(params);
   },
 };

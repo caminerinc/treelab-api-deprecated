@@ -15,7 +15,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      textValueId: {
+      textValue: {
+        type: Sequelize.STRING,
+      },
+      numberValue: {
         type: Sequelize.INTEGER,
       },
       createdAt: {

@@ -15,14 +15,15 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      textValueId: DataTypes.INTEGER,
+      textValue: DataTypes.STRING,
+      numberValue: DataTypes.INTEGER,
     },
     {},
   );
   fieldValues.associate = function(models) {
-    fieldValues.belongsTo(models.textValues, {
-      foreignKey: 'textValueId',
-      as: 'value',
+    fieldValues.belongsTo(models.fields, {
+      foreignKey: 'fieldId',
+      as: 'field',
     });
   };
   return fieldValues;
