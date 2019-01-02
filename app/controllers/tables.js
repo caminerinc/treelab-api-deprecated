@@ -1,44 +1,64 @@
-const DB = require('../models');
+const {
+  fields,
+  fieldValues,
+  numberTypes,
+  foreignKeyTypes,
+  records,
+  tables,
+  typeOptions,
+} = require('../models');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
-  findTables(baseId) {
-    return DB.tables.findAll({
+  dbGetTables(baseId) {
+    return tables.findAll({
       attributes: ['id', 'name'],
       where: { baseId },
       include: [
         {
-          model: DB.fields,
+          model: fields,
           as: 'fields',
-          attributes: ['id', 'name', 'fieldTypeId'],
+          attributes: ['id', 'name', 'fieldTypeId', 'typeOptionId'],
+          include: [
+            {
+              model: typeOptions,
+              as: 'typeOptions',
+              include: [
+                {
+                  model: numberTypes,
+                  as: FIELD_TYPES[2].typeName,
+                },
+                {
+                  model: foreignKeyTypes,
+                  as: FIELD_TYPES[3].typeName,
+                },
+              ],
+            },
+          ],
         },
       ],
     });
   },
 
-  findTable(id) {
-    return DB.tables.findOne({
+  dbGetTable(id) {
+    return tables.findOne({
       attributes: ['id'],
       where: { id },
       include: [
         {
           attributes: ['id', 'createdAt'],
-          model: DB.records,
+          model: records,
           as: 'records',
           include: [
             {
-              attributes: ['fieldId'],
-              model: DB.fieldValues,
+              model: fieldValues,
+              attributes: ['fieldId', 'textValue', 'numberValue'],
               as: 'fieldValues',
               include: [
                 {
-                  model: DB.fields,
+                  model: fields,
                   attributes: ['fieldTypeId'],
                   as: 'field',
-                },
-                {
-                  attributes: ['value'],
-                  model: DB.textValues,
-                  as: 'value',
                 },
                 {
                   model: DB.multipleAttachmentValues,

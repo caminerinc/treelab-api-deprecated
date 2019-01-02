@@ -1,5 +1,3 @@
-'use strict';
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
@@ -22,10 +20,29 @@ module.exports = {
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 'fldIwYLcbYWSUa4aK',
-          name: 'Tech Pack',
+          id: 'fld6tojhqApRQfJpd',
+          name: 'Age',
           fieldTypeId: 2,
+          typeOptionId: 1,
           tableId: 'tblNGUPdSs9Va4X5u',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
+          id: 'fld6tojhqApRQfJpi',
+          name: 'Link to PO',
+          fieldTypeId: 3,
+          typeOptionId: 2,
+          tableId: 'tblNGUPdSs9Va4X5u',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
+          id: 'fld6tojhqApRQfJ2d',
+          name: 'Link to Order',
+          fieldTypeId: 3,
+          typeOptionId: 3,
+          tableId: 'tblsnmRLfttLmAYQ8',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },

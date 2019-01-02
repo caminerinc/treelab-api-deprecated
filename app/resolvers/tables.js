@@ -1,16 +1,29 @@
-const pick = require('lodash').pick;
-const helperUtil = require('../util').helper;
-const tablesController = require('../controllers').tables;
-const { FIELD_TYPES } = require('../constants').fieldTypes;
+const { get, pick } = require('lodash');
+const { checkKeyExists } = require('../util/helper');
+const { dbGetTables } = require('../controllers/tables');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 const adaptTables = tables => {
   return {
     tableSchemas: tables.map(table => ({
       ...pick(table, ['id', 'name']),
-      columns: table.fields.map(field => ({
-        ...pick(field, ['id', 'name', 'fieldTypeId']),
-        type: FIELD_TYPES[field.fieldTypeId].name,
-      })),
+      columns: table.fields.map(field => {
+        const fieldProps = FIELD_TYPES[field.fieldTypeId];
+        const otherProps = {};
+
+        if (field.typeOptions) {
+          otherProps.typeOptions = pick(
+            get(field, `typeOptions[${fieldProps.typeName}]`),
+            fieldProps.typeProps,
+          );
+        }
+
+        return {
+          ...pick(field, ['id', 'name']),
+          ...otherProps,
+          type: fieldProps.name,
+        };
+      }),
     })),
   };
 };
@@ -35,20 +48,20 @@ const getRowsById = records =>
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    console.log(fieldValue);
-    cellAccum[fieldValue.fieldId] =
-      fieldValue[
-        FIELD_TYPES[fieldValue.field.dataValues.fieldTypeId].valueModel.name
-      ];
-    // cellAccum[fieldValue.fieldId] = fieldValue.value.value;
+    const fieldTypeId = get(fieldValue, 'field.fieldTypeId');
+    const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
+    if (!fieldProps)
+      throw new Error('field type id does not exist in fieldValue');
+
+    cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
     return cellAccum;
   }, {});
 
 module.exports = {
   async getTables(ctx) {
     const params = ctx.params;
-    helperUtil.checkKeyExists(params, 'baseId');
-    const tables = await tablesController.findTables(params.baseId);
+    checkKeyExists(params, 'baseId');
+    const tables = await dbGetTables(params.baseId);
     ctx.body = adaptTables(tables);
   },
 

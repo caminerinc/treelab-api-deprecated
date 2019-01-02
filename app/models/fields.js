@@ -1,5 +1,4 @@
 const { createUid } = require('../util/helper');
-
 const { PREFIX_TYPE } = require('../constants/app');
 
 module.exports = (sequelize, DataTypes) => {
@@ -24,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
-      typeOptionsId: DataTypes.INTEGER,
+      typeOptionId: DataTypes.INTEGER,
     },
     {},
   );
@@ -32,6 +31,10 @@ module.exports = (sequelize, DataTypes) => {
     fields.hasMany(models.fieldValues, {
       foreignKey: 'fieldId',
       as: 'fieldValues',
+    });
+    fields.belongsTo(models.typeOptions, {
+      foreignKey: 'typeOptionId',
+      as: 'typeOptions',
     });
   };
   return fields;

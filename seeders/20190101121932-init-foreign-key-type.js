@@ -3,17 +3,19 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'bases',
+      'foreignKeyTypes',
       [
         {
-          id: 'bse1jT7ZIHLmjH4',
-          name: 'Pygmy',
+          relationship: 'many',
+          foreignTableId: 'tblsnmRLfttLmAYQ8',
+          symmetricFieldId: 'fld6tojhqApRQfJ2d',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 'bse1jT7ZIDLmjH5',
-          name: 'Dumbo',
+          relationship: 'many',
+          foreignTableId: 'tblNGUPdSs9Va4X5u',
+          symmetricFieldId: 'fld6tojhqApRQfJpi',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
@@ -23,6 +25,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('bases', null, {});
+    return queryInterface.bulkDelete('foreignKeyTypes', null, {});
   },
 };

@@ -1,24 +1,16 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('fields', {
+    return queryInterface.createTable('typeOptions', {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
-        type: Sequelize.STRING,
-      },
-      name: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      tableId: {
-        allowNull: false,
-        type: Sequelize.STRING,
-      },
-      fieldTypeId: {
-        allowNull: false,
         type: Sequelize.INTEGER,
       },
-      typeOptionId: {
+      numberTypeId: {
+        type: Sequelize.INTEGER,
+      },
+      foreignKeyTypeId: {
         type: Sequelize.INTEGER,
       },
       createdAt: {
@@ -32,6 +24,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('fields');
+    return queryInterface.dropTable('typeOptions');
   },
 };

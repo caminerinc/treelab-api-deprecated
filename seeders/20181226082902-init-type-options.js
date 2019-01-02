@@ -1,31 +1,20 @@
-'use strict';
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'textValues',
+      'typeOptions',
       [
         {
-          id: 1,
-          value: 'Derek',
-          createdAt: '018-05-05T04:09:06.024Z',
-          updatedAt: '2018-05-05T04:09:06.024Z',
-        },
-        {
-          id: 2,
-          value: 'Chan',
+          numberTypeId: 1,
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 3,
-          value: 'Ricky',
-          createdAt: '018-05-05T04:09:06.024Z',
+          foreignKeyTypeId: 1,
+          createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 4,
-          value: 'Ho',
+          foreignKeyTypeId: 2,
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
@@ -35,6 +24,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('textValues', null, {});
+    return queryInterface.bulkDelete('typeOptions', null, {});
   },
 };
