@@ -8,7 +8,7 @@ const {
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'textValue', 'recordId', 'fieldId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldValue = await getFieldValue(params.recordId, params.fieldId);
 
     if (!fieldValue) {
@@ -17,5 +17,11 @@ module.exports = {
       await updateFieldValue(params);
     }
     ctx.body = { message: 'success' };
+  },
+  resolveClearFieldValue(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId', 'typeId');
+
+    updateFieldValue();
   },
 };
