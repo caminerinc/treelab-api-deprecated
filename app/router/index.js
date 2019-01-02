@@ -1,13 +1,19 @@
 const Router = require('koa-router');
 const router = new Router();
 
-const { getBases, createBase } = require('../resolvers/bases');
-const { getTables, getTable } = require('../resolvers/tables');
-const { createField } = require('../resolvers/fields');
-const { createOrUpdatePrimitiveField } = require('../resolvers/fieldValues');
-const { createRecord } = require('../resolvers/records');
-const { getUsers, createUser, login, testAuth } = require('../resolvers/users');
-const { resoverUpdateArrayTypeByAdding } = require('../resolvers/attachment');
+const { resolveGetBases, resolveCreateBase } = require('../resolvers/bases');
+const { resolveGetTables, resolveGetTable } = require('../resolvers/tables');
+const { resolveCreateField } = require('../resolvers/fields');
+const {
+  resolveCreateOrUpdatePrimitiveField,
+} = require('../resolvers/fieldValues');
+const { resolveCreateRecord } = require('../resolvers/records');
+const {
+  resolveGetUsers,
+  resolveCreateUser,
+  resolveLogin,
+  resolveTestAuth,
+} = require('../resolvers/users');
 
 const { checkTableExist } = require('../middlewares/tables');
 
@@ -17,27 +23,27 @@ router.get('/api/public/health-check', ctx => {
 });
 
 // Base
-router.get('/api/bases', getBases);
-router.post('/api/base', createBase);
+router.get('/api/bases', resolveGetBases);
+router.post('/api/base', resolveCreateBase);
 
 //Table
-router.get('/api/tables/:baseId', getTables);
-router.get('/api/table/:tableId', checkTableExist, getTable);
+router.get('/api/tables/:baseId', resolveGetTables);
+router.get('/api/table/:tableId', checkTableExist, resolveGetTable);
 
 //Field
-router.post('/api/field', checkTableExist, createField);
+router.post('/api/field', checkTableExist, resolveCreateField);
 
 //Record
-router.post('/api/record', checkTableExist, createRecord);
+router.post('/api/record', checkTableExist, resolveCreateRecord);
 
 //FieldValue
-router.put('/api/primitive-field', createOrUpdatePrimitiveField);
+router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 
 //Users
-router.get('/api/users', getUsers);
-router.post('/api/public/user', createUser);
-router.post('/api/public/login', login);
-router.get('/api/public/test-auth', testAuth);
+router.get('/api/users', resolveGetUsers);
+router.post('/api/public/user', resolveCreateUser);
+router.post('/api/public/login', resolveLogin);
+router.get('/api/public/test-auth', resolveTestAuth);
 
 //attachment
 router.post('/api/array-field', resoverUpdateArrayTypeByAdding);

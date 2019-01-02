@@ -79,7 +79,7 @@ async function createForeignKey(fieldParams, options, fieldProps) {
 }
 
 module.exports = {
-  async dbCreateField(params) {
+  async createField(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
     const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);

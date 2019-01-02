@@ -10,7 +10,7 @@ const {
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
-  dbGetTables(baseId) {
+  getTables(baseId) {
     return tables.findAll({
       attributes: ['id', 'name'],
       where: { baseId },
@@ -40,7 +40,7 @@ module.exports = {
     });
   },
 
-  dbGetTable(id) {
+  getTable(id) {
     return tables.findOne({
       attributes: ['id'],
       where: { id },

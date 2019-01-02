@@ -1,16 +1,16 @@
 const { fieldValues } = require('../models');
 
 module.exports = {
-  dbUpdateFieldValue(params) {
+  updateFieldValue(params) {
     return fieldValues.update(
       { textValue: params.textValue },
       { where: { recordId: params.recordId, fieldId: params.fieldId } },
     );
   },
-  dbCreateFieldValue(params) {
+  createFieldValue(params) {
     return fieldValues.create(params);
   },
-  dbGetFieldValue(recordId, fieldId) {
+  getFieldValue(recordId, fieldId) {
     return fieldValues.findOne({
       attributes: ['recordId', 'fieldId', 'textValue'],
       where: { recordId, fieldId },
