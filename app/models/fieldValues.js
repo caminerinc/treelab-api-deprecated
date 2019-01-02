@@ -2,11 +2,6 @@ module.exports = (sequelize, DataTypes) => {
   const fieldValues = sequelize.define(
     'fieldValues',
     {
-      id: {
-        allowNull: false,
-        primaryKey: true,
-        type: DataTypes.INTEGER,
-      },
       recordId: {
         allowNull: false,
         type: DataTypes.STRING,

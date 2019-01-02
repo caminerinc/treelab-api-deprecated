@@ -6,21 +6,23 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 
-async function upsertGenericFieldValue(
-  { recordId, fieldId, value },
-  fieldProps,
-) {
-  console.log(recordId);
-  return fieldValues.upsert(
-    {
-      recordId,
-      fieldId,
-      [fieldProps.valueName]: value,
-    },
-    {
-      fields: [fieldProps.valueName],
-    },
-  );
+async function upsertGenericFieldValue(params, fieldProps) {
+  const fieldValue = await fieldValues.findOne({
+    attributes: ['recordId', 'fieldId', 'textValue'],
+    where: { recordId: params.recordId, fieldId: params.fieldId },
+  });
+  if (!fieldValue) {
+    await fieldValues.create({
+      [fieldProps.valueName]: params.value,
+      recordId: params.recordId,
+      fieldId: params.fieldId,
+    });
+  } else {
+    await fieldValues.update(
+      { [fieldProps.valueName]: params.value },
+      { where: { recordId: params.recordId, fieldId: params.fieldId } },
+    );
+  }
 }
 module.exports = {
   updateFieldValue(params) {

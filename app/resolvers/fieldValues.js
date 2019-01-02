@@ -3,25 +3,25 @@ const {
   getFieldValue,
   createFieldValue,
   updateFieldValue,
+  upsertFieldValue,
 } = require('../controllers/fieldValues');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
-    const fieldValue = await getFieldValue(params.recordId, params.fieldId);
 
-    if (!fieldValue) {
-      await createFieldValue(params);
-    } else {
-      await updateFieldValue(params);
-    }
+    await upsertFieldValue(params);
     ctx.body = { message: 'success' };
   },
-  resolveClearFieldValue(ctx) {
+  async resolveClearFieldValue(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'typeId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'fieldTypeId');
 
-    updateFieldValue();
+    await upsertFieldValue({
+      ...params,
+      value: null,
+    });
+    ctx.body = { message: 'success' };
   },
 };
