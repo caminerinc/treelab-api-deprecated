@@ -27,7 +27,7 @@ module.exports = {
     });
   },
   async createArrayType(params) {
-    const fieldProps = FIELD_TYPES[params.typeId];
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_MAP[fieldProps.name];
 
     return await createOption(params);

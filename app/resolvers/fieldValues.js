@@ -22,7 +22,7 @@ module.exports = {
 
   async resoverUpdateArrayTypeByAdding(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'typeId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldValue = await getFieldValue(params.recordId, params.fieldId);
     if (!fieldValue) {
       fieldValue = await createFieldValue(params);
@@ -30,7 +30,7 @@ module.exports = {
     await createArrayType({
       fieldValueId: fieldValue.id,
       value: params.value,
-      typeId: params.typeId,
+      fieldTypeId: params.fieldTypeId,
     });
 
     ctx.body = { message: 'success' };
