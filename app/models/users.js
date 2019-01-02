@@ -1,5 +1,4 @@
 const { createUid } = require('../util/helper');
-
 const { PREFIX_TYPE } = require('../constants/app');
 
 module.exports = (sequelize, DataTypes) => {
