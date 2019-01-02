@@ -1,9 +1,9 @@
-const { dbCreateRecord } = require('../controllers/records');
+const { createRecord } = require('../controllers/records');
 
 module.exports = {
-  async createRecord(ctx) {
+  async resolveCreateRecord(ctx) {
     const params = ctx.request.body;
-    await dbCreateRecord(params);
+    await createRecord(params);
     ctx.body = { message: 'success' };
   },
 };
