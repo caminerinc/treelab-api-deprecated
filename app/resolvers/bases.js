@@ -1,6 +1,6 @@
 const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { dbGetBases, dbCreateBase } = require('../controllers/bases');
+const { getBases, createBase } = require('../controllers/bases');
 
 const adaptBases = bases => {
   return Array.from(bases, base => {
@@ -14,15 +14,15 @@ const adaptBases = bases => {
 };
 
 module.exports = {
-  async getBases(ctx) {
-    const bases = await dbGetBases();
+  async resolveGetBases(ctx) {
+    const bases = await getBases();
     ctx.body = { bases: adaptBases(bases) };
   },
 
-  async createBase(ctx) {
+  async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const bases = await dbCreateBase(params);
+    const bases = await createBase(params);
     ctx.body = pick(bases, ['id', 'name', 'createdAt']);
   },
 };
