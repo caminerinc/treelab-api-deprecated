@@ -1,4 +1,3 @@
-const DB = require('../models');
 const FIELD_TYPES = {
   1: {
     name: 'text',

@@ -16,4 +16,10 @@ module.exports = {
       where: { recordId, fieldId },
     });
   },
+  addFieldValue({ fieldValueId, value }) {
+    return multipleAttachmentValues.create({
+      fieldValueId,
+      ...value,
+    });
+  },
 };

@@ -7,7 +7,7 @@ const { createField } = require('../resolvers/fields');
 const { createOrUpdatePrimitiveField } = require('../resolvers/fieldValues');
 const { createRecord } = require('../resolvers/records');
 const { getUsers, createUser, login, testAuth } = require('../resolvers/users');
-const { updateArrayTypeByAdding } = require('../resolvers/attachment');
+const { resoverUpdateArrayTypeByAdding } = require('../resolvers/attachment');
 
 const { checkTableExist } = require('../middlewares/tables');
 
@@ -40,6 +40,6 @@ router.post('/api/public/login', login);
 router.get('/api/public/test-auth', testAuth);
 
 //attachment
-router.post('/api/array-field', updateArrayTypeByAdding);
+router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
 
 module.exports = router;
