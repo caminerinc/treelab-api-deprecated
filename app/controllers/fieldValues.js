@@ -5,12 +5,23 @@ const socketIo = require('../../lib/core/socketIo');
 const TYPE_MAP = {
   multipleAttachment: createMultipleAttachment,
 };
+
 async function createMultipleAttachment({ fieldValueId, value }) {
-  return multipleAttachmentValues.create({
+  const result = await multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
+
+  socketIo.sync({
+    op: 'createMultipleAttachment',
+    body: {
+      result,
+    },
+  });
+
+  return result;
 }
+
 module.exports = {
   async updateFieldValue(params) {
     const result = await fieldValues.update(
@@ -21,7 +32,7 @@ module.exports = {
     socketIo.sync({
       op: 'updateFieldValue',
       body: {
-        resul: params,
+        result: params,
       },
     });
 
@@ -47,6 +58,7 @@ module.exports = {
       where: { recordId, fieldId },
     });
   },
+
   async createArrayType(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_MAP[fieldProps.name];
