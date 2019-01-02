@@ -6,6 +6,7 @@ const {
   records,
   tables,
   typeOptions,
+  multipleAttachmentValues,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
@@ -59,6 +60,11 @@ module.exports = {
                   model: fields,
                   attributes: ['fieldTypeId'],
                   as: 'field',
+                },
+                {
+                  model: multipleAttachmentValues,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
+                  as: 'multipleAttachmentValues',
                 },
               ],
             },
