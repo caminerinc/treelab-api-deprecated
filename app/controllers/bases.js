@@ -1,4 +1,5 @@
 const { bases, tables } = require('../models');
+const socketIo = require('../../lib/core/socketIo');
 
 module.exports = {
   getBases() {
@@ -14,9 +15,16 @@ module.exports = {
     });
   },
 
-  createBase(params) {
-    return bases.create({
+  async createBase(params) {
+    const result = await bases.create({
       name: params.name,
+    });
+
+    return socketIo.sync({
+      op: 'createBase',
+      body: {
+        result,
+      },
     });
   },
 };

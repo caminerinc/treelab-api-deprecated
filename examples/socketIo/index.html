@@ -1,0 +1,18 @@
+<html>
+  <head>
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.min.js"></script>
+    <script src="socket.io.js"></script>
+  </head>
+  <body>
+    <div id="message"></div>
+    <script>
+      var socket = io.connect("http://127.0.0.1:9001", {
+         transports: ["websocket"],
+         query: 'token=' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQ1NDU0NSwiaWF0IjoxNTQ2NDIwNTUxLCJleHAiOjE1NDY0MzQ5NTF9.x76RO6isQtot_bkQ0VKaYwQPITaJ8ypNc-_YRI-Xgz0'
+      });
+      socket.on('sync', (message)=>{
+        $(`<div>${JSON.stringify(message)}</div>`).appendTo('body')
+      });
+    </script>
+  </body>
+</html>

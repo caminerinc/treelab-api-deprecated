@@ -7,6 +7,7 @@ const {
   fields,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const socketIo = require('../../lib/core/socketIo');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -84,6 +85,17 @@ module.exports = {
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
     const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);
 
-    return await createOption(fieldParams, params.typeOptions, fieldProps);
+    const result = await createOption(
+      fieldParams,
+      params.typeOptions,
+      fieldProps,
+    );
+
+    return socketIo.sync({
+      op: 'createField',
+      body: {
+        result,
+      },
+    });
   },
 };
