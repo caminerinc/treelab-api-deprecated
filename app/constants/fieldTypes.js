@@ -21,6 +21,10 @@ const FIELD_TYPES = {
     typeFK: 'foreignKeyTypeId',
     valueName: 'foreignKeyValue',
   },
+  4: {
+    name: 'multipleAttachment',
+    valueModel: 'multipleAttachmentValues',
+  },
 };
 
 module.exports = {
