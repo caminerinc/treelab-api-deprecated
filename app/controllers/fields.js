@@ -92,11 +92,13 @@ module.exports = {
       fieldProps,
     );
 
-    return socketIo.sync({
+    socketIo.sync({
       op: 'createField',
       body: {
         result,
       },
     });
+
+    return result;
   },
 };

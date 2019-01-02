@@ -5,11 +5,13 @@ module.exports = {
   async createRecord(params) {
     const result = await records.create(params);
 
-    return socketIo.sync({
+    socketIo.sync({
       op: 'createRecord',
       body: {
         result,
       },
     });
+
+    return result;
   },
 };

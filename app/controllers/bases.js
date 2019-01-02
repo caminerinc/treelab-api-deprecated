@@ -20,11 +20,13 @@ module.exports = {
       name: params.name,
     });
 
-    return socketIo.sync({
+    socketIo.sync({
       op: 'createBase',
       body: {
         result,
       },
     });
+
+    return result;
   },
 };

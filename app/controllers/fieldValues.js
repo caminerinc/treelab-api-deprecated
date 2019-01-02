@@ -18,23 +18,27 @@ module.exports = {
       { where: { recordId: params.recordId, fieldId: params.fieldId } },
     );
 
-    return socketIo.sync({
+    socketIo.sync({
       op: 'updateFieldValue',
       body: {
         resul: params,
       },
     });
+
+    return result;
   },
 
   async createFieldValue(params) {
     const result = await fieldValues.create(params);
 
-    return socketIo.sync({
+    socketIo.sync({
       op: 'createFieldValue',
       body: {
         result,
       },
     });
+
+    return result;
   },
 
   getFieldValue(recordId, fieldId) {
