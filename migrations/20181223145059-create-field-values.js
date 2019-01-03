@@ -9,11 +9,11 @@ module.exports = {
       },
       recordId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(18),
       },
       fieldId: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.STRING(18),
       },
       textValue: {
         type: Sequelize.STRING,
