@@ -19,7 +19,10 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   foreignKeyValues.associate = function(models) {
-    // associations can be defined here
+    foreignKeyValues.belongsTo(models.fieldValues, {
+      foreignKey: 'symmetricFieldValueId',
+      as: 'symmetricFieldValue',
+    });
   };
   return foreignKeyValues;
 };

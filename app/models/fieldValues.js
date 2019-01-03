@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldValueId',
       as: 'multipleAttachmentValues',
     });
+    fieldValues.hasMany(models.foreignKeyValues, {
+      foreignKey: 'fieldValueId',
+      as: 'foreignKeyValue',
+    });
   };
   return fieldValues;
 };
