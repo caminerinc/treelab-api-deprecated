@@ -2,7 +2,6 @@ const { checkKeyExists } = require('../util/helper');
 const {
   getFieldValue,
   createFieldValue,
-  updateFieldValue,
   createArrayType,
   upsertFieldValue,
 } = require('../controllers/fieldValues');
@@ -15,6 +14,7 @@ module.exports = {
     await upsertFieldValue(params);
     ctx.body = { message: 'success' };
   },
+
   async resolveClearFieldValue(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'fieldTypeId');
