@@ -4,4 +4,6 @@ module.exports = {
   port: 9000,
   socketIoPort: 9001,
   postgres: dbConfig,
+  tokenExpiresIn: '4h',
+  offlineDelayTime: 1000,
 };
