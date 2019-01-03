@@ -16,22 +16,16 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 async function upsertGenericFieldValue(params, fieldProps) {
-  const fieldValue = await module.exports.getFieldValue(
-    params.recordId,
-    params.fieldId,
-  );
-  if (!fieldValue) {
-    await fieldValues.create({
-      [fieldProps.valueName]: params.value,
+  await fieldValues.upsert(
+    {
       recordId: params.recordId,
       fieldId: params.fieldId,
-    });
-  } else {
-    await fieldValues.update(
-      { [fieldProps.valueName]: params.value },
-      { where: { recordId: params.recordId, fieldId: params.fieldId } },
-    );
-  }
+      [fieldProps.valueName]: params.value,
+    },
+    {
+      fields: [fieldProps.valueName],
+    },
+  );
 }
 module.exports = {
   createFieldValue(params) {
