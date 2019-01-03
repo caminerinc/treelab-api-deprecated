@@ -1,14 +1,32 @@
-const { fieldValues, multipleAttachmentValues } = require('../models');
+const {
+  fieldValues,
+  multipleAttachmentValues,
+  foreignKeyValues,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 const TYPE_MAP = {
   multipleAttachment: createMultipleAttachment,
+  foreignKey: createForeignKey,
 };
 async function createMultipleAttachment({ fieldValueId, value }) {
   return multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
+}
+async function createForeignKey({ fieldValueId, symmetricFieldValueId, name }) {
+  async function transactionSteps() {
+    const transact = { transaction: t };
+    const newField = await foreignKeyValues.create(
+      {
+        fieldValueId,
+        symmetricFieldValueId,
+        name,
+      },
+      transact,
+    );
+  }
 }
 module.exports = {
   updateFieldValue(params) {
