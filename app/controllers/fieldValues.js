@@ -16,31 +16,27 @@ async function createMultipleAttachment({ fieldValueId, value }) {
     ...value,
   });
 }
-async function createForeignKeyValue({
-  fieldValueId,
-  symmetricFieldValueId,
-  name,
-}) {
+async function createForeignKeyValue({ fieldValueId, value }) {
   async function transactionSteps(t) {
     const transact = { transaction: t };
     const foreignKey = await foreignKeyValues.create(
       {
         fieldValueId,
-        symmetricFieldValueId,
-        name,
+        symmetricFieldValueId: value.symmetricFieldValueId,
+        name: value.name,
       },
       transact,
     );
     const symmetricFieldKeyName = await fieldValues.findOne(
       {
         attributes: ['id', 'textValue'],
-        where: { id: symmetricFieldValueId },
+        where: { id: value.symmetricFieldValueId },
       },
       transact,
     );
     const symmetricFieldKey = await foreignKeyValues.create(
       {
-        fieldValueId: symmetricFieldValueId,
+        fieldValueId: value.symmetricFieldValueId,
         symmetricFieldValueId: fieldValueId,
         name: symmetricFieldKeyName.textValue,
       },
