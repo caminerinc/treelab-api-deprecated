@@ -41,7 +41,7 @@ router.post('/api/record', checkTableExist, resolveCreateRecord);
 //FieldValue
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
-router.put('/api/clear-field-value', resolveClearFieldValue);
+router.delete('/api/clear-field-value', resolveClearFieldValue);
 
 //Users
 router.get('/api/users', resolveGetUsers);
