@@ -49,4 +49,9 @@ module.exports = {
 
     return await createOption(params);
   },
+  async deleteFieldValue({ recordId, fieldId }) {
+    return fieldValues.destroy({
+      where: { recordId, fieldId },
+    });
+  },
 };

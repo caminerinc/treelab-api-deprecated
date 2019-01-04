@@ -4,6 +4,7 @@ const {
   createFieldValue,
   createArrayType,
   upsertFieldValue,
+  deleteFieldValue,
 } = require('../controllers/fieldValues');
 
 module.exports = {
@@ -19,10 +20,7 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'fieldTypeId');
 
-    await upsertFieldValue({
-      ...params,
-      value: null,
-    });
+    await deleteFieldValue(params);
     ctx.body = { message: 'success' };
   },
 

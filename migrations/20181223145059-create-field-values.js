@@ -32,9 +32,13 @@ module.exports = {
         },
       })
       .then(() => {
-        queryInterface.addConstraint('fieldValues', ['recordId', 'fieldId'], {
-          type: 'unique',
-        });
+        return queryInterface.addConstraint(
+          'fieldValues',
+          ['recordId', 'fieldId'],
+          {
+            type: 'unique',
+          },
+        );
       });
   },
   down: (queryInterface, Sequelize) => {
