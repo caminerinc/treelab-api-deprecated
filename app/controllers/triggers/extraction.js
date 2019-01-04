@@ -13,7 +13,11 @@ const attachmentExtractionTrigger = async params => {
     url: params.value.url,
     fileType: params.value.fileType,
   };
-  return await attachmentExtraction(_params);
+  const result = await attachmentExtraction(_params);
+  if (params.fieldId) {
+    //TODO 根据result生成fieldValue
+  }
+  return result;
 };
 
 module.exports = {
