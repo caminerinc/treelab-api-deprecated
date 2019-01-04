@@ -5,6 +5,7 @@ const PREFIX_TYPE = {
   RECORD: 'rec',
   USR: 'usr',
   ATT: 'att',
+  BLK: 'blk',
 };
 
 module.exports = {

@@ -6,6 +6,9 @@ const {
   upsertFieldValue,
   deleteFieldValue,
 } = require('../controllers/fieldValues');
+const {
+  attachmentExtractionTrigger,
+} = require('../controllers/triggers/extraction');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
@@ -36,7 +39,7 @@ module.exports = {
       value: params.value,
       fieldTypeId: params.fieldTypeId,
     });
-
+    await attachmentExtractionTrigger(params);
     ctx.body = { message: 'success' };
   },
 };
