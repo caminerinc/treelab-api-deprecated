@@ -18,7 +18,7 @@ module.exports = {
 
   async resolveClearFieldValue(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'fieldTypeId');
+    checkKeyExists(params, 'recordId', 'fieldId');
 
     await deleteFieldValue(params);
     ctx.body = { message: 'success' };
