@@ -1,5 +1,5 @@
 const { checkKeyExists } = require('../util/helper');
-const { createField } = require('../controllers/fields');
+const { createField, deleteField } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
@@ -22,6 +22,14 @@ module.exports = {
     }
 
     await createField(params);
+    ctx.body = { message: 'success' };
+  },
+
+  async resolveDeleteField(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'fieldId', 'fieldTypeId');
+
+    await deleteField(params);
     ctx.body = { message: 'success' };
   },
 };

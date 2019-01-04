@@ -3,7 +3,10 @@ const router = new Router();
 
 const { resolveGetBases, resolveCreateBase } = require('../resolvers/bases');
 const { resolveGetTables, resolveGetTable } = require('../resolvers/tables');
-const { resolveCreateField } = require('../resolvers/fields');
+const {
+  resolveCreateField,
+  resolveDeleteField,
+} = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
   resoverUpdateArrayTypeByAdding,
@@ -34,6 +37,7 @@ router.get('/api/table/:tableId', checkTableExist, resolveGetTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
+router.delete('/api/delete-field', resolveDeleteField);
 
 //Record
 router.post('/api/record', checkTableExist, resolveCreateRecord);

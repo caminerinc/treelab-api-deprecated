@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: FIELD_TYPES[3].typeFK,
       as: FIELD_TYPES[3].typeName,
     });
+    typeOptions.hasOne(models.fields, {
+      foreignKey: 'typeOptionId',
+      as: 'fields',
+      onDelete: 'CASCADE',
+    });
   };
   return typeOptions;
 };

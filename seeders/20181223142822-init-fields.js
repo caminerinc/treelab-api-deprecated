@@ -46,6 +46,14 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          id: 'fldIwYLcbYWSUa4aK',
+          name: 'Link to Order',
+          fieldTypeId: 4,
+          tableId: 'tblsnmRLfttLmAYQ8',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );

@@ -35,6 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     fields.belongsTo(models.typeOptions, {
       foreignKey: 'typeOptionId',
       as: 'typeOptions',
+      onDelete: 'CASCADE',
+      hooks: true,
     });
   };
   return fields;
