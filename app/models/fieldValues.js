@@ -4,16 +4,19 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
         type: DataTypes.INTEGER,
       },
       recordId: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'fieldValues_recordId_fieldId_uk',
       },
       fieldId: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'fieldValues_recordId_fieldId_uk',
       },
       textValue: DataTypes.STRING,
       numberValue: DataTypes.INTEGER,
