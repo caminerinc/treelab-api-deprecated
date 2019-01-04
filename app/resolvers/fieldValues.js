@@ -2,21 +2,25 @@ const { checkKeyExists } = require('../util/helper');
 const {
   getFieldValue,
   createFieldValue,
-  updateFieldValue,
   createArrayType,
+  upsertFieldValue,
+  deleteFieldValue,
 } = require('../controllers/fieldValues');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'textValue', 'recordId', 'fieldId');
-    const fieldValue = await getFieldValue(params.recordId, params.fieldId);
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
 
-    if (!fieldValue) {
-      await createFieldValue(params);
-    } else {
-      await updateFieldValue(params);
-    }
+    await upsertFieldValue(params);
+    ctx.body = { message: 'success' };
+  },
+
+  async resolveClearFieldValue(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId');
+
+    await deleteFieldValue(params);
     ctx.body = { message: 'success' };
   },
 
