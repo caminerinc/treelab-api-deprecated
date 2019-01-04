@@ -6,5 +6,8 @@ module.exports = {
   postgres: dbConfig,
   tokenExpiresIn: '4h',
   offlineDelayTime: 2000,
+  url: {
+    attachmentExtraction: 'http://localhost:9002/attachmentExtraction',
+  },
 };
 Í

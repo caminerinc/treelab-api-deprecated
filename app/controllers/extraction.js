@@ -1,5 +1,6 @@
 const request = require('request-promise');
 const config = require('../../config/config');
+const querystring = require('querystring');
 
 const attachmentExtraction = async params => {
   if (!params.url) {
@@ -8,11 +9,9 @@ const attachmentExtraction = async params => {
   if (!params.fileType) {
     throw new Error('fileType is required');
   }
-  const result = await request({
-    url: config.url.attachmentExtraction,
-    method: 'GET',
-    body: params,
-  });
+  const result = await request.get(
+    `${config.url.attachmentExtraction}?${querystring.stringify(params)}`,
+  );
   return result;
 };
 
