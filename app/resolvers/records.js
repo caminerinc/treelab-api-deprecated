@@ -1,4 +1,5 @@
 const { createRecord, deleteRecord } = require('../controllers/records');
+const { checkKeyExists } = require('../util/helper');
 const socketIo = require('../../lib/core/socketIo');
 
 module.exports = {
