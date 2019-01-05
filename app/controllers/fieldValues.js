@@ -6,11 +6,10 @@ const TYPE_MAP = {
 };
 
 async function createMultipleAttachment({ fieldValueId, value }) {
-  const result = await multipleAttachmentValues.create({
+  return await multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
-  return result;
 }
 
 const UPSERT_MAP = {
@@ -19,7 +18,7 @@ const UPSERT_MAP = {
 };
 
 async function upsertGenericFieldValue(params, fieldProps) {
-  await fieldValues.upsert(
+  return await fieldValues.upsert(
     {
       recordId: params.recordId,
       fieldId: params.fieldId,

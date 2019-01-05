@@ -78,11 +78,6 @@ module.exports = {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
     const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);
-    const result = await createOption(
-      fieldParams,
-      params.typeOptions,
-      fieldProps,
-    );
-    return result;
+    return await createOption(fieldParams, params.typeOptions, fieldProps);
   },
 };

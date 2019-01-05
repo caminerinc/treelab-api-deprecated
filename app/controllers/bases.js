@@ -15,9 +15,8 @@ module.exports = {
   },
 
   async createBase(params) {
-    const result = await bases.create({
+    return await bases.create({
       name: params.name,
     });
-    return result;
   },
 };
