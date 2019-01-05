@@ -1,4 +1,5 @@
-const { createRecord } = require('../controllers/records');
+const { createRecord, deleteRecord } = require('../controllers/records');
+const { checkKeyExists } = require('../util/helper');
 
 module.exports = {
   async resolveCreateRecord(ctx) {
@@ -9,7 +10,6 @@ module.exports = {
   async resolveDeleteRecord(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'rows');
-    console.log(rows);
     await deleteRecord(params);
     ctx.body = { message: 'success' };
   },

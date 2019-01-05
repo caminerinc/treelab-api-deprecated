@@ -6,7 +6,7 @@ const { resolveGetTables, resolveGetTable } = require('../resolvers/tables');
 const { resolveCreateField } = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
-  resoverUpdateArrayTypeByAdding,
+  resolveUpdateArrayTypeByAdding,
   resolveClearFieldValue,
 } = require('../resolvers/fieldValues');
 const {
@@ -44,7 +44,7 @@ router.delete('/api/delete-rows', resolveDeleteRecord);
 
 //FieldValue
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
-router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
+router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
 router.delete('/api/clear-field-value', resolveClearFieldValue);
 
 //Users
