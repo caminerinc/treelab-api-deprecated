@@ -10,14 +10,12 @@ const adaptTables = tables => {
       columns: table.fields.map(field => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
-
         if (field.typeOptions) {
           otherProps.typeOptions = pick(
             get(field, `typeOptions[${fieldProps.typeName}]`),
             fieldProps.typeProps,
           );
         }
-
         return {
           ...pick(field, ['id', 'name']),
           ...otherProps,
@@ -53,7 +51,6 @@ const getCellValuesByColumnId = fieldValues =>
     console.log(fieldProps);
     if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
-
     cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
     return cellAccum;
   }, {});

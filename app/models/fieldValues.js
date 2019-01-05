@@ -6,15 +6,18 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true,
         type: DataTypes.INTEGER,
       },
       recordId: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'fieldValues_recordId_fieldId_uk',
       },
       fieldId: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'fieldValues_recordId_fieldId_uk',
       },
       textValue: DataTypes.STRING,
       numberValue: DataTypes.INTEGER,

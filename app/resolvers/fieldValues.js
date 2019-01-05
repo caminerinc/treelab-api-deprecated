@@ -2,23 +2,34 @@ const { checkKeyExists } = require('../util/helper');
 const {
   getFieldValue,
   createFieldValue,
-  updateFieldValue,
   createArrayType,
   findOrCreateFieldValue,
+  upsertFieldValue,
+  deleteFieldValue,
 } = require('../controllers/fieldValues');
+const socketIo = require('../../lib/core/socketIo');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'textValue', 'recordId', 'fieldId');
-    const fieldValue = await getFieldValue(params.recordId, params.fieldId);
-
-    if (!fieldValue) {
-      await createFieldValue(params);
-    } else {
-      await updateFieldValue(params);
-    }
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
+    await upsertFieldValue(params);
     ctx.body = { message: 'success' };
+    socketIo.sync({
+      op: 'createOrUpdatePrimitiveField',
+      body: params,
+    });
+  },
+
+  async resolveClearFieldValue(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId');
+    const result = await deleteFieldValue(params);
+    ctx.body = { message: 'success' };
+    socketIo.sync({
+      op: 'clearFieldValue',
+      body: params,
+    });
   },
 
   async resolveUpdateArrayTypeByAdding(ctx) {
@@ -33,7 +44,10 @@ module.exports = {
       value: params.value,
       fieldTypeId: params.fieldTypeId,
     });
-
     ctx.body = { message: 'success' };
+    socketIo.sync({
+      op: 'updateArrayTypeByAdding',
+      body: result,
+    });
   },
 };

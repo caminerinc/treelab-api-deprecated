@@ -14,8 +14,8 @@ module.exports = {
     });
   },
 
-  createBase(params) {
-    return bases.create({
+  async createBase(params) {
+    return await bases.create({
       name: params.name,
     });
   },

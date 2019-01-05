@@ -11,8 +11,9 @@ const TYPE_MAP = {
   multipleAttachment: createMultipleAttachment,
   foreignKey: createForeignKeyValue,
 };
+
 async function createMultipleAttachment({ fieldValueId, value }) {
-  return multipleAttachmentValues.create({
+  return await multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
@@ -53,26 +54,46 @@ async function createForeignKeyValue({ fieldValueId, value }) {
   // }
   // return await sequelize.transaction(transactionSteps);
 }
+
+const UPSERT_MAP = {
+  text: upsertGenericFieldValue,
+  number: upsertGenericFieldValue,
+};
+
+async function upsertGenericFieldValue(params, fieldProps) {
+  return await fieldValues.upsert(
+    {
+      recordId: params.recordId,
+      fieldId: params.fieldId,
+      [fieldProps.valueName]: params.value,
+    },
+    {
+      fields: [fieldProps.valueName],
+    },
+  );
+}
+
 module.exports = {
-  updateFieldValue(params) {
-    return fieldValues.update(
-      { textValue: params.textValue },
-      { where: { recordId: params.recordId, fieldId: params.fieldId } },
-    );
-  },
   createFieldValue(params) {
     return fieldValues.create(params);
   },
+
+  async upsertFieldValue(params) {
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const option = UPSERT_MAP[fieldProps.name];
+    return await option(params, fieldProps);
+  },
+
   getFieldValue(recordId, fieldId) {
     return fieldValues.findOne({
       attributes: ['id', 'recordId', 'fieldId', 'textValue'],
       where: { recordId, fieldId },
     });
   },
+
   async createArrayType(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_MAP[fieldProps.name];
-
     return await createOption(params);
   },
   async findOrCreateFieldValue(recordId, fieldId) {
@@ -82,6 +103,10 @@ module.exports = {
         recordId,
         fieldId,
       },
+
+  async deleteFieldValue({ recordId, fieldId }) {
+    return await fieldValues.destroy({
+      where: { recordId, fieldId },
     });
   },
 };
