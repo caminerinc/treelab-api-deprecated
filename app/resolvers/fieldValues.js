@@ -43,7 +43,7 @@ module.exports = {
       fieldValueId: fieldValue.id,
       value: params.value,
     });
-    console.log('what does the result look like?', result);
+
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'updateArrayTypeByAdding',
