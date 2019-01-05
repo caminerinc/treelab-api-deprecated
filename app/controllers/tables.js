@@ -75,7 +75,7 @@ module.exports = {
                 {
                   model: foreignKeyValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
-                  as: 'symmetricKeyValue',
+                  as: 'symmetricFieldValue',
                 },
               ],
             },

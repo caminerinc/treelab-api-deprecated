@@ -48,10 +48,16 @@ const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
     const fieldTypeId = get(fieldValue.dataValues, 'field.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    console.log(fieldProps);
     if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
-    cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
+
+    if (fieldTypeId == 3) {
+      cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName].concat(
+        fieldValue[fieldProps.symmetricName],
+      );
+    } else {
+      cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
+    }
     return cellAccum;
   }, {});
 

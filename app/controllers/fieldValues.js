@@ -13,6 +13,7 @@ const TYPE_MAP = {
 };
 
 async function createMultipleAttachment({ fieldValueId, value }) {
+  checkKeyExists(value, 'url', 'fileName', 'fileType');
   return await multipleAttachmentValues.create({
     fieldValueId,
     ...value,
@@ -21,38 +22,11 @@ async function createMultipleAttachment({ fieldValueId, value }) {
 async function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'symmetricFieldValueId', 'name');
 
-  const foreignKey = await foreignKeyValues.create({
+  await foreignKeyValues.create({
     fieldValueId,
     symmetricFieldValueId: value.symmetricFieldValueId,
     name: value.name,
   });
-  // async function transactionSteps(t) {
-  //   const transact = { transaction: t };
-  //   const foreignKey = await foreignKeyValues.create(
-  //     {
-  //       fieldValueId,
-  //       symmetricFieldValueId: value.symmetricFieldValueId,
-  //       name: value.name,
-  //     },
-  //     transact,
-  //   );
-  //   const symmetricFieldKeyName = await fieldValues.findOne(
-  //     {
-  //       attributes: ['id', 'textValue'],
-  //       where: { id: value.symmetricFieldValueId },
-  //     },
-  //     transact,
-  //   );
-  //   const symmetricFieldKey = await foreignKeyValues.create(
-  //     {
-  //       fieldValueId: value.symmetricFieldValueId,
-  //       symmetricFieldValueId: fieldValueId,
-  //       name: symmetricFieldKeyName.textValue,
-  //     },
-  //     transact,
-  //   );
-  // }
-  // return await sequelize.transaction(transactionSteps);
 }
 
 const UPSERT_MAP = {
@@ -103,7 +77,8 @@ module.exports = {
         recordId,
         fieldId,
       },
-
+    });
+  },
   async deleteFieldValue({ recordId, fieldId }) {
     return await fieldValues.destroy({
       where: { recordId, fieldId },
