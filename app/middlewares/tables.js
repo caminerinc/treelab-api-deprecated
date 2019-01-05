@@ -1,6 +1,7 @@
 const { getTable } = require('../controllers/tables');
 
 const checkTableExist = async (ctx, next) => {
+  await next();
   const tableId = ctx.request.body.tableId || ctx.params.tableId;
   if (!tableId) {
     ctx.status = 422;
@@ -12,7 +13,6 @@ const checkTableExist = async (ctx, next) => {
     return (ctx.body = { error: 'table does not exist' });
   }
   ctx.table = table;
-  await next();
 };
 
 module.exports = {

@@ -1,6 +1,7 @@
 const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const { getBases, createBase } = require('../controllers/bases');
+const socketIo = require('../../lib/core/socketIo');
 
 const adaptBases = bases => {
   return Array.from(bases, base => {
@@ -24,5 +25,9 @@ module.exports = {
     checkKeyExists(params, 'name');
     const bases = await createBase(params);
     ctx.body = pick(bases, ['id', 'name', 'createdAt']);
+    socketIo.sync({
+      op: 'createBase',
+      body: ctx.body,
+    });
   },
 };

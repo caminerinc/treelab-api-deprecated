@@ -1,6 +1,5 @@
 const { fieldValues, multipleAttachmentValues } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
-const socketIo = require('../../lib/core/socketIo');
 
 const TYPE_MAP = {
   multipleAttachment: createMultipleAttachment,
@@ -11,14 +10,6 @@ async function createMultipleAttachment({ fieldValueId, value }) {
     fieldValueId,
     ...value,
   });
-
-  socketIo.sync({
-    op: 'createMultipleAttachment',
-    body: {
-      result,
-    },
-  });
-
   return result;
 }
 
@@ -48,7 +39,6 @@ module.exports = {
   async upsertFieldValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const option = UPSERT_MAP[fieldProps.name];
-
     return await option(params, fieldProps);
   },
 
@@ -62,20 +52,12 @@ module.exports = {
   async createArrayType(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_MAP[fieldProps.name];
-
     return await createOption(params);
   },
 
   async deleteFieldValue({ recordId, fieldId }) {
-    fieldValues.destroy({
+    return await fieldValues.destroy({
       where: { recordId, fieldId },
     });
-
-    socketIo.sync({
-      op: 'deleteFieldValue',
-      body: { recordId, fieldId },
-    });
-
-    return;
   },
 };

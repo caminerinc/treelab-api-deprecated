@@ -7,7 +7,6 @@ const {
   fields,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
-const socketIo = require('../../lib/core/socketIo');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -23,10 +22,8 @@ async function createGenericField(fieldParams) {
 async function createNumberOptions(fieldParams, options, fieldProps) {
   const newNumberType = await numberTypes.create(options);
   const typeOptionProps = { [fieldProps.typeFK]: newNumberType.id };
-
   const option = await typeOptions.create(typeOptionProps);
   fieldParams.typeOptionId = option.id;
-
   return fields.create(fieldParams);
 }
 
@@ -42,7 +39,6 @@ async function createForeignKey(fieldParams, options, fieldProps) {
       },
       transact,
     );
-
     const newForeignKeyType = await foreignKeyTypes.create(
       {
         ...options,
@@ -58,7 +54,6 @@ async function createForeignKey(fieldParams, options, fieldProps) {
       },
       transact,
     );
-
     const newTypeOption = await typeOptions.create(
       { [fieldProps.typeFK]: newForeignKeyType.id },
       transact,
@@ -69,14 +64,12 @@ async function createForeignKey(fieldParams, options, fieldProps) {
       },
       transact,
     );
-
     await newField.update({ typeOptionId: newTypeOption.id }, transact);
     await newSymmetricField.update(
       { typeOptionId: newSymmetricTypeOption.id },
       transact,
     );
   }
-
   return await sequelize.transaction(transactionSteps);
 }
 
@@ -85,20 +78,11 @@ module.exports = {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
     const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);
-
     const result = await createOption(
       fieldParams,
       params.typeOptions,
       fieldProps,
     );
-
-    socketIo.sync({
-      op: 'createField',
-      body: {
-        result,
-      },
-    });
-
     return result;
   },
 };
