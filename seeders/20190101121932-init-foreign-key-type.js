@@ -72,18 +72,6 @@ module.exports = {
           },
           onDelete: 'cascade',
         });
-        // return queryInterface.addConstraint(
-        //   'foreignKeyTypes',
-        //   ['symmetricFieldId'],
-        //   {
-        //     type: 'FOREIGN KEY',
-        //     references: {
-        //       table: 'fields',
-        //       field: 'id',
-        //     },
-        //     onDelete: 'cascade',
-        //   },
-        // );
       });
   },
 

@@ -1,6 +1,11 @@
 const { pick } = require('lodash');
 const { sequelize } = require('../models');
-const DB = require('../models');
+const {
+  fields,
+  numberTypes,
+  typeOptions,
+  foreignKeyTypes,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 const TYPE_OPTION_MAP = {
@@ -11,24 +16,24 @@ const TYPE_OPTION_MAP = {
 };
 
 async function createGenericField(fieldParams) {
-  return DB.fields.create(fieldParams);
+  return fields.create(fieldParams);
 }
 
 async function createNumberOptions(fieldParams, options, fieldProps) {
-  const newNumberType = await DB.numberTypes.create(options);
+  const newNumberType = await numberTypes.create(options);
   const typeOptionProps = { [fieldProps.typeFK]: newNumberType.id };
 
-  const option = await DB.typeOptions.create(typeOptionProps);
+  const option = await typeOptions.create(typeOptionProps);
   fieldParams.typeOptionId = option.id;
 
-  return DB.fields.create(fieldParams);
+  return fields.create(fieldParams);
 }
 
 async function createForeignKey(fieldParams, options, fieldProps) {
   async function transactionSteps(t) {
     const transact = { transaction: t };
-    const newField = await DB.fields.create(fieldParams, transact);
-    const newSymmetricField = await DB.fields.create(
+    const newField = await fields.create(fieldParams, transact);
+    const newSymmetricField = await fields.create(
       {
         tableId: options.foreignTableId,
         name: 'Link',
@@ -37,14 +42,14 @@ async function createForeignKey(fieldParams, options, fieldProps) {
       transact,
     );
 
-    const newForeignKeyType = await DB.foreignKeyTypes.create(
+    const newForeignKeyType = await foreignKeyTypes.create(
       {
         ...options,
         symmetricFieldId: newSymmetricField.id,
       },
       transact,
     );
-    const newSymmetricForeignKeyType = await DB.foreignKeyTypes.create(
+    const newSymmetricForeignKeyType = await foreignKeyTypes.create(
       {
         relationship: options.relationship,
         foreignTableId: fieldParams.tableId,
@@ -53,11 +58,11 @@ async function createForeignKey(fieldParams, options, fieldProps) {
       transact,
     );
 
-    const newTypeOption = await DB.typeOptions.create(
+    const newTypeOption = await typeOptions.create(
       { [fieldProps.typeFK]: newForeignKeyType.id },
       transact,
     );
-    const newSymmetricTypeOption = await DB.typeOptions.create(
+    const newSymmetricTypeOption = await typeOptions.create(
       {
         [fieldProps.typeFK]: newSymmetricForeignKeyType.id,
       },
@@ -73,19 +78,32 @@ async function createForeignKey(fieldParams, options, fieldProps) {
 
   return await sequelize.transaction(transactionSteps);
 }
-async function deleteTypeOptionsRequired({ fieldId, fieldProps }) {
-  const typeOption = await DB.fields.findOne({
+
+const DELETE_MAP = {
+  text: deleteTextField,
+  number: deleteNumberField,
+  foreignKey: deleteForeignField,
+  multipleAttachment: deleteMultipleAttachmentField,
+};
+async function deleteTextField({ fieldId }) {
+  return await fields.destroy({
+    where: { id: fieldId },
+    cascade: true,
+  });
+}
+async function deleteNumberField({ fieldId, fieldProps }) {
+  const typeOption = await fields.findOne({
     where: {
       id: fieldId,
     },
     attributes: ['typeOptionId'],
     include: [
       {
-        model: DB.typeOptions,
+        model: typeOptions,
         as: 'typeOptions',
         include: [
           {
-            model: DB[fieldProps.typeModel],
+            model: numberTypes,
             attributes: ['id'],
             as: fieldProps.typeName,
           },
@@ -94,8 +112,40 @@ async function deleteTypeOptionsRequired({ fieldId, fieldProps }) {
     ],
     raw: true,
   });
-  return await DB[fieldProps.typeModel].destroy({
+  return await numberTypes.destroy({
     where: { id: typeOption[`typeOptions.${fieldProps.typeName}.id`] },
+    cascade: true,
+  });
+}
+async function deleteForeignField({ fieldId, fieldProps }) {
+  const typeOption = await fields.findOne({
+    where: {
+      id: fieldId,
+    },
+    attributes: ['typeOptionId'],
+    include: [
+      {
+        model: typeOptions,
+        as: 'typeOptions',
+        include: [
+          {
+            model: foreignKeyTypes,
+            attributes: ['id'],
+            as: fieldProps.typeName,
+          },
+        ],
+      },
+    ],
+    raw: true,
+  });
+  return await foreignKeyTypes.destroy({
+    where: { id: typeOption[`typeOptions.${fieldProps.typeName}.id`] },
+    cascade: true,
+  });
+}
+async function deleteMultipleAttachmentField({ fieldId }) {
+  return await fields.destroy({
+    where: { id: fieldId },
     cascade: true,
   });
 }
@@ -110,16 +160,8 @@ module.exports = {
   },
   async deleteField({ fieldId, fieldTypeId }) {
     const fieldProps = FIELD_TYPES[fieldTypeId];
-    if (fieldProps.isTypeOptionsRequired) {
-      return await deleteTypeOptionsRequired({
-        fieldId,
-        fieldProps,
-      });
-    } else {
-      return await DB.fields.destroy({
-        where: { id: fieldId },
-        cascade: true,
-      });
-    }
+    const deleteOption = DELETE_MAP[fieldProps.name];
+
+    return await deleteOption({ fieldId, fieldProps });
   },
 };
