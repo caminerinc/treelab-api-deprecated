@@ -17,10 +17,6 @@ module.exports = {
           allowNull: false,
           type: Sequelize.INTEGER,
         },
-        name: {
-          allowNull: false,
-          type: Sequelize.STRING,
-        },
         createdAt: {
           allowNull: false,
           type: Sequelize.DATE,
@@ -31,6 +27,14 @@ module.exports = {
         },
       })
       .then(() => {
+        queryInterface.addConstraint('foreignKeyValues', ['fieldValueId'], {
+          type: 'foreign key',
+          references: {
+            table: 'fieldValues',
+            field: 'id',
+          },
+          onDelete: 'cascade',
+        });
         return queryInterface.addConstraint(
           'foreignKeyValues',
           ['fieldValueId', 'symmetricFieldValueId'],

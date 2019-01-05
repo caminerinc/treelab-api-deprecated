@@ -20,7 +20,7 @@ const FIELD_TYPES = {
     typeProps: ['relationship', 'foreignTableId', 'symmetricFieldId'],
     typeFK: 'foreignKeyTypeId',
     valueName: 'foreignKeyValue',
-    symmetricName: 'symmetricFieldValue',
+    symmetricName: 'symmetricKeyValue',
   },
   4: {
     name: 'multipleAttachment',

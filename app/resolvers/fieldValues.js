@@ -1,7 +1,5 @@
 const { checkKeyExists } = require('../util/helper');
 const {
-  getFieldValue,
-  createFieldValue,
   createArrayType,
   findOrCreateFieldValue,
   upsertFieldValue,
@@ -39,11 +37,13 @@ module.exports = {
       params.recordId,
       params.fieldId,
     );
+
     const result = await createArrayType({
-      fieldValueId: fieldValue[0].id,
-      value: params.value,
       fieldTypeId: params.fieldTypeId,
+      fieldValueId: fieldValue.id,
+      value: params.value,
     });
+    console.log('what does the result look like?', result);
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'updateArrayTypeByAdding',

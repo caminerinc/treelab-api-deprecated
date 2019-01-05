@@ -3,6 +3,16 @@ const { checkKeyExists } = require('../util/helper');
 const { getTables } = require('../controllers/tables');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
+const adaptForeignKey = (fieldValue, fieldProps) => {
+  return fieldValue[fieldProps.valueName].concat(
+    fieldValue[fieldProps.symmetricName],
+  );
+};
+
+const ADAPT_MAP = {
+  foreignKey: adaptForeignKey,
+};
+
 const adaptTables = tables => {
   return {
     tableSchemas: tables.map(table => ({
@@ -51,13 +61,13 @@ const getCellValuesByColumnId = fieldValues =>
     if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
 
-    if (fieldTypeId == 3) {
-      cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName].concat(
-        fieldValue[fieldProps.symmetricName],
-      );
+    const adaptData = ADAPT_MAP[fieldProps.name];
+    if (adaptData) {
+      cellAccum[fieldValue.fieldId] = adaptData(fieldValue, fieldProps);
     } else {
       cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
     }
+
     return cellAccum;
   }, {});
 

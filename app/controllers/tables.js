@@ -71,11 +71,40 @@ module.exports = {
                   model: foreignKeyValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
                   as: 'foreignKeyValue',
+                  include: [
+                    {
+                      model: fieldValues,
+                      as: 'symmetricFieldValue',
+                      attributes: ['id', 'fieldId'],
+                      // SEQUELIZE BUG, KEYS ARE BEING SLICED
+                      include: [
+                        {
+                          model: records,
+                          as: 'record',
+                          attributes: ['id'],
+                        },
+                      ],
+                    },
+                  ],
                 },
                 {
                   model: foreignKeyValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
-                  as: 'symmetricFieldValue',
+                  as: 'symmetricKeyValue',
+                  include: [
+                    {
+                      model: fieldValues,
+                      as: 'fieldValue',
+                      attributes: ['id'],
+                      include: [
+                        {
+                          model: records,
+                          as: 'record',
+                          attributes: ['id'],
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },

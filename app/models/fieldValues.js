@@ -29,13 +29,17 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldId',
       as: 'field',
     });
+    fieldValues.belongsTo(models.records, {
+      foreignKey: 'recordId',
+      as: 'record',
+    });
     fieldValues.hasMany(models.multipleAttachmentValues, {
       foreignKey: 'fieldValueId',
       as: 'multipleAttachmentValues',
     });
     fieldValues.hasMany(models.foreignKeyValues, {
       foreignKey: 'symmetricFieldValueId',
-      as: 'symmetricFieldValue',
+      as: 'symmetricKeyValue',
     });
     fieldValues.hasMany(models.foreignKeyValues, {
       foreignKey: 'fieldValueId',
