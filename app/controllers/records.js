@@ -1,8 +1,8 @@
 const { records } = require('../models');
 
 module.exports = {
-  createRecord(params) {
-    return records.create(params);
+  async createRecord(params) {
+    return await records.create(params);
   },
   deleteRecord({ rows }) {
     records.destroy({

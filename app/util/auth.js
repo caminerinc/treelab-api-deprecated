@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const helper = require('./helper');
+const config = require('../../config/config');
 
 module.exports = {
   authenticate({ passwordDigest, password }) {
@@ -7,7 +8,7 @@ module.exports = {
   },
   getToken(payload) {
     return jwt.sign(payload, process.env.SHARED_SECRET, {
-      expiresIn: '4h',
+      expiresIn: config.tokenExpiresIn || '4h',
     });
   },
   createAuthToken({ token }) {
