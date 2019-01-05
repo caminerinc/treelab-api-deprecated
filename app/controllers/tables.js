@@ -7,6 +7,7 @@ const {
   tables,
   typeOptions,
   multipleAttachmentValues,
+  foreignKeyValues,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
@@ -65,6 +66,16 @@ module.exports = {
                   model: multipleAttachmentValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
                   as: 'multipleAttachmentValues',
+                },
+                {
+                  model: foreignKeyValues,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
+                  as: 'foreignKeyValue',
+                },
+                {
+                  model: foreignKeyValues,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
+                  as: 'symmetricKeyValue',
                 },
               ],
             },

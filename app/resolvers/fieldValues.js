@@ -4,6 +4,7 @@ const {
   createFieldValue,
   updateFieldValue,
   createArrayType,
+  findOrCreateFieldValue,
 } = require('../controllers/fieldValues');
 
 module.exports = {
@@ -20,15 +21,15 @@ module.exports = {
     ctx.body = { message: 'success' };
   },
 
-  async resoverUpdateArrayTypeByAdding(ctx) {
+  async resolveUpdateArrayTypeByAdding(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
-    const fieldValue = await getFieldValue(params.recordId, params.fieldId);
-    if (!fieldValue) {
-      fieldValue = await createFieldValue(params);
-    }
+    const fieldValue = await findOrCreateFieldValue(
+      params.recordId,
+      params.fieldId,
+    );
     await createArrayType({
-      fieldValueId: fieldValue.id,
+      fieldValueId: fieldValue[0].id,
       value: params.value,
       fieldTypeId: params.fieldTypeId,
     });

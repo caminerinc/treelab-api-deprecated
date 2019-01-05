@@ -5,6 +5,7 @@ const {
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { sequelize } = require('../models');
+const { checkKeyExists } = require('../util/helper');
 
 const TYPE_MAP = {
   multipleAttachment: createMultipleAttachment,
@@ -17,33 +18,40 @@ async function createMultipleAttachment({ fieldValueId, value }) {
   });
 }
 async function createForeignKeyValue({ fieldValueId, value }) {
-  async function transactionSteps(t) {
-    const transact = { transaction: t };
-    const foreignKey = await foreignKeyValues.create(
-      {
-        fieldValueId,
-        symmetricFieldValueId: value.symmetricFieldValueId,
-        name: value.name,
-      },
-      transact,
-    );
-    const symmetricFieldKeyName = await fieldValues.findOne(
-      {
-        attributes: ['id', 'textValue'],
-        where: { id: value.symmetricFieldValueId },
-      },
-      transact,
-    );
-    const symmetricFieldKey = await foreignKeyValues.create(
-      {
-        fieldValueId: value.symmetricFieldValueId,
-        symmetricFieldValueId: fieldValueId,
-        name: symmetricFieldKeyName.textValue,
-      },
-      transact,
-    );
-  }
-  return await sequelize.transaction(transactionSteps);
+  checkKeyExists(value, 'symmetricFieldValueId', 'name');
+
+  const foreignKey = await foreignKeyValues.create({
+    fieldValueId,
+    symmetricFieldValueId: value.symmetricFieldValueId,
+    name: value.name,
+  });
+  // async function transactionSteps(t) {
+  //   const transact = { transaction: t };
+  //   const foreignKey = await foreignKeyValues.create(
+  //     {
+  //       fieldValueId,
+  //       symmetricFieldValueId: value.symmetricFieldValueId,
+  //       name: value.name,
+  //     },
+  //     transact,
+  //   );
+  //   const symmetricFieldKeyName = await fieldValues.findOne(
+  //     {
+  //       attributes: ['id', 'textValue'],
+  //       where: { id: value.symmetricFieldValueId },
+  //     },
+  //     transact,
+  //   );
+  //   const symmetricFieldKey = await foreignKeyValues.create(
+  //     {
+  //       fieldValueId: value.symmetricFieldValueId,
+  //       symmetricFieldValueId: fieldValueId,
+  //       name: symmetricFieldKeyName.textValue,
+  //     },
+  //     transact,
+  //   );
+  // }
+  // return await sequelize.transaction(transactionSteps);
 }
 module.exports = {
   updateFieldValue(params) {
@@ -66,5 +74,14 @@ module.exports = {
     const createOption = TYPE_MAP[fieldProps.name];
 
     return await createOption(params);
+  },
+  async findOrCreateFieldValue(recordId, fieldId) {
+    return await fieldValues.findCreateFind({
+      where: { recordId, fieldId },
+      defaults: {
+        recordId,
+        fieldId,
+      },
+    });
   },
 };
