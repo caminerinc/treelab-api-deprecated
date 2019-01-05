@@ -31,7 +31,7 @@ module.exports = {
     });
   },
 
-  async resoverUpdateArrayTypeByAdding(ctx) {
+  async resolveUpdateArrayTypeByAdding(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldValue = await getFieldValue(params.recordId, params.fieldId);
