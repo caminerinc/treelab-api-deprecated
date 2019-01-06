@@ -35,7 +35,7 @@ const adaptTable = table => {
     viewDatas: [
       {
         columnOrder: table.fieldPositions,
-        rowOrder: table.rowPositions,
+        rowOrder: table.recordPositions,
       },
     ],
   };
