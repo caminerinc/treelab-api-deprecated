@@ -32,6 +32,12 @@ const adaptTable = table => {
       ...pick(table, ['id']),
       rowsById: getRowsById(table.records),
     },
+    viewDatas: [
+      {
+        columnOrder: table.fieldPositions,
+        rowOrder: table.rowPositions,
+      },
+    ],
   };
 };
 
