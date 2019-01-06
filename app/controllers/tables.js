@@ -70,6 +70,16 @@ module.exports = {
             },
           ],
         },
+        {
+          model: fields,
+          as: 'fieldPositions',
+          attributes: ['id'],
+        },
+        {
+          model: records,
+          as: 'recordPositions',
+          attributes: ['id'],
+        },
       ],
     });
   },

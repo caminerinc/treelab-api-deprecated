@@ -46,6 +46,14 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          id: 'fldIwYLcbYWSUa4aK',
+          name: 'Attachment List',
+          fieldTypeId: 4,
+          tableId: 'tblNGUPdSs9Va4X5u',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );

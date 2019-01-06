@@ -23,7 +23,7 @@ module.exports = {
   async resolveClearFieldValue(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId');
-    const result = await deleteFieldValue(params);
+    await deleteFieldValue(params);
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'clearFieldValue',
