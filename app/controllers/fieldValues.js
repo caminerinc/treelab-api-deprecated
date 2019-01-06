@@ -59,4 +59,11 @@ module.exports = {
       where: { recordId, fieldId },
     });
   },
+
+  async bulkCopyFieldValue({ sourceColumnConfigs, sourceCellValues2dArray }) {
+    async function transactionSteps(t) {
+      const transact = { transaction: t };
+    }
+    return await sequelize.transaction(transactionSteps);
+  },
 };

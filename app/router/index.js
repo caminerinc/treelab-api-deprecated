@@ -8,6 +8,7 @@ const {
   resolveCreateOrUpdatePrimitiveField,
   resoverUpdateArrayTypeByAdding,
   resolveClearFieldValue,
+  resolveBulkCopyFieldValue,
 } = require('../resolvers/fieldValues');
 const { resolveCreateRecord } = require('../resolvers/records');
 const {
@@ -42,6 +43,7 @@ router.post('/api/record', checkTableExist, resolveCreateRecord);
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 router.post('/api/array-field', resoverUpdateArrayTypeByAdding);
 router.delete('/api/clear-field-value', resolveClearFieldValue);
+router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
 //Users
 router.get('/api/users', resolveGetUsers);
