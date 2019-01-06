@@ -73,4 +73,8 @@ module.exports = {
       ],
     });
   },
+
+  createTable(params) {
+    return tables.create(params);
+  },
 };
