@@ -57,11 +57,8 @@ const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
     const fieldTypeId = get(fieldValue, 'field.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    if (!fieldProps) {
-      console.log(JSON.parse(JSON.stringify(fieldValue)));
+    if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
-    }
-
     cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
     return cellAccum;
   }, {});
