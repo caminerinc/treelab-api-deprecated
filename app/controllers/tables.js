@@ -74,8 +74,8 @@ module.exports = {
                   include: [
                     {
                       model: fieldValues,
-                      as: 'symmetricFieldValue',
-                      attributes: ['id', 'fieldId'],
+                      as: 'fieldValue',
+                      attributes: ['id', 'recordId'],
                       // SEQUELIZE BUG, KEYS ARE BEING SLICED
                       include: [
                         {
@@ -94,8 +94,8 @@ module.exports = {
                   include: [
                     {
                       model: fieldValues,
-                      as: 'fieldValue',
-                      attributes: ['id'],
+                      as: 'symmetricFieldValue',
+                      attributes: ['id', 'recordId'],
                       include: [
                         {
                           model: records,
