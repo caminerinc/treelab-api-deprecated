@@ -6,6 +6,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
     "crypto-js": "^3.1.9-1",
     "dotenv": "^6.2.0",
     "extend2": "^1.0.0",
@@ -23,8 +25,6 @@
     "path": "^0.12.7",
     "pg": "^7.7.1",
     "pg-hstore": "^2.3.2",
-    "power-assert": "^1.6.1",
-    "request": "^2.88.0",
     "sequelize": "^4.42.0",
     "socket.io": "^2.2.0",
     "socketio-jwt": "^4.5.0"
@@ -33,6 +33,7 @@
     "start": "node bin/www",
     "dev": "nodemon bin/www",
     "configure": "./bin/configure_db.sh",
+    "configureTestDB": "./bin/configure_test_db.sh",
     "test": "mocha ./app/test"
   },
   "devDependencies": {

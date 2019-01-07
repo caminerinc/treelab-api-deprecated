@@ -1,4 +1,4 @@
-const dbConfig = require('./db-config.json');
+const dbConfig = require(`./db-config.${process.env.NODE_ENV}.json`);
 
 module.exports = {
   port: 9000,
