@@ -8,7 +8,7 @@ module.exports = {
           name: 'First Name',
           fieldTypeId: 1,
           tableId: 'tblNGUPdSs9Va4X5u',
-          createdAt: '018-05-05T04:09:06.024Z',
+          createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {

@@ -8,8 +8,10 @@ const {
   typeOptions,
   multipleAttachmentValues,
   foreignKeyValues,
+  sequelize,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const _ = require('lodash');
 
 module.exports = {
   getTables(baseId) {
@@ -42,20 +44,25 @@ module.exports = {
     });
   },
 
-  getTable(id) {
-    return tables.findOne({
+  async getTable(id) {
+    return await tables.findOne({
       attributes: ['id'],
       where: { id },
       include: [
         {
-          attributes: ['id', 'createdAt'],
           model: records,
+          attributes: ['id', 'createdAt'],
           as: 'records',
+          required: false,
           include: [
             {
-              model: fieldValues,
+              association: records.hasMany(fieldValues, {
+                foreignKey: 'recordId',
+                as: 'fV',
+              }),
+              as: 'fV',
               attributes: ['fieldId', 'textValue', 'numberValue'],
-              as: 'fieldValues',
+              required: false,
               include: [
                 {
                   model: fields,
@@ -68,20 +75,21 @@ module.exports = {
                   as: 'multipleAttachmentValues',
                 },
                 {
-                  model: foreignKeyValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
+                  model: foreignKeyValues,
                   as: 'foreignKeyValue',
+                  required: false,
                   include: [
                     {
                       model: fieldValues,
-                      as: 'fieldValue',
-                      attributes: ['id', 'recordId'],
+                      as: 'symmetricFieldValue',
+                      attributes: ['id'],
+                      required: false,
                       // SEQUELIZE BUG, KEYS ARE BEING SLICED
                       include: [
                         {
                           model: records,
                           as: 'record',
-                          attributes: ['id'],
                         },
                       ],
                     },
@@ -94,13 +102,12 @@ module.exports = {
                   include: [
                     {
                       model: fieldValues,
-                      as: 'symmetricFieldValue',
-                      attributes: ['id', 'recordId'],
+                      as: 'fieldValue',
+                      attributes: ['id'],
                       include: [
                         {
                           model: records,
                           as: 'record',
-                          attributes: ['id'],
                         },
                       ],
                     },

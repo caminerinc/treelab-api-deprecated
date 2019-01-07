@@ -49,13 +49,13 @@ const getRowsById = records =>
   records.reduce((rowAccum, record) => {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: getCellValuesByColumnId(record.fieldValues),
+      cellValuesByColumnId: getCellValuesByColumnId(record.fV),
     };
     return rowAccum;
   }, {});
 
-const getCellValuesByColumnId = fieldValues =>
-  fieldValues.reduce((cellAccum, fieldValue) => {
+const getCellValuesByColumnId = fV =>
+  fV.reduce((cellAccum, fieldValue) => {
     const fieldTypeId = get(fieldValue.dataValues, 'field.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
     if (!fieldProps)
