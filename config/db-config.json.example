@@ -1,5 +1,5 @@
 {
-  "database": "elephante_test",
+  "database": "database_name",
   "username": "postgres",
   "password": "psql_password",
   "host": "localhost",
