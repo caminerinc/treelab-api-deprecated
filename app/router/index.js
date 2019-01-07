@@ -37,7 +37,7 @@ router.post('/api/base', resolveCreateBase);
 
 //Table
 router.get('/api/tables/:baseId', resolveGetTables);
-router.get('/api/table/:tableId', checkTableExist, resolveGetTable);
+router.get('/api/table/:tableId', resolveGetTable);
 router.post('/api/table', resolveCreateTable);
 
 //Field

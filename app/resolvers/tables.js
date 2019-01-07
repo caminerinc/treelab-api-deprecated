@@ -1,6 +1,6 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getTables, createTable } = require('../controllers/tables');
+const { getTables, createTable, getTable } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
@@ -57,8 +57,11 @@ const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
     const fieldTypeId = get(fieldValue, 'field.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    if (!fieldProps)
+    if (!fieldProps) {
+      console.log(JSON.parse(JSON.stringify(fieldValue)));
       throw new Error('field type id does not exist in fieldValue');
+    }
+
     cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
     return cellAccum;
   }, {});
@@ -72,7 +75,14 @@ module.exports = {
   },
 
   async resolveGetTable(ctx) {
-    ctx.body = adaptTable(ctx.table);
+    const params = ctx.params;
+    checkKeyExists(params, 'tableId');
+    const table = await getTable(params.tableId);
+    if (!table) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'table does not exist' });
+    }
+    ctx.body = adaptTable(table);
   },
 
   async resolveCreateTable(ctx) {

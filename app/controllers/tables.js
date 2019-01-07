@@ -87,4 +87,8 @@ module.exports = {
   createTable(params) {
     return tables.create(params);
   },
+
+  getEasyTable(id) {
+    return tables.findOne({ where: { id } });
+  },
 };
