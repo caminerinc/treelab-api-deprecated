@@ -19,7 +19,7 @@ module.exports = {
       include: [
         {
           model: fields,
-          as: 'fields',
+          as: 'flds',
           attributes: ['id', 'name', 'fieldTypeId', 'typeOptionId'],
           include: [
             {
@@ -50,37 +50,36 @@ module.exports = {
         {
           attributes: ['id', 'createdAt'],
           model: records,
-          as: 'records',
+          as: 'recs',
           include: [
             {
               model: fieldValues,
               attributes: ['fieldId', 'textValue', 'numberValue'],
-              as: 'fieldValues',
+              as: 'fldVs',
               include: [
                 {
                   model: fields,
                   attributes: ['fieldTypeId'],
-                  as: 'field',
+                  as: 'fld',
                 },
                 {
                   model: multipleAttachmentValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
-                  as: 'multipleAttachmentValues',
+                  as: 'multiAttV',
                 },
                 {
                   model: foreignKeyValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
-                  as: 'foreignKeyValue',
+                  as: 'fgnKV',
                   include: [
                     {
                       model: fieldValues,
-                      as: 'symmetricFieldValue',
+                      as: 'symFldV',
                       attributes: ['id', 'fieldId'],
-                      // SEQUELIZE BUG, KEYS ARE BEING SLICED
                       include: [
                         {
                           model: records,
-                          as: 'record',
+                          as: 'rec',
                           attributes: ['id'],
                         },
                       ],
@@ -90,16 +89,16 @@ module.exports = {
                 {
                   model: foreignKeyValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
-                  as: 'symmetricKeyValue',
+                  as: 'symKV',
                   include: [
                     {
                       model: fieldValues,
-                      as: 'fieldValue',
+                      as: 'fldV',
                       attributes: ['id'],
                       include: [
                         {
                           model: records,
-                          as: 'record',
+                          as: 'rec',
                           attributes: ['id'],
                         },
                       ],

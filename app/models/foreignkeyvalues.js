@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
   foreignKeyValues.associate = function(models) {
     foreignKeyValues.belongsTo(models.fieldValues, {
       foreignKey: 'symmetricFieldValueId',
-      as: 'symmetricFieldValue',
+      as: 'symFldV',
     });
     foreignKeyValues.belongsTo(models.fieldValues, {
       foreignKey: 'fieldValueId',
-      as: 'fieldValue',
+      as: 'fldV',
     });
   };
   return foreignKeyValues;

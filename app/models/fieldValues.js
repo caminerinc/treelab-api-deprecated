@@ -27,23 +27,23 @@ module.exports = (sequelize, DataTypes) => {
   fieldValues.associate = function(models) {
     fieldValues.belongsTo(models.fields, {
       foreignKey: 'fieldId',
-      as: 'field',
+      as: 'fld',
     });
     fieldValues.belongsTo(models.records, {
       foreignKey: 'recordId',
-      as: 'record',
+      as: 'rec',
     });
     fieldValues.hasMany(models.multipleAttachmentValues, {
       foreignKey: 'fieldValueId',
-      as: 'multipleAttachmentValues',
+      as: 'multiAttV',
     });
     fieldValues.hasMany(models.foreignKeyValues, {
       foreignKey: 'symmetricFieldValueId',
-      as: 'symmetricKeyValue',
+      as: 'symKV',
     });
     fieldValues.hasMany(models.foreignKeyValues, {
       foreignKey: 'fieldValueId',
-      as: 'foreignKeyValue',
+      as: 'fgnKV',
     });
   };
   return fieldValues;

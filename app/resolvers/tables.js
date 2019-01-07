@@ -4,9 +4,14 @@ const { getTables } = require('../controllers/tables');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 const adaptForeignKey = (fieldValue, fieldProps) => {
-  return fieldValue[fieldProps.valueName].concat(
-    fieldValue[fieldProps.symmetricName],
+  const foreignRecords = fieldValue[fieldProps.valueName].map(
+    fieldValues => fieldValues.symFldV.rec.id,
   );
+  const symmetricRecords = fieldValue[fieldProps.symmetricName].map(
+    fieldValues => fieldValues.fldV.rec.id,
+  );
+
+  return foreignRecords.concat(symmetricRecords);
 };
 
 const ADAPT_MAP = {
@@ -17,7 +22,7 @@ const adaptTables = tables => {
   return {
     tableSchemas: tables.map(table => ({
       ...pick(table, ['id', 'name']),
-      columns: table.fields.map(field => {
+      columns: table.flds.map(field => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
         if (field.typeOptions) {
@@ -40,7 +45,7 @@ const adaptTable = table => {
   return {
     tableDatas: {
       ...pick(table, ['id']),
-      rowsById: getRowsById(table.records),
+      rowsById: getRowsById(table.recs),
     },
   };
 };
@@ -49,14 +54,14 @@ const getRowsById = records =>
   records.reduce((rowAccum, record) => {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: getCellValuesByColumnId(record.fieldValues),
+      cellValuesByColumnId: getCellValuesByColumnId(record.fldVs),
     };
     return rowAccum;
   }, {});
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    const fieldTypeId = get(fieldValue.dataValues, 'field.fieldTypeId');
+    const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
     if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
