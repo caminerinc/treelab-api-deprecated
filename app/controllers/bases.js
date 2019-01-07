@@ -19,4 +19,11 @@ module.exports = {
       name: params.name,
     });
   },
+
+  getBase(id) {
+    return bases.findOne({
+      attributes: ['id', 'name'],
+      where: { id },
+    });
+  },
 };
