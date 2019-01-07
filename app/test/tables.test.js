@@ -39,7 +39,16 @@ describe('tables模块', function(done) {
           done();
         });
     });
-    it('baseId: tblNGUPdSs9Va4X5u', function(done) {
+    it('error tableId', function(done) {
+      chai
+        .request('http://localhost:9000')
+        .get('/api/table/1111111')
+        .end((err, res) => {
+          res.should.have.status(400);
+          done();
+        });
+    });
+    it('tableId: tblNGUPdSs9Va4X5u', function(done) {
       chai
         .request('http://localhost:9000')
         .get('/api/table/tblNGUPdSs9Va4X5u')
