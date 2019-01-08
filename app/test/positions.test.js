@@ -7,6 +7,7 @@ describe('positions模块', function(done) {
   describe('/api/change-position', function(done) {
     it('changePosition', function(done) {
       const params = {
+        prefix: 'rec',
         targetPosition: 2,
         parentId: 'tblNGUPdSs9Va4X5u',
         originalPositions: [1, 4],
@@ -22,6 +23,7 @@ describe('positions模块', function(done) {
     });
     it('empty originalPositions', function(done) {
       const params = {
+        prefix: 'rec',
         targetPosition: 2,
         parentId: 'tblNGUPdSs9Va4X5u',
         originalPositions: [],
@@ -37,6 +39,7 @@ describe('positions模块', function(done) {
     });
     it('not parentId', function(done) {
       const params = {
+        prefix: 'rec',
         targetPosition: 2,
         originalPositions: [],
       };
@@ -51,6 +54,7 @@ describe('positions模块', function(done) {
     });
     it('not targetPosition', function(done) {
       const params = {
+        prefix: 'rec',
         parentId: 'tblNGUPdSs9Va4X5u',
         originalPositions: [1, 3],
       };
@@ -60,6 +64,21 @@ describe('positions模块', function(done) {
         .send(params)
         .end((err, res) => {
           res.should.have.status(422);
+          done();
+        });
+    });
+    it('not prefix', function(done) {
+      const params = {
+        targetPosition: 2,
+        parentId: 'tblNGUPdSs9Va4X5u',
+        originalPositions: [1, 4],
+      };
+      chai
+        .request('http://localhost:8000')
+        .put('/api/change-position')
+        .send(params)
+        .end((err, res) => {
+          res.should.have.status(200);
           done();
         });
     });

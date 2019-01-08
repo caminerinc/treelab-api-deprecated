@@ -2,6 +2,7 @@ const { checkKeyExists } = require('../util/helper');
 const { createField } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
+const { createPosition } = require('../controllers/positions');
 
 module.exports = {
   async resolveCreateField(ctx) {
@@ -20,6 +21,7 @@ module.exports = {
       });
     }
     const result = await createField(params);
+    await createPosition({ parentId: params.tableId, id: result.id });
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'createField',

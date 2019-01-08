@@ -1,4 +1,5 @@
 const { sequelize } = require('../models');
+const { positions } = require('../models');
 
 module.exports = {
   async changePosition({ originalPositions, targetPosition, parentId }) {
@@ -29,7 +30,22 @@ module.exports = {
         movedNum++;
       }
     }
-    sql += ` else position end where "parentId" = '${parentId}'`;
-    return await sequelize.query(sql);
+    sql += ` else position end where "parentId" = ?`;
+    return await sequelize.query(sql, { replacements: [parentId] });
+  },
+
+  async createPosition({ parentId, id }) {
+    const prefix = id.slice(0, 3);
+    parentId = prefix + '_' + parentId;
+    const lastPosition = await positions.findOne({
+      attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
+      where: { parentId },
+    });
+    const position = (lastPosition.dataValues.max || 0) + 1;
+    return await positions.create({
+      id: id,
+      position,
+      parentId,
+    });
   },
 };
