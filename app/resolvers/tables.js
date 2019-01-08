@@ -1,7 +1,10 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getTables } = require('../controllers/tables');
+const { getTables, createTable } = require('../controllers/tables');
+const { createField } = require('../controllers/fields');
+const { getBase } = require('../controllers/bases');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const socketIo = require('../../lib/core/socketIo');
 
 const adaptTables = tables => {
   return {
@@ -32,6 +35,12 @@ const adaptTable = table => {
       ...pick(table, ['id']),
       rowsById: getRowsById(table.records),
     },
+    viewDatas: [
+      {
+        columnOrder: table.fieldPositions,
+        rowOrder: table.recordPositions,
+      },
+    ],
   };
 };
 
@@ -64,5 +73,29 @@ module.exports = {
 
   async resolveGetTable(ctx) {
     ctx.body = adaptTable(ctx.table);
+  },
+
+  async resolveCreateTable(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'baseId', 'name');
+    const base = await getBase(params.baseId);
+    if (!base) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'base does not exist' });
+    }
+    const table = await createTable(params);
+    const field = await createField({
+      tableId: table.id,
+      name: 'Field 1',
+      fieldTypeId: 1,
+    });
+    ctx.body = table;
+    socketIo.sync({
+      op: 'createTable',
+      body: {
+        table: table,
+        field,
+      },
+    });
   },
 };

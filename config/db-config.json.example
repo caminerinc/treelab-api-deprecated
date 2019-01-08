@@ -1,6 +1,6 @@
 {
   "develop": {
-    "database": "database_name",
+    "database": "elephante_db",
     "username": "postgres",
     "password": "psql_password",
     "host": "localhost",
