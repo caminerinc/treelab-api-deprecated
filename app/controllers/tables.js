@@ -5,7 +5,6 @@ const {
   foreignKeyTypes,
   records,
   tables,
-  typeOptions,
   multipleAttachmentValues,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
@@ -19,21 +18,15 @@ module.exports = {
         {
           model: fields,
           as: 'fields',
-          attributes: ['id', 'name', 'fieldTypeId', 'typeOptionId'],
+          attributes: ['id', 'name', 'fieldTypeId'],
           include: [
             {
-              model: typeOptions,
-              as: 'typeOptions',
-              include: [
-                {
-                  model: numberTypes,
-                  as: FIELD_TYPES[2].typeName,
-                },
-                {
-                  model: foreignKeyTypes,
-                  as: FIELD_TYPES[3].typeName,
-                },
-              ],
+              model: numberTypes,
+              as: FIELD_TYPES[2].typeName,
+            },
+            {
+              model: foreignKeyTypes,
+              as: FIELD_TYPES[3].typeName,
             },
           ],
         },

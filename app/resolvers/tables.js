@@ -13,9 +13,9 @@ const adaptTables = tables => {
       columns: table.fields.map(field => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
-        if (field.typeOptions) {
+        if (fieldProps.isTypeOptionsRequired) {
           otherProps.typeOptions = pick(
-            get(field, `typeOptions[${fieldProps.typeName}]`),
+            get(field, fieldProps.typeName),
             fieldProps.typeProps,
           );
         }
