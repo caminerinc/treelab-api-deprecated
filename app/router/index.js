@@ -2,14 +2,21 @@ const Router = require('koa-router');
 const router = new Router();
 
 const { resolveGetBases, resolveCreateBase } = require('../resolvers/bases');
-const { resolveGetTables, resolveGetTable } = require('../resolvers/tables');
+const {
+  resolveGetTables,
+  resolveGetTable,
+  resolveCreateTable,
+} = require('../resolvers/tables');
 const { resolveCreateField } = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
   resolveUpdateArrayTypeByAdding,
   resolveClearFieldValue,
 } = require('../resolvers/fieldValues');
-const { resolveCreateRecord } = require('../resolvers/records');
+const {
+  resolveCreateRecord,
+  resolveDeleteRecord,
+} = require('../resolvers/records');
 const {
   resolveGetUsers,
   resolveCreateUser,
@@ -31,12 +38,14 @@ router.post('/api/base', resolveCreateBase);
 //Table
 router.get('/api/tables/:baseId', resolveGetTables);
 router.get('/api/table/:tableId', checkTableExist, resolveGetTable);
+router.post('/api/table', resolveCreateTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
 
 //Record
 router.post('/api/record', checkTableExist, resolveCreateRecord);
+router.delete('/api/delete-rows', resolveDeleteRecord);
 
 //FieldValue
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
