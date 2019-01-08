@@ -10,5 +10,3 @@ config/db-config.json
 .env
 *.DS_Store
 config/config.js
-config/db-config.test.json
-config/db-config.develop.json
