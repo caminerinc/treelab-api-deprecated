@@ -1,6 +1,7 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
+const expect = chai.expect;
 
 chai.use(chaiHttp);
 describe('tables模块', function(done) {
@@ -55,13 +56,71 @@ describe('tables模块', function(done) {
         .get('/api/table/tblNGUPdSs9Va4X5u')
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('tableDatas');
-          res.body.tableDatas.should.have.property('id');
-          res.body.tableDatas.should.have.property('rowsById');
-          res.body.tableDatas.rowsById.should.have.property(
-            'recfPInitd1QpZ6aV',
-          );
+          expect(res.body).eql({
+            tableDatas: {
+              id: 'tblNGUPdSs9Va4X5u',
+              rowsById: {
+                recfPInitd1QpZ6aV: {
+                  id: 'recfPInitd1QpZ6aV',
+                  createdAt: '2018-05-05T04:09:06.024Z',
+                  cellValuesByColumnId: {
+                    fldnQ4OWns9ZF88nC: 'Muller',
+                    fld6tojhqApRQfJpd: 34,
+                    fld6tojhqApRQfJpc: 'Ren',
+                  },
+                },
+                recwEKHeMhcDnLnfc: {
+                  id: 'recwEKHeMhcDnLnfc',
+                  createdAt: '0018-05-05T04:09:06.024Z',
+                  cellValuesByColumnId: {
+                    fld6tojhqApRQfJpd: 24,
+                    fld6tojhqApRQfJpi: ['rec1db61c8d540400f'],
+                    fldnQ4OWns9ZF88nC: 'Rob',
+                    fld6tojhqApRQfJpc: 'Ricky',
+                    fldIwYLcbYWSUa4aK: [
+                      {
+                        id: 'attqdl74Yu4DjbLvc',
+                        fieldValueId: 7,
+                        url:
+                          'https://dl.airtable.com/yP8sUJ2qQ22T0Jl8cBS4_W%20THXU%20SHACKER%20SL%20PO%20-%209.27%20Fit%20rej.pdf',
+                        fileName: 'W THXU SHACKER SL PO - 9.27 Fit rej.pdf',
+                        fileType: 'application/pdf',
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+            viewDatas: [
+              {
+                columnOrder: [
+                  {
+                    id: 'fldIwYLcbYWSUa4aK',
+                  },
+                  {
+                    id: 'fld6tojhqApRQfJpi',
+                  },
+                  {
+                    id: 'fld6tojhqApRQfJpd',
+                  },
+                  {
+                    id: 'fld6tojhqApRQfJpc',
+                  },
+                  {
+                    id: 'fldnQ4OWns9ZF88nC',
+                  },
+                ],
+                rowOrder: [
+                  {
+                    id: 'recfPInitd1QpZ6aV',
+                  },
+                  {
+                    id: 'recwEKHeMhcDnLnfc',
+                  },
+                ],
+              },
+            ],
+          });
           done();
         });
     });
