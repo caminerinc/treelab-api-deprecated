@@ -50,6 +50,7 @@ module.exports = {
           id: 'fldIwYLcbYWSUa4aK',
           name: 'Attachment List',
           fieldTypeId: 4,
+          typeOptionId: 1,
           tableId: 'tblNGUPdSs9Va4X5u',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
