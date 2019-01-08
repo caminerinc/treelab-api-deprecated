@@ -36,7 +36,7 @@ describe('tables模块', function(done) {
         .request('http://localhost:8000')
         .get('/api/table')
         .end((err, res) => {
-          res.should.have.status(404);
+          res.should.have.status(405);
           done();
         });
     });
