@@ -23,6 +23,7 @@ const {
   resolveLogin,
   resolveTestAuth,
 } = require('../resolvers/users');
+const { resolveChangePosition } = require('../resolvers/positions');
 
 const { checkTableExist } = require('../middlewares/tables');
 
@@ -51,6 +52,9 @@ router.delete('/api/delete-rows', resolveDeleteRecord);
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
 router.delete('/api/clear-field-value', resolveClearFieldValue);
+
+//Position
+router.put('/api/change-position', resolveChangePosition);
 
 //Users
 router.get('/api/users', resolveGetUsers);
