@@ -2,9 +2,9 @@ const dbConfig = require('./db-config.json');
 
 module.exports = {
   port: 9000,
+  testPort: 8000,
   socketIoPort: 9001,
   postgres: dbConfig,
-  tokenExpiresIn: '4h',
+  tokenExpiresIn: '10h',
   offlineDelayTime: 2000,
 };
-Í
