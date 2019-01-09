@@ -7,6 +7,7 @@ const {
   tables,
   multipleAttachmentValues,
   foreignKeyValues,
+  sequelize,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
@@ -32,6 +33,7 @@ module.exports = {
           ],
         },
       ],
+      order: [[sequelize.col(`flds.createdAt`), 'ASC']],
     });
   },
 
