@@ -40,6 +40,6 @@
     "configure": "./bin/configure_db.sh",
     "configure:test": "./bin/configure_test_db.sh",
     "start:test": "node bin/www --env=test",
-    "test": "mocha ./app/test"
+    "test": "npm run configure:test && mocha ./app/test"
   }
 }
