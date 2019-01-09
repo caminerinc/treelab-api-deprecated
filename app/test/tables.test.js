@@ -6,14 +6,27 @@ const expect = chai.expect;
 chai.use(chaiHttp);
 describe('tables模块', function(done) {
   describe('GET /api/tables/:baseId', function(done) {
-    it('not baseId', function(done) {
-      chai
-        .request('http://localhost:8000')
-        .get('/api/tables')
-        .end((err, res) => {
-          res.should.have.status(404);
-          done();
-        });
+    describe('ERROR', function(done) {
+      it('not baseId', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/tables')
+          .end((err, res) => {
+            res.should.have.status(404);
+            done();
+          });
+      });
+      it('error baseId', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/tables/111111111')
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.tableSchemas.should.be.a('array');
+            res.body.tableSchemas.length.should.be.eql(0);
+            done();
+          });
+      });
     });
     it('baseId: bse1jT7ZIHLmjH4', function(done) {
       chai
@@ -32,23 +45,25 @@ describe('tables模块', function(done) {
   });
 
   describe('GET /api/table/:tableId', function(done) {
-    it('not tableId', function(done) {
-      chai
-        .request('http://localhost:8000')
-        .get('/api/table')
-        .end((err, res) => {
-          res.should.have.status(405);
-          done();
-        });
-    });
-    it('error tableId', function(done) {
-      chai
-        .request('http://localhost:8000')
-        .get('/api/table/1111111')
-        .end((err, res) => {
-          res.should.have.status(400);
-          done();
-        });
+    describe('ERROR', function(done) {
+      it('not tableId', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/table')
+          .end((err, res) => {
+            res.should.have.status(405);
+            done();
+          });
+      });
+      it('error tableId', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/table/1111111')
+          .end((err, res) => {
+            res.should.have.status(400);
+            done();
+          });
+      });
     });
     it('tableId: tblNGUPdSs9Va4X5u', function(done) {
       chai
