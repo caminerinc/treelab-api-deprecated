@@ -9,7 +9,6 @@ const FIELD_TYPES = {
     typeModel: 'numberTypes',
     typeName: 'numberTypes',
     typeProps: ['format', 'precision', 'negative'],
-    typeFK: 'numberTypeId',
     valueName: 'numberValue',
   },
   3: {
@@ -18,7 +17,6 @@ const FIELD_TYPES = {
     typeModel: 'foreignKeyTypes',
     typeName: 'foreignKeyTypes',
     typeProps: ['relationship', 'foreignTableId', 'symmetricFieldId'],
-    typeFK: 'foreignKeyTypeId',
     valueName: 'fgnKV',
     symmetricName: 'symKV',
   },
