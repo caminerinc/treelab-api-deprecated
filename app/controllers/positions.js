@@ -58,7 +58,6 @@ module.exports = {
   },
 
   async deletePositions({ deletePositions, parentId, type }) {
-    console.log(deletePositions);
     deletePositions = Array.from(deletePositions, i => parseInt(i));
     deletePositions.sort();
     const len = deletePositions.length;
