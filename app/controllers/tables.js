@@ -33,7 +33,6 @@ module.exports = {
           ],
         },
       ],
-      order: [[sequelize.col(`flds.createdAt`), 'ASC']],
     });
   },
 
