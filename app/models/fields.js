@@ -32,10 +32,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldId',
       as: 'fieldValues',
     });
-    fields.belongsTo(models.typeOptions, {
-      foreignKey: 'typeOptionId',
-      as: 'typeOptions',
-    });
     fields.hasOne(models[FIELD_TYPES[2].typeModel], {
       foreignKey: 'fieldId',
       as: FIELD_TYPES[2].typeName,
