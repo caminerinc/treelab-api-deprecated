@@ -118,5 +118,50 @@ describe('fields模块', function(done) {
           done();
         });
     });
+    it('get table', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/table/tblNGUPdSs9Va4X5u')
+        .end((err, res) => {
+          res.should.have.status(200);
+
+          res.body.tableSchemas[0].columns[5].should.have
+            .property('name')
+            .eql('age');
+          res.body.tableSchemas[0].columns[5].should.have
+            .property('type')
+            .eql('number');
+          expect(res.body.tableSchemas[0].columns[5].typeOptions).to.eql({
+            format: 'decimal',
+            precision: 1,
+            negative: false,
+          });
+
+          res.body.tableSchemas[0].columns[6].should.have
+            .property('name')
+            .eql('测试');
+          res.body.tableSchemas[0].columns[6].should.have
+            .property('type')
+            .eql('foreignKey');
+          expect(res.body.tableSchemas[0].columns[6].typeOptions).to.eql({
+            relationship: 'many',
+            foreignTableId: 'tblsnmRLfttLmAYQ8',
+            symmetricFieldId: 'fld1e057e7c58041ab',
+          });
+
+          res.body.tableSchemas[1].columns[1].should.have
+            .property('name')
+            .eql('Link');
+          res.body.tableSchemas[1].columns[1].should.have
+            .property('type')
+            .eql('foreignKey');
+          expect(res.body.tableSchemas[1].columns[1].typeOptions).to.eql({
+            relationship: 'many',
+            foreignTableId: 'tblNGUPdSs9Va4X5u',
+            symmetricFieldId: 'fld1e057e7c3c0419b',
+          });
+          done();
+        });
+    });
   });
 });
