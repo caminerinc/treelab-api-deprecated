@@ -7,6 +7,7 @@ const {
   fields,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { checkKeyExists } = require('../util/helper');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -20,6 +21,7 @@ async function createGenericField(fieldParams) {
 }
 
 async function createNumberOptions(fieldParams, options, fieldProps) {
+  checkKeyExists(options, 'format', 'precision', 'negative');
   const newNumberType = await numberTypes.create(options);
   const typeOptionProps = { [fieldProps.typeFK]: newNumberType.id };
   const option = await typeOptions.create(typeOptionProps);
@@ -28,6 +30,7 @@ async function createNumberOptions(fieldParams, options, fieldProps) {
 }
 
 async function createForeignKey(fieldParams, options, fieldProps) {
+  checkKeyExists(options, 'relationship', 'foreignTableId');
   async function transactionSteps(t) {
     const transact = { transaction: t };
     const newField = await fields.create(fieldParams, transact);

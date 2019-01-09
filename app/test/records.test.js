@@ -42,4 +42,18 @@ describe('records模块', function(done) {
         });
     });
   });
+  describe('DELETE /api/delete-rows', function(done) {
+    it('rows: [recwEKHeMhcDnLnfc,recfPInitd1QpZ6aV]', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .delete('/api/delete-rows')
+        .send({
+          rows: ['recwEKHeMhcDnLnfc', 'recfPInitd1QpZ6aV'],
+        })
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
 });
