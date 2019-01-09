@@ -27,14 +27,6 @@ module.exports = {
         },
       })
       .then(() => {
-        queryInterface.addConstraint('foreignKeyValues', ['fieldValueId'], {
-          type: 'foreign key',
-          references: {
-            table: 'fieldValues',
-            field: 'id',
-          },
-          onDelete: 'cascade',
-        });
         return queryInterface.addConstraint(
           'foreignKeyValues',
           ['fieldValueId', 'symmetricFieldValueId'],

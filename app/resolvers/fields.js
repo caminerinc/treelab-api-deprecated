@@ -1,5 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const { createField, deleteField } = require('../controllers/fields');
+const {
+  createField,
+  deleteField,
+  findFieldType,
+} = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -29,9 +33,16 @@ module.exports = {
 
   async resolveDeleteField(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'fieldId', 'fieldTypeId');
+    checkKeyExists(params, 'fieldId');
 
-    await deleteField(params);
+    const field = await findFieldType(params);
+    if (!field) {
+      ctx.status = 400;
+      return (ctx.body = {
+        error: `error fieldId: ${params.fieldId}`,
+      });
+    }
+    await deleteField(field);
     ctx.body = { message: 'success' };
   },
 };

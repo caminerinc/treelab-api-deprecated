@@ -63,74 +63,59 @@ async function createForeignKey(fieldParams, options) {
 }
 
 const DELETE_MAP = {
-  text: deleteTextField,
-  number: deleteNumberField,
+  text: deleteGenericField,
+  number: deleteGenericField,
   foreignKey: deleteForeignField,
-  multipleAttachment: deleteMultipleAttachmentField,
+  multipleAttachment: deleteGenericField,
 };
-async function deleteTextField({ fieldId }) {
+async function deleteGenericField({ fieldId }) {
   return await fields.destroy({
     where: { id: fieldId },
-    cascade: true,
-  });
-}
-async function deleteNumberField({ fieldId, fieldProps }) {
-  const typeOption = await fields.findOne({
-    where: {
-      id: fieldId,
-    },
-    attributes: ['typeOptionId'],
-    include: [
-      {
-        model: typeOptions,
-        as: 'typeOptions',
-        include: [
-          {
-            model: numberTypes,
-            attributes: ['id'],
-            as: fieldProps.typeName,
-          },
-        ],
-      },
-    ],
-    raw: true,
-  });
-  return await numberTypes.destroy({
-    where: { id: typeOption[`typeOptions.${fieldProps.typeName}.id`] },
     cascade: true,
   });
 }
 async function deleteForeignField({ fieldId, fieldProps }) {
-  const typeOption = await fields.findOne({
-    where: {
-      id: fieldId,
-    },
-    attributes: ['typeOptionId'],
-    include: [
+  async function transactionSteps(t) {
+    const transact = { transaction: t };
+    const symmetricFieldId = await fields.findOne(
       {
-        model: typeOptions,
-        as: 'typeOptions',
+        where: {
+          id: fieldId,
+        },
+        attributes: [
+          [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
+        ],
         include: [
           {
             model: foreignKeyTypes,
-            attributes: ['id'],
+            attributes: [],
             as: fieldProps.typeName,
           },
         ],
+        raw: true,
       },
-    ],
-    raw: true,
-  });
-  return await foreignKeyTypes.destroy({
-    where: { id: typeOption[`typeOptions.${fieldProps.typeName}.id`] },
-    cascade: true,
-  });
-}
-async function deleteMultipleAttachmentField({ fieldId }) {
-  return await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-  });
+      transact,
+    );
+    await fields.destroy(
+      {
+        where: { id: fieldId },
+        cascade: true,
+      },
+      transact,
+    );
+    return await fields.update(
+      {
+        fieldTypeId: 1,
+      },
+      {
+        where: {
+          id: symmetricFieldId.id,
+        },
+        transaction: t,
+      },
+    );
+  }
+  return await sequelize.transaction(transactionSteps);
 }
 
 module.exports = {
@@ -141,6 +126,13 @@ module.exports = {
     return await createOption(fieldParams, params.typeOptions);
   },
 
+  async findFieldType({ fieldId: id }) {
+    return await fields.findOne({
+      where: { id },
+      attributes: [['id', 'fieldId'], 'fieldTypeId'],
+      raw: true,
+    });
+  },
   async deleteField({ fieldId, fieldTypeId }) {
     const fieldProps = FIELD_TYPES[fieldTypeId];
     const deleteOption = DELETE_MAP[fieldProps.name];
