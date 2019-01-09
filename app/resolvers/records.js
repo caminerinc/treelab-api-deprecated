@@ -7,7 +7,11 @@ module.exports = {
   async resolveCreateRecord(ctx) {
     const params = ctx.request.body;
     const result = await createRecord(params);
-    await createPosition({ parentId: params.tableId, id: result.id });
+    await createPosition({
+      parentId: params.tableId,
+      id: result.id,
+      type: 'record',
+    });
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'createRecord',

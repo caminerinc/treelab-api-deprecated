@@ -15,6 +15,10 @@ module.exports = {
           allowNull: false,
           type: Sequelize.INTEGER,
         },
+        type: {
+          allowNull: false,
+          type: Sequelize.STRING,
+        },
         createdAt: {
           allowNull: false,
           type: Sequelize.DATE,
@@ -25,7 +29,7 @@ module.exports = {
         },
       })
       .then(() => {
-        return queryInterface.addIndex('positions', ['parentId']);
+        return queryInterface.addIndex('positions', ['parentId', 'type']);
       });
   },
   down: (queryInterface, Sequelize) => {

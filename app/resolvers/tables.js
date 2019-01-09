@@ -114,13 +114,17 @@ module.exports = {
       return (ctx.body = { error: 'base does not exist' });
     }
     const table = await createTable(params);
-    await createPosition({ parentId: params.baseId, id: table.id });
+    await createPosition({
+      parentId: params.baseId,
+      id: table.id,
+      type: 'table',
+    });
     const field = await createField({
       tableId: table.id,
       name: 'Field 1',
       fieldTypeId: 1,
     });
-    await createPosition({ parentId: table.id, id: field.id });
+    await createPosition({ parentId: table.id, id: field.id, type: 'field' });
     ctx.body = table;
     socketIo.sync({
       op: 'createTable',

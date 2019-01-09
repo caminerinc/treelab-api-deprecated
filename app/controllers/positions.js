@@ -2,7 +2,7 @@ const { sequelize } = require('../models');
 const { positions } = require('../models');
 
 module.exports = {
-  async changePosition({ originalPositions, targetPosition, parentId }) {
+  async changePosition({ originalPositions, targetPosition, parentId, type }) {
     targetPosition = parseInt(targetPosition);
     originalPositions = Array.from(originalPositions, i => parseInt(i));
     originalPositions.sort();
@@ -30,22 +30,24 @@ module.exports = {
         movedNum++;
       }
     }
-    sql += ` else position end where "parentId" = ?`;
-    return await sequelize.query(sql, { replacements: [parentId] });
+    sql += ` else position end where "parentId" = ? and "type" = ?`;
+    return await sequelize.query(sql, { replacements: [parentId, type] });
   },
 
-  async createPosition({ parentId, id }) {
-    const prefix = id.slice(0, 3);
-    parentId = prefix + '_' + parentId;
+  async createPosition({ parentId, id, type }) {
     const lastPosition = await positions.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
-      where: { parentId },
+      where: { parentId, type },
     });
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create({
-      id: id,
-      position,
-      parentId,
+    return await positions.create({ id, position, parentId, type });
+  },
+
+  async getPositions(parentId, type) {
+    return await positions.findAll({
+      attributes: ['id', 'position'],
+      where: { parentId, type },
+      order: [['position', 'asc']],
     });
   },
 };

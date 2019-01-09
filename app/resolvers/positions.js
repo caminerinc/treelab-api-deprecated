@@ -9,7 +9,7 @@ const resolveChangePosition = async ctx => {
     'originalPositions',
     'targetPosition',
     'parentId',
-    'prefix',
+    'type',
   );
   if (params.originalPositions.length === 0) {
     ctx.status = 422;
@@ -17,7 +17,6 @@ const resolveChangePosition = async ctx => {
   }
   if (!Array.isArray(params.originalPositions))
     params.originalPositions = [params.originalPositions];
-  params.parentId = params.prefix + '_' + params.parentId;
   await changePosition(params);
   ctx.body = { message: 'success' };
   socketIo.sync({

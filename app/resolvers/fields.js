@@ -21,7 +21,11 @@ module.exports = {
       });
     }
     const result = await createField(params);
-    await createPosition({ parentId: params.tableId, id: result.id });
+    await createPosition({
+      parentId: params.tableId,
+      id: result.id,
+      type: 'field',
+    });
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'createField',
