@@ -65,5 +65,15 @@ describe('records模块', function(done) {
           done();
         });
     });
+    it('get table', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/table/tblNGUPdSs9Va4X5u')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.viewDatas[0].rowOrder.length.should.be.eql(1);
+          done();
+        });
+    });
   });
 });
