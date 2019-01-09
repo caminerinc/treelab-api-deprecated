@@ -39,7 +39,7 @@
     "dev": "nodemon bin/www",
     "configure": "./bin/configure_db.sh",
     "configure:test": "./bin/configure_test_db.sh",
-    "start:test": "node bin/www --env=test",
+    "start:test": "npm run configure:test && node bin/www --env=test",
     "test": "mocha ./app/test"
   }
 }
