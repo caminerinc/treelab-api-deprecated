@@ -3,7 +3,7 @@ const { checkKeyExists } = require('../util/helper');
 const { getTables, createTable, getTable } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
-const { createPosition } = require('../controllers/positions');
+const { createPosition, getPositions } = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -29,9 +29,9 @@ const adaptTables = tables => {
       columns: table.flds.map(field => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
-        if (fieldProps.isTypeOptionsRequired) {
+        if (field.typeOptions) {
           otherProps.typeOptions = pick(
-            get(field, fieldProps.typeName),
+            get(field, `typeOptions[${fieldProps.typeName}]`),
             fieldProps.typeProps,
           );
         }
@@ -53,8 +53,20 @@ const adaptTable = table => {
     },
     viewDatas: [
       {
-        columnOrder: table.fieldPositions,
-        rowOrder: table.recordPositions,
+        columnOrder: table.positions
+          .filter(i => {
+            if (i.type === 'field') return i;
+          })
+          .map(i => {
+            return { id: i.id };
+          }),
+        rowOrder: table.positions
+          .filter(i => {
+            if (i.type === 'record') return i;
+          })
+          .map(i => {
+            return { id: i.id };
+          }),
       },
     ],
   };

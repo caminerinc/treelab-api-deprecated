@@ -28,17 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'tableId',
       as: 'flds',
     });
-    tables.hasMany(models.fields, {
-      foreignKey: 'tableId',
-      as: 'fieldPositions',
-    });
     tables.hasMany(models.records, {
       foreignKey: 'tableId',
       as: 'recs',
     });
-    tables.hasMany(models.records, {
-      foreignKey: 'tableId',
-      as: 'recordPositions',
+    tables.hasMany(models.positions, {
+      foreignKey: 'parentId',
+      as: 'positions',
     });
   };
   return tables;

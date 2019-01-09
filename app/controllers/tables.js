@@ -1,4 +1,5 @@
 const {
+  sequelize,
   fields,
   fieldValues,
   numberTypes,
@@ -7,6 +8,7 @@ const {
   tables,
   multipleAttachmentValues,
   foreignKeyValues,
+  positions,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
@@ -103,15 +105,14 @@ module.exports = {
           ],
         },
         {
-          model: fields,
-          as: 'fieldPositions',
-          attributes: ['id'],
+          model: positions,
+          as: 'positions',
+          attributes: ['id', 'position', 'type'],
         },
-        {
-          model: records,
-          as: 'recordPositions',
-          attributes: ['id'],
-        },
+      ],
+      order: [
+        [sequelize.col('positions.type'), 'asc'],
+        [sequelize.col('positions.position'), 'asc'],
       ],
     });
   },
