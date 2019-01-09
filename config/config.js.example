@@ -6,5 +6,8 @@ module.exports = {
   socketIoPort: 9001,
   postgres: dbConfig,
   tokenExpiresIn: '10h',
-  offlineDelayTime: 2000,
+  offlineDelayTime: 2000,  
+  url: {
+    attachmentExtraction: 'http://52.80.52.148:5000',
+  },
 };
