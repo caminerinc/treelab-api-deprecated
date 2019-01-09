@@ -26,7 +26,7 @@ describe('users模块', function(done) {
           firstName: 'test',
           lastName: 'test',
           password: 'test',
-          email: Date.now() + '@test.com',
+          email: 'test@test.com',
         })
         .end((err, res) => {
           res.should.have.status(200);
@@ -63,6 +63,25 @@ describe('users模块', function(done) {
           res.should.have.status(422);
           res.body.should.be.a('object');
           res.body.should.have.property('error');
+          done();
+        });
+    });
+    it('email exists', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/public/user')
+        .send({
+          firstName: 'test',
+          lastName: 'test',
+          password: 'test',
+          email: 'jon@caminer.io',
+        })
+        .end((err, res) => {
+          res.should.have.status(400);
+          res.body.should.be.a('object');
+          res.body.should.have
+            .property('error')
+            .eql('The email already exists');
           done();
         });
     });
