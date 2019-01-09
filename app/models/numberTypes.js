@@ -5,6 +5,10 @@ module.exports = (sequelize, DataTypes) => {
       format: DataTypes.STRING,
       precision: DataTypes.INTEGER,
       negative: DataTypes.BOOLEAN,
+      fieldId: {
+        allowNull: false,
+        type: DataTypes.STRING,
+      },
     },
     {},
   );

@@ -5,8 +5,8 @@ const {
   foreignKeyTypes,
   records,
   tables,
-  typeOptions,
   multipleAttachmentValues,
+  foreignKeyValues,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
@@ -18,22 +18,16 @@ module.exports = {
       include: [
         {
           model: fields,
-          as: 'fields',
-          attributes: ['id', 'name', 'fieldTypeId', 'typeOptionId'],
+          as: 'flds',
+          attributes: ['id', 'name', 'fieldTypeId'],
           include: [
             {
-              model: typeOptions,
-              as: 'typeOptions',
-              include: [
-                {
-                  model: numberTypes,
-                  as: FIELD_TYPES[2].typeName,
-                },
-                {
-                  model: foreignKeyTypes,
-                  as: FIELD_TYPES[3].typeName,
-                },
-              ],
+              model: numberTypes,
+              as: FIELD_TYPES[2].typeName,
+            },
+            {
+              model: foreignKeyTypes,
+              as: FIELD_TYPES[3].typeName,
             },
           ],
         },
@@ -49,28 +43,80 @@ module.exports = {
         {
           attributes: ['id', 'createdAt'],
           model: records,
-          as: 'records',
+          as: 'recs',
           include: [
             {
               model: fieldValues,
               attributes: ['fieldId', 'textValue', 'numberValue'],
-              as: 'fieldValues',
+              as: 'fldVs',
               include: [
                 {
                   model: fields,
                   attributes: ['fieldTypeId'],
-                  as: 'field',
+                  as: 'fld',
                 },
                 {
                   model: multipleAttachmentValues,
                   attributes: { exclude: ['createdAt', 'updatedAt'] },
-                  as: 'multipleAttachmentValues',
+                  as: 'multiAttV',
+                },
+                {
+                  model: foreignKeyValues,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
+                  as: 'fgnKV',
+                  include: [
+                    {
+                      model: fieldValues,
+                      as: 'symFldV',
+                      attributes: ['id', 'fieldId'],
+                      include: [
+                        {
+                          model: records,
+                          as: 'rec',
+                          attributes: ['id'],
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  model: foreignKeyValues,
+                  attributes: { exclude: ['createdAt', 'updatedAt'] },
+                  as: 'symKV',
+                  include: [
+                    {
+                      model: fieldValues,
+                      as: 'fldV',
+                      attributes: ['id'],
+                      include: [
+                        {
+                          model: records,
+                          as: 'rec',
+                          attributes: ['id'],
+                        },
+                      ],
+                    },
+                  ],
                 },
               ],
             },
           ],
         },
+        {
+          model: fields,
+          as: 'fieldPositions',
+          attributes: ['id'],
+        },
+        {
+          model: records,
+          as: 'recordPositions',
+          attributes: ['id'],
+        },
       ],
     });
+  },
+
+  createTable(params) {
+    return tables.create(params);
   },
 };

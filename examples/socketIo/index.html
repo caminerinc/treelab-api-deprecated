@@ -8,7 +8,7 @@
     <script>
       var socket = io.connect("http://127.0.0.1:9001", {
          transports: ["websocket"],
-         query: 'token=' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c3IxY2U0N2ExYTkwMDQwM2YiLCJpYXQiOjE1NDY0OTgyMzAsImV4cCI6MTU0Njc1NzQzMH0.VxoYfZ53eyJx_LA_g8VvwvhWuDeGWId5HznnxwgbJxI'
+         query: 'token=' + 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJ1c3IxY2U0N2ExYTkwMDQwM2YiLCJpYXQiOjE1NDY4Mjg0NDksImV4cCI6MTU0OTQyMDQ0OX0.0XC8mA1fGXb_sUWDucaltO-SbKInWmLzW-QU8etY66Y'
       });
       socket.on('sync', (message)=>{
         $(`<div>${JSON.stringify(message)}</div>`).appendTo('body');

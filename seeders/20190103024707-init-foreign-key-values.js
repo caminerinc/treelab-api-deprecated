@@ -1,13 +1,13 @@
+'use strict';
+
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert(
-      'numberTypes',
+      'foreignKeyValues',
       [
         {
-          format: 'decimal',
-          precision: 1,
-          negative: false,
-          fieldId: 'fld6tojhqApRQfJpd',
+          fieldValueId: 8,
+          symmetricFieldValueId: 9,
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
@@ -17,6 +17,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('numberTypes', null, {});
+    return queryInterface.bulkDelete('foreignKeyValues', null, {});
   },
 };
