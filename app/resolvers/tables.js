@@ -3,7 +3,7 @@ const { checkKeyExists } = require('../util/helper');
 const { getTables, createTable, getTable } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
-const { createPosition, getPositions } = require('../controllers/positions');
+const { createPosition } = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -58,14 +58,14 @@ const adaptTable = table => {
             if (i.type === 'field') return i;
           })
           .map(i => {
-            return { id: i.id };
+            return { id: i.id, position: i.position };
           }),
         rowOrder: table.positions
           .filter(i => {
             if (i.type === 'record') return i;
           })
           .map(i => {
-            return { id: i.id };
+            return { id: i.id, position: i.position };
           }),
       },
     ],

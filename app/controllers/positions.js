@@ -50,4 +50,44 @@ module.exports = {
       order: [['position', 'asc']],
     });
   },
+
+  async getPositionsByIds(ids) {
+    return await positions.findAll({
+      where: { id: { $in: ids } },
+    });
+  },
+
+  async deletePositions({ deletePositions, parentId, type }) {
+    console.log(deletePositions);
+    deletePositions = Array.from(deletePositions, i => parseInt(i));
+    deletePositions.sort();
+    const len = deletePositions.length;
+    let movedNum = 0;
+    let sql = `update positions set position = case`;
+    for (let i = deletePositions[0]; i < deletePositions[len - 1]; i++) {
+      if (deletePositions.indexOf(i) === -1) {
+        sql += ` when position = ${i} then ${i - movedNum}`;
+      } else {
+        movedNum++;
+      }
+    }
+    sql += ` when position > ${
+      deletePositions[len - 1]
+    } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
+    async function transactionSteps(t) {
+      const transact = { transaction: t };
+      await positions.destroy(
+        {
+          where: {
+            position: { $in: deletePositions },
+            parentId,
+            type,
+          },
+        },
+        transact,
+      );
+      await sequelize.query(sql, { replacements: [parentId, type] }, transact);
+    }
+    return await sequelize.transaction(transactionSteps);
+  },
 };
