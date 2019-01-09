@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
   fields.associate = function(models) {
     fields.hasMany(models.fieldValues, {
       foreignKey: 'fieldId',
-      as: 'fieldValues',
+      as: 'fldVs',
     });
     fields.hasOne(models[FIELD_TYPES[2].typeModel], {
       foreignKey: 'fieldId',

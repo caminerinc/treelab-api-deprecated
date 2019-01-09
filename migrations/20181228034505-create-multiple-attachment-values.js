@@ -29,14 +29,12 @@ module.exports = {
         },
       })
       .then(() => {
-        //Foreign Key
         return queryInterface.addConstraint(
           'multipleAttachmentValues',
           ['fieldValueId'],
           {
             type: 'FOREIGN KEY',
             references: {
-              //Required field
               table: 'fieldValues',
               field: 'id',
             },
