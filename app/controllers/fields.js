@@ -1,12 +1,12 @@
 const { pick } = require('lodash');
-const { sequelize } = require('../models');
 const {
   fields,
   numberTypes,
-  typeOptions,
   foreignKeyTypes,
+  sequelize,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { checkKeyExists } = require('../util/helper');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -19,17 +19,17 @@ async function createGenericField(fieldParams) {
   return fields.create(fieldParams);
 }
 
-async function createNumberOptions(fieldParams, options, fieldProps) {
-  const newNumberType = await numberTypes.create(options);
-  const typeOptionProps = { [fieldProps.typeFK]: newNumberType.id };
-
-  const option = await typeOptions.create(typeOptionProps);
-  fieldParams.typeOptionId = option.id;
-
-  return fields.create(fieldParams);
+async function createNumberOptions(fieldParams, options) {
+  checkKeyExists(options, 'format', 'precision', 'negative');
+  const field = await fields.create(fieldParams);
+  return await numberTypes.create({
+    ...options,
+    fieldId: field.id,
+  });
 }
 
-async function createForeignKey(fieldParams, options, fieldProps) {
+async function createForeignKey(fieldParams, options) {
+  checkKeyExists(options, 'relationship', 'foreignTableId');
   async function transactionSteps(t) {
     const transact = { transaction: t };
     const newField = await fields.create(fieldParams, transact);
@@ -41,41 +41,24 @@ async function createForeignKey(fieldParams, options, fieldProps) {
       },
       transact,
     );
-
-    const newForeignKeyType = await foreignKeyTypes.create(
+    await foreignKeyTypes.create(
       {
         ...options,
         symmetricFieldId: newSymmetricField.id,
+        fieldId: newField.id,
       },
       transact,
     );
-    const newSymmetricForeignKeyType = await foreignKeyTypes.create(
+    return await foreignKeyTypes.create(
       {
         relationship: options.relationship,
         foreignTableId: fieldParams.tableId,
         symmetricFieldId: newField.id,
+        fieldId: newSymmetricField.id,
       },
-      transact,
-    );
-
-    const newTypeOption = await typeOptions.create(
-      { [fieldProps.typeFK]: newForeignKeyType.id },
-      transact,
-    );
-    const newSymmetricTypeOption = await typeOptions.create(
-      {
-        [fieldProps.typeFK]: newSymmetricForeignKeyType.id,
-      },
-      transact,
-    );
-
-    await newField.update({ typeOptionId: newTypeOption.id }, transact);
-    await newSymmetricField.update(
-      { typeOptionId: newSymmetricTypeOption.id },
       transact,
     );
   }
-
   return await sequelize.transaction(transactionSteps);
 }
 
@@ -155,9 +138,9 @@ module.exports = {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
     const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);
-
-    return await createOption(fieldParams, params.DB.typeOptions, fieldProps);
+    return await createOption(fieldParams, params.typeOptions);
   },
+
   async deleteField({ fieldId, fieldTypeId }) {
     const fieldProps = FIELD_TYPES[fieldTypeId];
     const deleteOption = DELETE_MAP[fieldProps.name];

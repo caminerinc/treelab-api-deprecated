@@ -1,22 +1,52 @@
-const { fieldValues, multipleAttachmentValues } = require('../models');
+const {
+  fieldValues,
+  multipleAttachmentValues,
+  foreignKeyValues,
+  sequelize,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { checkKeyExists } = require('../util/helper');
 
-const TYPE_MAP = {
+const CREATE_MAP = {
   multipleAttachment: createMultipleAttachment,
+  foreignKey: createForeignKeyValue,
 };
-async function createMultipleAttachment({ fieldValueId, value }) {
-  return multipleAttachmentValues.create({
-    fieldValueId,
-    ...value,
-  });
-}
 
 const UPSERT_MAP = {
   text: upsertGenericFieldValue,
   number: upsertGenericFieldValue,
 };
+
+async function createMultipleAttachment({ fieldValueId, value }) {
+  checkKeyExists(value, 'url', 'fileName', 'fileType');
+  return await multipleAttachmentValues.create({
+    fieldValueId,
+    ...value,
+  });
+}
+function createForeignKeyValue({ fieldValueId, value }) {
+  checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
+  async function transactionSteps(t) {
+    const transact = { transaction: t };
+    const { foreignRowId: recordId, foreignColumnId: fieldId } = value;
+    const symmetricFieldValue = await fieldValues
+      .findCreateFind({ where: { recordId, fieldId } }, transact)
+      .spread(fieldValue => fieldValue);
+    await foreignKeyValues.create(
+      {
+        fieldValueId,
+        symmetricFieldValueId: symmetricFieldValue.id,
+        name: value.name,
+      },
+      transact,
+    );
+  }
+
+  return sequelize.transaction(transactionSteps);
+}
+
 async function upsertGenericFieldValue(params, fieldProps) {
-  await fieldValues.upsert(
+  return await fieldValues.upsert(
     {
       recordId: params.recordId,
       fieldId: params.fieldId,
@@ -27,29 +57,41 @@ async function upsertGenericFieldValue(params, fieldProps) {
     },
   );
 }
+
 module.exports = {
   createFieldValue(params) {
     return fieldValues.create(params);
   },
-  async upsertFieldValue(params) {
-    const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    const option = UPSERT_MAP[fieldProps.name];
 
-    return await option(params, fieldProps);
+  upsertFieldValue(params) {
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const upsertValue = UPSERT_MAP[fieldProps.name];
+    return upsertValue(params, fieldProps);
   },
+
   getFieldValue(recordId, fieldId) {
     return fieldValues.findOne({
       attributes: ['id', 'recordId', 'fieldId', 'textValue'],
       where: { recordId, fieldId },
     });
   },
-  async createArrayType(params) {
-    const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    const createOption = TYPE_MAP[fieldProps.name];
 
-    return await createOption(params);
+  createArrayType(params) {
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const createValue = CREATE_MAP[fieldProps.name];
+    return createValue(params);
   },
-  async deleteFieldValue({ recordId, fieldId }) {
+
+  findOrCreateFieldValue(recordId, fieldId) {
+    return fieldValues
+      .findOrCreate({
+        where: { recordId, fieldId },
+        defaults: { recordId, fieldId },
+      })
+      .spread(fieldValue => fieldValue);
+  },
+
+  deleteFieldValue({ recordId, fieldId }) {
     return fieldValues.destroy({
       where: { recordId, fieldId },
     });

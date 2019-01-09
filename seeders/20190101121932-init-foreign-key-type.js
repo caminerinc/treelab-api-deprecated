@@ -10,6 +10,7 @@ module.exports = {
             relationship: 'many',
             foreignTableId: 'tblsnmRLfttLmAYQ8',
             symmetricFieldId: 'fld6tojhqApRQfJ2d',
+            fieldId: 'fld6tojhqApRQfJpi',
             createdAt: '2018-05-05T04:09:06.024Z',
             updatedAt: '2018-05-05T04:09:06.024Z',
           },
@@ -17,6 +18,7 @@ module.exports = {
             relationship: 'many',
             foreignTableId: 'tblNGUPdSs9Va4X5u',
             symmetricFieldId: 'fld6tojhqApRQfJpi',
+            fieldId: 'fld6tojhqApRQfJ2d',
             createdAt: '2018-05-05T04:09:06.024Z',
             updatedAt: '2018-05-05T04:09:06.024Z',
           },
@@ -36,7 +38,8 @@ module.exports = {
             onDelete: 'cascade',
           },
         );
-        await queryInterface.addConstraint('fieldValues', ['fieldId'], {
+        // await queryInterface.addConstraint('fieldValues', ['fieldId'], {
+        await queryInterface.addConstraint('foreignKeyTypes', ['fieldId'], {
           type: 'FOREIGN KEY',
           references: {
             table: 'fields',
@@ -44,30 +47,18 @@ module.exports = {
           },
           onDelete: 'cascade',
         });
-        await queryInterface.addConstraint('typeOptions', ['numberTypeId'], {
+        await queryInterface.addConstraint('numberTypes', ['fieldId'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'numberTypes',
+            table: 'fields',
             field: 'id',
           },
           onDelete: 'cascade',
         });
-        await queryInterface.addConstraint(
-          'typeOptions',
-          ['foreignKeyTypeId'],
-          {
-            type: 'FOREIGN KEY',
-            references: {
-              table: 'foreignKeyTypes',
-              field: 'id',
-            },
-            onDelete: 'cascade',
-          },
-        );
-        await queryInterface.addConstraint('fields', ['typeOptionId'], {
+        return queryInterface.addConstraint('fieldValues', ['recordId'], {
           type: 'FOREIGN KEY',
           references: {
-            table: 'typeOptions',
+            table: 'records',
             field: 'id',
           },
           onDelete: 'cascade',

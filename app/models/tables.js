@@ -27,11 +27,19 @@ module.exports = (sequelize, DataTypes) => {
   tables.associate = function(models) {
     tables.hasMany(models.fields, {
       foreignKey: 'tableId',
-      as: 'fields',
+      as: 'flds',
+    });
+    tables.hasMany(models.fields, {
+      foreignKey: 'tableId',
+      as: 'fieldPositions',
     });
     tables.hasMany(models.records, {
       foreignKey: 'tableId',
-      as: 'records',
+      as: 'recs',
+    });
+    tables.hasMany(models.records, {
+      foreignKey: 'tableId',
+      as: 'recordPositions',
     });
   };
   return tables;

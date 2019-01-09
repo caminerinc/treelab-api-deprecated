@@ -6,6 +6,7 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
+        autoIncrement: true,
         type: DataTypes.INTEGER,
       },
       recordId: {
@@ -26,11 +27,23 @@ module.exports = (sequelize, DataTypes) => {
   fieldValues.associate = function(models) {
     fieldValues.belongsTo(models.fields, {
       foreignKey: 'fieldId',
-      as: 'field',
+      as: 'fld',
+    });
+    fieldValues.belongsTo(models.records, {
+      foreignKey: 'recordId',
+      as: 'rec',
     });
     fieldValues.hasMany(models.multipleAttachmentValues, {
       foreignKey: 'fieldValueId',
-      as: 'multipleAttachmentValues',
+      as: 'multiAttV',
+    });
+    fieldValues.hasMany(models.foreignKeyValues, {
+      foreignKey: 'symmetricFieldValueId',
+      as: 'symKV',
+    });
+    fieldValues.hasMany(models.foreignKeyValues, {
+      foreignKey: 'fieldValueId',
+      as: 'fgnKV',
     });
   };
   return fieldValues;

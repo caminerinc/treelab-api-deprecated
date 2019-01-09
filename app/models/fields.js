@@ -1,5 +1,6 @@
 const { createUid } = require('../util/helper');
 const { PREFIX_TYPE } = require('../constants/app');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = (sequelize, DataTypes) => {
   const fields = sequelize.define(
@@ -23,20 +24,21 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
-      typeOptionId: DataTypes.INTEGER,
     },
     {},
   );
   fields.associate = function(models) {
     fields.hasMany(models.fieldValues, {
       foreignKey: 'fieldId',
-      as: 'fieldValues',
+      as: 'fldVs',
     });
-    fields.belongsTo(models.typeOptions, {
-      foreignKey: 'typeOptionId',
-      as: 'typeOptions',
-      onDelete: 'CASCADE',
-      hooks: true,
+    fields.hasOne(models[FIELD_TYPES[2].typeModel], {
+      foreignKey: 'fieldId',
+      as: FIELD_TYPES[2].typeName,
+    });
+    fields.hasOne(models[FIELD_TYPES[3].typeModel], {
+      foreignKey: 'fieldId',
+      as: FIELD_TYPES[3].typeName,
     });
   };
   return fields;
