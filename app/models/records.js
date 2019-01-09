@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
   records.associate = function(models) {
     records.hasMany(models.fieldValues, {
       foreignKey: 'recordId',
-      as: 'fieldValues',
+      as: 'fldVs',
     });
   };
   return records;

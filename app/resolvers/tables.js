@@ -7,11 +7,26 @@ const { createPosition } = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
+const adaptForeignKey = (fieldValue, fieldProps) => {
+  const foreignRecords = fieldValue[fieldProps.valueName].map(
+    fieldValues => fieldValues.symFldV.rec.id,
+  );
+  const symmetricRecords = fieldValue[fieldProps.symmetricName].map(
+    fieldValues => fieldValues.fldV.rec.id,
+  );
+
+  return foreignRecords.concat(symmetricRecords);
+};
+
+const ADAPT_MAP = {
+  foreignKey: adaptForeignKey,
+};
+
 const adaptTables = tables => {
   return {
     tableSchemas: tables.map(table => ({
       ...pick(table, ['id', 'name']),
-      columns: table.fields.map(field => {
+      columns: table.flds.map(field => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
         if (field.typeOptions) {
@@ -34,7 +49,7 @@ const adaptTable = table => {
   return {
     tableDatas: {
       ...pick(table, ['id']),
-      rowsById: getRowsById(table.records),
+      rowsById: getRowsById(table.recs),
     },
     viewDatas: [
       {
@@ -49,18 +64,25 @@ const getRowsById = records =>
   records.reduce((rowAccum, record) => {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: getCellValuesByColumnId(record.fieldValues),
+      cellValuesByColumnId: getCellValuesByColumnId(record.fldVs),
     };
     return rowAccum;
   }, {});
 
 const getCellValuesByColumnId = fieldValues =>
   fieldValues.reduce((cellAccum, fieldValue) => {
-    const fieldTypeId = get(fieldValue, 'field.fieldTypeId');
+    const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
     if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
-    cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
+
+    const adaptData = ADAPT_MAP[fieldProps.name];
+    if (adaptData) {
+      cellAccum[fieldValue.fieldId] = adaptData(fieldValue, fieldProps);
+    } else {
+      cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
+    }
+
     return cellAccum;
   }, {});
 

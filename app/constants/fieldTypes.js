@@ -19,11 +19,12 @@ const FIELD_TYPES = {
     typeName: 'foreignKeyTypes',
     typeProps: ['relationship', 'foreignTableId', 'symmetricFieldId'],
     typeFK: 'foreignKeyTypeId',
-    valueName: 'foreignKeyValue',
+    valueName: 'fgnKV',
+    symmetricName: 'symKV',
   },
   4: {
     name: 'multipleAttachment',
-    valueName: 'multipleAttachmentValues',
+    valueName: 'multiAttV',
   },
 };
 
