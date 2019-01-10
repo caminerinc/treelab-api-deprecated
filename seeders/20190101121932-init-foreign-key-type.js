@@ -21,6 +21,22 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          relationship: 'one',
+          foreignTableId: 'tblNGUPdSs9Va4X5u',
+          symmetricFieldId: 'fld1e1cf1f8f80404b',
+          fieldId: 'fld1e1cf1f8dc0403b',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
+          relationship: 'one',
+          foreignTableId: 'tblsnmRLfttLmAYQ8',
+          symmetricFieldId: 'fld1e1cf1f8dc0403b',
+          fieldId: 'fld1e1cf1f8f80404b',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );

@@ -24,7 +24,7 @@ async function createMultipleAttachment({ fieldValueId, value }) {
     ...value,
   });
 }
-function createForeignKeyValue({ fieldValueId, value }) {
+async function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
   async function transactionSteps(t) {
     const transact = { transaction: t };
@@ -32,7 +32,7 @@ function createForeignKeyValue({ fieldValueId, value }) {
     const symmetricFieldValue = await fieldValues
       .findCreateFind({ where: { recordId, fieldId } }, transact)
       .spread(fieldValue => fieldValue);
-    await foreignKeyValues.create(
+    return await foreignKeyValues.create(
       {
         fieldValueId,
         symmetricFieldValueId: symmetricFieldValue.id,
@@ -42,7 +42,7 @@ function createForeignKeyValue({ fieldValueId, value }) {
     );
   }
 
-  return sequelize.transaction(transactionSteps);
+  return await sequelize.transaction(transactionSteps);
 }
 
 async function upsertGenericFieldValue(params, fieldProps) {
@@ -76,10 +76,10 @@ module.exports = {
     });
   },
 
-  createArrayType(params) {
+  async createArrayValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createValue = CREATE_MAP[fieldProps.name];
-    return createValue(params);
+    return await createValue(params);
   },
 
   findOrCreateFieldValue(recordId, fieldId) {
