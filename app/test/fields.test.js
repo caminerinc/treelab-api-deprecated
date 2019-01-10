@@ -286,21 +286,17 @@ describe('fields模块', function(done) {
             let multipleAttachment = findIndex(columns, function(o) {
               return o.id == 'fldIwYLcbYWSUa4aK';
             });
-            expect(txt, 'error txt').to.eql(-1);
-            expect(number, 'error number').to.eql(-1);
-            expect(foreignKey, 'error foreignKey').to.eql(-1);
-            expect(multipleAttachment, 'error multipleAttachment').to.eql(-1);
-
             let symmetricField = findIndex(
               res.body.tableSchemas[1].columns,
               function(o) {
                 return o.id == 'fld6tojhqApRQfJ2d';
               },
             );
-            expect(
-              res.body.tableSchemas[1].columns[symmetricField],
-              'error symmetricField',
-            ).to.have.property('type', 'text');
+            expect(txt, 'error txt').to.eql(-1);
+            expect(number, 'error number').to.eql(-1);
+            expect(foreignKey, 'error foreignKey').to.eql(-1);
+            expect(multipleAttachment, 'error multipleAttachment').to.eql(-1);
+            expect(symmetricField, 'error symmetricField').to.eql(-1);
             done();
           });
       });

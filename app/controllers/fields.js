@@ -114,16 +114,12 @@ async function deleteForeignField({ fieldId, fieldProps }) {
       },
       transact,
     );
-    return await fields.update(
+    return await fields.destroy(
       {
-        fieldTypeId: 1,
+        where: { id: symmetricFieldId.id },
+        cascade: true,
       },
-      {
-        where: {
-          id: symmetricFieldId.id,
-        },
-        transaction: t,
-      },
+      transact,
     );
   }
   return await sequelize.transaction(transactionSteps);
