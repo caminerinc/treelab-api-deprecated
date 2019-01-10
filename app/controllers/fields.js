@@ -16,16 +16,23 @@ const TYPE_OPTION_MAP = {
 };
 
 async function createGenericField(fieldParams) {
-  return fields.create(fieldParams);
+  const field = await fields.create(fieldParams);
+
+  return {
+    fieldId: field.id,
+  };
 }
 
 async function createNumberOptions(fieldParams, options) {
   checkKeyExists(options, 'format', 'precision', 'negative');
   const field = await fields.create(fieldParams);
-  return await numberTypes.create({
+  await numberTypes.create({
     ...options,
     fieldId: field.id,
   });
+  return {
+    fieldId: field.id,
+  };
 }
 
 async function createForeignKey(fieldParams, options) {
@@ -49,7 +56,7 @@ async function createForeignKey(fieldParams, options) {
       },
       transact,
     );
-    return await foreignKeyTypes.create(
+    await foreignKeyTypes.create(
       {
         relationship: options.relationship,
         foreignTableId: fieldParams.tableId,
@@ -58,6 +65,10 @@ async function createForeignKey(fieldParams, options) {
       },
       transact,
     );
+    return {
+      foreignFieldId: newField.id,
+      symmetricFieldId: newSymmetricField.id,
+    };
   }
   return await sequelize.transaction(transactionSteps);
 }

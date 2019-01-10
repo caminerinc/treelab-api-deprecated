@@ -24,7 +24,7 @@ module.exports = {
       });
     }
     const result = await createField(params);
-    ctx.body = { message: 'success' };
+    ctx.body = result;
     socketIo.sync({
       op: 'createField',
       body: result,
