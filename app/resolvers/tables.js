@@ -103,7 +103,6 @@ module.exports = {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
     const tables = await getTables(params.baseId);
-    console.log(JSON.stringify(tables));
     ctx.body = adaptTables(tables);
   },
 
