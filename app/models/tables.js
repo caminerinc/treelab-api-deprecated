@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     {
       id: {
         allowNull: false,
-        defaultValue: () => createUid(PREFIX_TYPE.BASE),
+        defaultValue: () => createUid(PREFIX_TYPE.TABLE),
         primaryKey: true,
         type: DataTypes.STRING,
       },
@@ -16,7 +16,6 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
-      primaryFieldId: DataTypes.STRING,
       baseId: {
         allowNull: false,
         type: DataTypes.INTEGER,
@@ -29,17 +28,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'tableId',
       as: 'flds',
     });
-    tables.hasMany(models.fields, {
-      foreignKey: 'tableId',
-      as: 'fieldPositions',
-    });
     tables.hasMany(models.records, {
       foreignKey: 'tableId',
       as: 'recs',
     });
-    tables.hasMany(models.records, {
-      foreignKey: 'tableId',
-      as: 'recordPositions',
+    tables.hasMany(models.positions, {
+      foreignKey: 'parentId',
+      as: 'positions',
     });
   };
   return tables;
