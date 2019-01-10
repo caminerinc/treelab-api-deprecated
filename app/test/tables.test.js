@@ -36,8 +36,6 @@ describe('tables模块', function(done) {
           res.should.have.status(200);
           res.body.should.be.a('object');
           res.body.should.have.property('tableSchemas');
-          res.body.tableSchemas[0].columns.length.should.be.eql(9);
-          res.body.tableSchemas[1].columns.length.should.be.eql(2);
           expect(res.body).to.not.equal();
           done();
         });
@@ -72,7 +70,6 @@ describe('tables模块', function(done) {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.viewDatas[0].rowOrder.length.should.be.eql(1);
           done();
         });
     });
