@@ -4,7 +4,9 @@ const {
   findOrCreateFieldValue,
   upsertFieldValue,
   deleteFieldValue,
+  deleteArrayValue,
 } = require('../controllers/fieldValues');
+const { findFieldType } = require('../controllers/fields');
 const socketIo = require('../../lib/core/socketIo');
 
 module.exports = {
@@ -49,5 +51,13 @@ module.exports = {
       op: 'updateArrayTypeByAdding',
       body: result,
     });
+  },
+  async resolveDeleteArrayValue(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId', 'itemId');
+
+    const field = await findFieldType(params);
+    params.fieldTypeId = field.fieldTypeId;
+    const fieldValue = deleteArrayValue(params);
   },
 };

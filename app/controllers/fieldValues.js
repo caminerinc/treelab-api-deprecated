@@ -17,6 +17,11 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 
+const DELETE_ARRAY_MAP = {
+  multipleAttachment: deleteMultipleAttachment,
+  foreignKey: deleteForeignKeyValue,
+};
+
 async function createMultipleAttachment({ fieldValueId, value }) {
   checkKeyExists(value, 'url', 'fileName', 'fileType');
   return await multipleAttachmentValues.create({
@@ -57,6 +62,48 @@ async function upsertGenericFieldValue(params, fieldProps) {
     },
   );
 }
+async function deleteMultipleAttachment({ itemId: id }) {
+  return multipleAttachmentValues.destroy({
+    where: { id },
+  });
+}
+async function deleteForeignKeyValue(
+  { recordId, fieldId, itemId },
+  fieldProps,
+) {
+  const {
+    [fieldProps.valueName]: [{ fieldValueId, symmetricFieldValueId }],
+  } = await fieldValues.findOne({
+    where: {
+      recordId,
+      fieldId,
+    },
+    attributes: [],
+    include: [
+      {
+        model: foreignKeyValues,
+        attributes: ['fieldValueId', 'symmetricFieldValueId'],
+        as: fieldProps.valueName,
+        include: [
+          {
+            where: {
+              recordId: itemId,
+            },
+            model: fieldValues,
+            attributes: [],
+            as: 'symFldV',
+          },
+        ],
+      },
+    ],
+  });
+  return foreignKeyValues.destroy({
+    where: {
+      fieldValueId,
+      symmetricFieldValueId,
+    },
+  });
+}
 
 module.exports = {
   createFieldValue(params) {
@@ -67,13 +114,6 @@ module.exports = {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const upsertValue = UPSERT_MAP[fieldProps.name];
     return upsertValue(params, fieldProps);
-  },
-
-  getFieldValue(recordId, fieldId) {
-    return fieldValues.findOne({
-      attributes: ['id', 'recordId', 'fieldId', 'textValue'],
-      where: { recordId, fieldId },
-    });
   },
 
   createArrayType(params) {
@@ -95,5 +135,11 @@ module.exports = {
     return fieldValues.destroy({
       where: { recordId, fieldId },
     });
+  },
+
+  deleteArrayValue(params) {
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const createValue = DELETE_ARRAY_MAP[fieldProps.name];
+    return createValue(params, fieldProps);
   },
 };
