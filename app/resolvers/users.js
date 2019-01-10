@@ -22,6 +22,11 @@ module.exports = {
       ctx.status = 400;
       return (ctx.body = { error: 'Incorrect email format' });
     }
+    const user = await getUser(ctx.request.body);
+    if (user) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'The email already exists' });
+    }
     await createUser(ctx.request.body);
     ctx.body = { message: 'success' };
   },

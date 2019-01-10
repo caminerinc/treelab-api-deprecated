@@ -7,6 +7,7 @@ const {
   tables,
   multipleAttachmentValues,
   foreignKeyValues,
+  sequelize,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 

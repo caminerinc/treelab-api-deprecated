@@ -1,21 +1,29 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('multipleAttachmentValues', {
+    return queryInterface.createTable('pouches', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING,
       },
-      fieldValueId: {
-        type: Sequelize.INTEGER,
-      },
-      url: {
+      name: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      fileName: {
+      moduleId: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      fileType: {
+      baseId: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      triggerTableId: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      triggerFieldId: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -28,7 +36,8 @@ module.exports = {
       },
     });
   },
+
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('multipleAttachmentValues');
+    return queryInterface.dropTable('pouches');
   },
 };

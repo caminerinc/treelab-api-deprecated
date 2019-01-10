@@ -6,7 +6,9 @@ module.exports = {
   async resolveCreateRecord(ctx) {
     const params = ctx.request.body;
     const result = await createRecord(params);
-    ctx.body = { message: 'success' };
+    ctx.body = {
+      recordId: result.id,
+    };
     socketIo.sync({
       op: 'createRecord',
       body: result,
