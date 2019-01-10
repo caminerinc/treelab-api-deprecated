@@ -1,8 +1,9 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getTables, createTable } = require('../controllers/tables');
+const { getTables, createTable, getTable } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
+const { createPosition } = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -52,8 +53,20 @@ const adaptTable = table => {
     },
     viewDatas: [
       {
-        columnOrder: table.fieldPositions,
-        rowOrder: table.recordPositions,
+        columnOrder: table.positions
+          .filter(i => {
+            if (i.type === 'field') return i;
+          })
+          .map(i => {
+            return { id: i.id, position: i.position };
+          }),
+        rowOrder: table.positions
+          .filter(i => {
+            if (i.type === 'record') return i;
+          })
+          .map(i => {
+            return { id: i.id, position: i.position };
+          }),
       },
     ],
   };
@@ -94,7 +107,14 @@ module.exports = {
   },
 
   async resolveGetTable(ctx) {
-    ctx.body = adaptTable(ctx.table);
+    const params = ctx.params;
+    checkKeyExists(params, 'tableId');
+    const table = await getTable(params.tableId);
+    if (!table) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'table does not exist' });
+    }
+    ctx.body = adaptTable(table);
   },
 
   async resolveCreateTable(ctx) {
@@ -106,11 +126,17 @@ module.exports = {
       return (ctx.body = { error: 'base does not exist' });
     }
     const table = await createTable(params);
+    await createPosition({
+      parentId: params.baseId,
+      id: table.id,
+      type: 'table',
+    });
     const field = await createField({
       tableId: table.id,
       name: 'Field 1',
       fieldTypeId: 1,
     });
+    await createPosition({ parentId: table.id, id: field.id, type: 'field' });
     ctx.body = table;
     socketIo.sync({
       op: 'createTable',

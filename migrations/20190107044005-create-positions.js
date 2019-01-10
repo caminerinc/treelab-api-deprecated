@@ -1,21 +1,23 @@
-'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface
-      .createTable('foreignKeyValues', {
+      .createTable('positions', {
         id: {
           allowNull: false,
-          autoIncrement: true,
           primaryKey: true,
-          type: Sequelize.INTEGER,
+          type: Sequelize.STRING,
         },
-        fieldValueId: {
+        parentId: {
+          allowNull: false,
+          type: Sequelize.STRING,
+        },
+        position: {
           allowNull: false,
           type: Sequelize.INTEGER,
         },
-        symmetricFieldValueId: {
+        type: {
           allowNull: false,
-          type: Sequelize.INTEGER,
+          type: Sequelize.STRING,
         },
         createdAt: {
           allowNull: false,
@@ -27,16 +29,10 @@ module.exports = {
         },
       })
       .then(() => {
-        return queryInterface.addConstraint(
-          'foreignKeyValues',
-          ['fieldValueId', 'symmetricFieldValueId'],
-          {
-            type: 'unique',
-          },
-        );
+        return queryInterface.addIndex('positions', ['parentId', 'type']);
       });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('foreignKeyValues');
+    return queryInterface.dropTable('positions');
   },
 };

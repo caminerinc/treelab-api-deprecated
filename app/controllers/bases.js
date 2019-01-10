@@ -8,7 +8,7 @@ module.exports = {
         {
           model: tables,
           as: 'tables',
-          attributes: [['id', 'primaryTableId']],
+          attributes: [['id']],
         },
       ],
     });

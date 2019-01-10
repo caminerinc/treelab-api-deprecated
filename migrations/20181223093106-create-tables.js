@@ -10,9 +10,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      primaryFieldId: {
-        type: Sequelize.STRING,
-      },
       baseId: {
         allowNull: false,
         type: Sequelize.STRING,
