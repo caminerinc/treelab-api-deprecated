@@ -1,21 +1,13 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('multipleAttachmentValues', {
+    return queryInterface.createTable('modules', {
       id: {
         allowNull: false,
         primaryKey: true,
         type: Sequelize.STRING,
       },
-      fieldValueId: {
-        type: Sequelize.INTEGER,
-      },
-      url: {
-        type: Sequelize.STRING,
-      },
-      fileName: {
-        type: Sequelize.STRING,
-      },
-      fileType: {
+      name: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
       createdAt: {
@@ -28,7 +20,8 @@ module.exports = {
       },
     });
   },
+
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('multipleAttachmentValues');
+    return queryInterface.dropTable('modules');
   },
 };

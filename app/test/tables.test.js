@@ -28,17 +28,22 @@ describe('tables模块', function(done) {
           });
       });
     });
-    it('baseId: bse1jT7ZIHLmjH4', function(done) {
-      chai
-        .request('http://localhost:8000')
-        .get('/api/tables/bse1jT7ZIHLmjH4')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('tableSchemas');
-          expect(res.body).to.not.equal();
-          done();
-        });
+
+    describe('OK', function(done) {
+      it('baseId: bse1jT7ZIHLmjH4', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/tables/bse1jT7ZIHLmjH4')
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.be.a('object');
+            res.body.should.have.property('tableSchemas');
+            res.body.tableSchemas[0].should.have.property('id');
+            res.body.tableSchemas[0].should.have.property('name');
+            res.body.tableSchemas[0].should.have.property('columns');
+            done();
+          });
+      });
     });
   });
 
@@ -63,15 +68,16 @@ describe('tables模块', function(done) {
           });
       });
     });
-    it('tableId: tblNGUPdSs9Va4X5u', function(done) {
-      chai
-        .request('http://localhost:8000')
-        .get('/api/table/tblNGUPdSs9Va4X5u')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          done();
-        });
+    describe('OK', function(done) {
+      it('tableId: tblNGUPdSs9Va4X5u', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/table/tblNGUPdSs9Va4X5u')
+          .end((err, res) => {
+            res.should.have.status(200);
+            done();
+          });
+      });
     });
   });
 });

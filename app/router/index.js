@@ -7,7 +7,10 @@ const {
   resolveGetTable,
   resolveCreateTable,
 } = require('../resolvers/tables');
-const { resolveCreateField } = require('../resolvers/fields');
+const {
+  resolveCreateField,
+  resolveDeleteField,
+} = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
   resolveUpdateArrayTypeByAdding,
@@ -24,6 +27,11 @@ const {
   resolveTestAuth,
 } = require('../resolvers/users');
 const { resolveChangePosition } = require('../resolvers/positions');
+const { resolveGetPouches, resolveGetPouch } = require('../resolvers/pouches');
+const {
+  resolveGetModules,
+  resolveExtraction,
+} = require('../resolvers/modules');
 
 const { checkTableExist } = require('../middlewares/tables');
 
@@ -43,6 +51,7 @@ router.post('/api/table', resolveCreateTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
+router.delete('/api/delete-field', resolveDeleteField);
 
 //Record
 router.post('/api/record', checkTableExist, resolveCreateRecord);
@@ -55,6 +64,14 @@ router.delete('/api/clear-field-value', resolveClearFieldValue);
 
 //Position
 router.put('/api/change-position', resolveChangePosition);
+
+//Pouch
+router.get('/api/pouches', resolveGetPouches);
+router.get('/api/pouch/:pouchId', resolveGetPouch);
+
+//Module
+router.get('/api/modules', resolveGetModules);
+router.post('/api/module/extraction', resolveExtraction);
 
 //Users
 router.get('/api/users', resolveGetUsers);

@@ -1,5 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const { createField } = require('../controllers/fields');
+const {
+  createField,
+  deleteField,
+  findFieldType,
+} = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 const { createPosition } = require('../controllers/positions');
@@ -21,15 +25,43 @@ module.exports = {
       });
     }
     const result = await createField(params);
-    await createPosition({
-      parentId: params.tableId,
-      id: result.id,
-      type: 'field',
-    });
+    if (fieldProps.name === 'foreignKey') {
+      await createPosition({
+        parentId: params.tableId,
+        id: result.foreignFieldId,
+        type: 'field',
+      });
+      await createPosition({
+        parentId: params.tableId,
+        id: result.symmetricFieldId,
+        type: 'field',
+      });
+    } else {
+      await createPosition({
+        parentId: params.tableId,
+        id: result.fieldId || result.id,
+        type: 'field',
+      });
+    }
     ctx.body = result;
     socketIo.sync({
       op: 'createField',
       body: result,
     });
+  },
+
+  async resolveDeleteField(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'fieldId');
+
+    const field = await findFieldType(params);
+    if (!field) {
+      ctx.status = 400;
+      return (ctx.body = {
+        error: `error fieldId: ${params.fieldId}`,
+      });
+    }
+    await deleteField(field);
+    ctx.body = { message: 'success' };
   },
 };
