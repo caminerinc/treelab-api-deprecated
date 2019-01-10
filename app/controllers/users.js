@@ -4,7 +4,7 @@ const { sha1 } = require('../util/helper');
 module.exports = {
   getAllUsers() {
     return users.findAll({
-      attributes: ['id', 'firstName', 'lastName', 'email', 'passwordDigest'],
+      attributes: ['id', 'firstName', 'lastName', 'email'],
       raw: true,
     });
   },

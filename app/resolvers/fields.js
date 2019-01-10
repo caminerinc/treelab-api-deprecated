@@ -26,7 +26,7 @@ module.exports = {
       id: result.id,
       type: 'field',
     });
-    ctx.body = { message: 'success' };
+    ctx.body = result;
     socketIo.sync({
       op: 'createField',
       body: result,

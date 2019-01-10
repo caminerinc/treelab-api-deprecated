@@ -16,7 +16,7 @@ module.exports = {
       id: result.id,
       type: 'record',
     });
-    ctx.body = { message: 'success' };
+    ctx.body = { recordId: result.id };
     socketIo.sync({
       op: 'createRecord',
       body: result,
