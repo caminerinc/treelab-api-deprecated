@@ -11,11 +11,7 @@ describe('fieldValues模块', function(done) {
         chai
           .request('http://localhost:8000')
           .put('/api/primitive-field')
-          .send({
-            fieldId,
-            value,
-            fieldTypeId,
-          })
+          .send({})
           .end((err, res) => {
             res.should.have.status(422);
             done();
