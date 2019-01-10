@@ -29,9 +29,9 @@ const adaptTables = tables => {
       columns: table.flds.map(field => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
-        if (field.typeOptions) {
+        if (fieldProps.isTypeOptionsRequired) {
           otherProps.typeOptions = pick(
-            get(field, `typeOptions[${fieldProps.typeName}]`),
+            get(field, fieldProps.typeName),
             fieldProps.typeProps,
           );
         }
@@ -103,6 +103,7 @@ module.exports = {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
     const tables = await getTables(params.baseId);
+    console.log(JSON.stringify(tables));
     ctx.body = adaptTables(tables);
   },
 
