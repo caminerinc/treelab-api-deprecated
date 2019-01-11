@@ -13,11 +13,4 @@ module.exports = {
       },
     });
   },
-  async findRecordById({ id }) {
-    return await records.findOne({
-      where: { id },
-      attributes: ['id'],
-      raw: true,
-    });
-  },
 };

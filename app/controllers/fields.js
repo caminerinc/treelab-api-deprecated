@@ -146,11 +146,4 @@ module.exports = {
 
     return await deleteOption({ fieldId, fieldProps });
   },
-  async findFieldById({ id }) {
-    return await fields.findOne({
-      where: { id },
-      attributes: ['id'],
-      raw: true,
-    });
-  },
 };
