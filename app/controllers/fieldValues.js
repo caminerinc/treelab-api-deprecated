@@ -17,9 +17,9 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 
-async function createMultipleAttachment({ fieldValueId, value }) {
+function createMultipleAttachment({ fieldValueId, value }) {
   checkKeyExists(value, 'url', 'fileName', 'fileType');
-  return await multipleAttachmentValues.create({
+  return multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
@@ -32,7 +32,7 @@ function createForeignKeyValue({ fieldValueId, value }) {
     const symmetricFieldValue = await fieldValues
       .findCreateFind({ where: { recordId, fieldId } }, transact)
       .spread(fieldValue => fieldValue);
-    await foreignKeyValues.create(
+    return await foreignKeyValues.create(
       {
         fieldValueId,
         symmetricFieldValueId: symmetricFieldValue.id,
@@ -76,7 +76,7 @@ module.exports = {
     });
   },
 
-  createArrayType(params) {
+  createArrayValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createValue = CREATE_MAP[fieldProps.name];
     return createValue(params);
