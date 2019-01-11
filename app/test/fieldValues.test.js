@@ -90,7 +90,7 @@ describe('fieldValues模块', function(done) {
             fieldTypeId: '1',
           })
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(500);
             done();
           });
       });

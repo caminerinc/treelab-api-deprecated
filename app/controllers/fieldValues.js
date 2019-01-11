@@ -17,14 +17,14 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 
-async function createMultipleAttachment({ fieldValueId, value }) {
+function createMultipleAttachment({ fieldValueId, value }) {
   checkKeyExists(value, 'url', 'fileName', 'fileType');
-  return await multipleAttachmentValues.create({
+  return multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
 }
-async function createForeignKeyValue({ fieldValueId, value }) {
+function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
   async function transactionSteps(t) {
     const transact = { transaction: t };
@@ -42,7 +42,7 @@ async function createForeignKeyValue({ fieldValueId, value }) {
     );
   }
 
-  return await sequelize.transaction(transactionSteps);
+  return sequelize.transaction(transactionSteps);
 }
 
 async function upsertGenericFieldValue(params, fieldProps) {
@@ -76,10 +76,10 @@ module.exports = {
     });
   },
 
-  async createArrayValue(params) {
+  createArrayValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createValue = CREATE_MAP[fieldProps.name];
-    return await createValue(params);
+    return createValue(params);
   },
 
   findOrCreateFieldValue(recordId, fieldId) {

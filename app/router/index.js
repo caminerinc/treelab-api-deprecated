@@ -34,7 +34,6 @@ const {
 } = require('../resolvers/modules');
 
 const { checkTableExist } = require('../middlewares/tables');
-const { checkFieldIdAndRecordId } = require('../middlewares/fieldValues');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -59,21 +58,9 @@ router.post('/api/record', checkTableExist, resolveCreateRecord);
 router.delete('/api/delete-rows', resolveDeleteRecord);
 
 //FieldValue
-router.put(
-  '/api/primitive-field',
-  checkFieldIdAndRecordId,
-  resolveCreateOrUpdatePrimitiveField,
-);
-router.post(
-  '/api/array-field',
-  checkFieldIdAndRecordId,
-  resolveUpdateArrayTypeByAdding,
-);
-router.delete(
-  '/api/clear-field-value',
-  checkFieldIdAndRecordId,
-  resolveClearFieldValue,
-);
+router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
+router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
+router.delete('/api/clear-field-value', resolveClearFieldValue);
 
 //Position
 router.put('/api/change-position', resolveChangePosition);

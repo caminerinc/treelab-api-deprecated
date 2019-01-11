@@ -11,7 +11,7 @@ const { FIELD_TYPES } = require('../constants/fieldTypes');
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'value', 'fieldTypeId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     if (fieldProps.isArrayValue) {
       ctx.status = 400;
@@ -29,6 +29,7 @@ module.exports = {
 
   async resolveClearFieldValue(ctx) {
     const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId');
     await deleteFieldValue(params);
     ctx.body = { message: 'success' };
     socketIo.sync({
@@ -39,7 +40,7 @@ module.exports = {
 
   async resolveUpdateArrayTypeByAdding(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'value', 'fieldTypeId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     if (!fieldProps.isArrayValue) {
       ctx.status = 400;
@@ -57,7 +58,6 @@ module.exports = {
       fieldValueId: fieldValue.id,
       value: params.value,
     });
-
     ctx.body = {
       id: result.id,
       fieldValueId: result.fieldValueId,
