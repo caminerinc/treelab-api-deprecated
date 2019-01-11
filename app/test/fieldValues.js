@@ -120,69 +120,29 @@ describe('fieldValues模块', function(done) {
     });
 
     describe('OK', function(done) {
-      it('text', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/array-field')
-          .send({
-            tableId: 'tblNGUPdSs9Va4X5u',
-            name: 'address',
-            fieldTypeId: '1',
-          })
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('fieldId');
-            checkNewField(res.body, done);
-          });
-      });
-      it('number', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/array-field')
-          .send({
-            tableId: 'tblNGUPdSs9Va4X5u',
-            name: 'age',
-            fieldTypeId: '2',
-            typeOptions: {
-              format: 'decimal',
-              precision: 1,
-              negative: false,
-            },
-          })
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('fieldId');
-            checkNewField(res.body, done);
-          });
-      });
       it('foreignKey', function(done) {
         chai
           .request('http://localhost:8000')
-          .post('/api/array-field')
+          .delete('/api/array-field')
           .send({
-            tableId: 'tblNGUPdSs9Va4X5u',
-            name: '测试',
-            fieldTypeId: '3',
-            typeOptions: {
-              relationship: 'many',
-              foreignTableId: 'tblsnmRLfttLmAYQ8',
-            },
+            recordId: 'tblNGUPdSs9Va4X5u',
+            fieldId: 'address',
+            itemId: '1',
           })
           .end((err, res) => {
             res.should.have.status(200);
-            res.body.should.have.property('foreignFieldId');
-            res.body.should.have.property('symmetricFieldId');
-            checkForeignField(res.body, done);
+            res.body.should.have.property('fieldId');
+            checkNewField(res.body, done);
           });
       });
       it('multipleAttachment', function(done) {
         chai
           .request('http://localhost:8000')
-          .post('/api/field')
+          .delete('/api/array-field')
           .send({
-            tableId: 'tblNGUPdSs9Va4X5u',
-            name: 'contract',
-            fieldTypeId: '4',
+            recordId: 'tblNGUPdSs9Va4X5u',
+            fieldId: 'address',
+            itemId: '1',
           })
           .end((err, res) => {
             res.should.have.status(200);
