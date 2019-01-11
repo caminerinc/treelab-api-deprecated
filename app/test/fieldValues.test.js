@@ -2,7 +2,7 @@ const chai = require('chai');
 const chaiHttp = require('chai-http');
 const should = chai.should();
 const expect = chai.expect;
-const { forEach } = require('lodash');
+const { forEach, findIndex } = require('lodash');
 
 chai.use(chaiHttp);
 
@@ -201,6 +201,111 @@ describe('fieldValues模块', function(done) {
                 fieldValueId: res.body.fieldValueId,
                 ...sends.multipleAttachment.value,
               });
+              done();
+            });
+          });
+      });
+    });
+  });
+  describe('DELETE /api/array-field', function(done) {
+    let attachmentId;
+    describe('ERROR', function(done) {
+      it('Missing parameters', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .delete('/api/array-field')
+          .send({})
+          .end((err, res) => {
+            res.should.have.status(422);
+            done();
+          });
+      });
+    });
+    describe('add data', done => {
+      it('add foreignValue', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .post('/api/array-field')
+          .send({
+            recordId: 'rec1db61c8d540400f',
+            fieldId: 'fld1e1cf1f8dc0403b',
+            value: {
+              foreignRowId: 'recfPInitd1QpZ6aE',
+              name: 'DELETE test',
+              foreignColumnId: 'fld1e1cf1f8f80404b',
+            },
+            fieldTypeId: '3',
+          })
+          .end((err, res) => {
+            res.should.have.status(200);
+            done();
+          });
+      });
+      it('add multipleAttachment', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .post('/api/array-field')
+          .send({
+            recordId: 'rec1db61c8d540400f',
+            fieldId: 'fld1e1ced53340402b',
+            value: {
+              url: 'www.caminer.com',
+              fileName: 'web',
+              fileType: 'application/html',
+            },
+            fieldTypeId: '4',
+          })
+          .end((err, res) => {
+            res.should.have.status(200);
+            attachmentId = res.body.id;
+            done();
+          });
+      });
+    });
+
+    describe('OK', function(done) {
+      it('foreignKey', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .delete('/api/array-field')
+          .send({
+            recordId: 'rec1db61c8d540400f',
+            fieldId: 'fld1e1cf1f8dc0403b',
+            itemId: 'recfPInitd1QpZ6aE',
+          })
+          .end((err, res) => {
+            res.should.have.status(200);
+            checkResult((_err, _res) => {
+              _res.should.have.status(200);
+              let column =
+                _res.body.tableDatas.rowsById['rec1db61c8d540400f']
+                  .cellValuesByColumnId['fld1e1cf1f8dc0403b'];
+              column = column.indexOf('recfPInitd1QpZ6aE');
+              column.should.be.eql(-1);
+              done();
+            });
+          });
+      });
+      it('multipleAttachment', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .delete('/api/array-field')
+          .send({
+            recordId: 'rec1db61c8d540400f',
+            fieldId: 'fld1e1ced53340402b',
+            itemId: attachmentId,
+          })
+          .end((err, res) => {
+            res.should.have.status(200);
+            checkResult((_err, _res) => {
+              _res.should.have.status(200);
+              let column =
+                _res.body.tableDatas.rowsById['rec1db61c8d540400f']
+                  .cellValuesByColumnId['fld1e1ced53340402b'];
+              let multipleAttachment = findIndex(column, function(o) {
+                return o.id == attachmentId;
+              });
+              multipleAttachment.should.be.eql(-1);
               done();
             });
           });

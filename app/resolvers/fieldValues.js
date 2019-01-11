@@ -75,6 +75,8 @@ module.exports = {
 
     const field = await findFieldType(params);
     params.fieldTypeId = field.fieldTypeId;
-    const fieldValue = deleteArrayValue(params);
+    const fieldValue = await deleteArrayValue(params);
+
+    ctx.body = { message: 'success' };
   },
 };

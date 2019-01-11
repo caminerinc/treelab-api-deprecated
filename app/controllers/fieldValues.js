@@ -96,7 +96,7 @@ async function deleteForeignKeyValue(
       },
     ],
   });
-  return foreignKeyValues.destroy({
+  return await foreignKeyValues.destroy({
     where: {
       fieldValueId,
       symmetricFieldValueId,
