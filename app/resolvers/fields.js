@@ -3,6 +3,7 @@ const {
   createField,
   deleteField,
   findFieldType,
+  updateField,
 } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
@@ -63,5 +64,32 @@ module.exports = {
     }
     await deleteField(field);
     ctx.body = { message: 'success' };
+  },
+
+  async resolveUpdateField(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'fieldId');
+
+    if (params.name && params.name.length == 0) {
+      ctx.status = 400;
+      return (ctx.body = {
+        error: `name can't null`,
+      });
+    }
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    if (!fieldProps) {
+      ctx.status = 400;
+      return (ctx.body = {
+        error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
+      });
+    }
+    const field = await findFieldType(params);
+    if (!field) {
+      ctx.status = 400;
+      return (ctx.body = {
+        error: `field is not found`,
+      });
+    }
+    ctx.body = await updateField(field, params);
   },
 };

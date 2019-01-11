@@ -15,27 +15,30 @@ const TYPE_OPTION_MAP = {
   multipleAttachment: createGenericField,
 };
 
-async function createGenericField(fieldParams) {
-  const field = await fields.create(fieldParams);
+async function createGenericField({ fieldParams, isTransaction }) {
+  const field = await fields.create(fieldParams, isTransaction);
 
   return {
     fieldId: field.id,
   };
 }
 
-async function createNumberOptions(fieldParams, options) {
+async function createNumberOptions({ fieldParams, options, isTransaction }) {
   checkKeyExists(options, 'format', 'precision', 'negative');
-  const field = await fields.create(fieldParams);
-  await numberTypes.create({
-    ...options,
-    fieldId: field.id,
-  });
+  const field = await fields.create(fieldParams, isTransaction);
+  await numberTypes.create(
+    {
+      ...options,
+      fieldId: field.id,
+    },
+    isTransaction,
+  );
   return {
     fieldId: field.id,
   };
 }
 
-async function createForeignKey(fieldParams, options) {
+async function createForeignKey({ fieldParams, options, isTransaction }) {
   checkKeyExists(options, 'relationship', 'foreignTableId');
   async function transactionSteps(t) {
     const transact = { transaction: t };
@@ -70,7 +73,11 @@ async function createForeignKey(fieldParams, options) {
       symmetricFieldId: newSymmetricField.id,
     };
   }
-  return await sequelize.transaction(transactionSteps);
+  if (isTransaction.transaction) {
+    return await transactionSteps(isTransaction.transaction);
+  } else {
+    return await sequelize.transaction(transactionSteps);
+  }
 }
 
 const DELETE_MAP = {
@@ -79,13 +86,16 @@ const DELETE_MAP = {
   foreignKey: deleteForeignField,
   multipleAttachment: deleteGenericField,
 };
-async function deleteGenericField({ fieldId }) {
-  return await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-  });
+async function deleteGenericField({ fieldId, isTransaction }) {
+  return await fields.destroy(
+    {
+      where: { id: fieldId },
+      cascade: true,
+    },
+    isTransaction,
+  );
 }
-async function deleteForeignField({ fieldId, fieldProps }) {
+async function deleteForeignField({ fieldId, fieldProps, isTransaction }) {
   async function transactionSteps(t) {
     const transact = { transaction: t };
     const symmetricFieldId = await fields.findOne(
@@ -122,28 +132,64 @@ async function deleteForeignField({ fieldId, fieldProps }) {
       transact,
     );
   }
-  return await sequelize.transaction(transactionSteps);
+  if (isTransaction.transaction) {
+    return await transactionSteps(isTransaction.transaction);
+  } else {
+    return await sequelize.transaction(transactionSteps);
+  }
 }
 
 module.exports = {
   async createField(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
-    const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);
-    return await createOption(fieldParams, params.typeOptions);
+    const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
+    const { isTransaction = {} } = params;
+    return await createOption({
+      fieldParams,
+      options: params.typeOptions,
+      isTransaction,
+    });
   },
 
   async findFieldType({ fieldId: id }) {
     return await fields.findOne({
       where: { id },
-      attributes: [['id', 'fieldId'], 'fieldTypeId'],
+      attributes: ['id', 'name', 'tableId', 'fieldTypeId'],
       raw: true,
     });
   },
-  async deleteField({ fieldId, fieldTypeId }) {
+  async deleteField({ id: fieldId, fieldTypeId, isTransaction = {} }) {
     const fieldProps = FIELD_TYPES[fieldTypeId];
     const deleteOption = DELETE_MAP[fieldProps.name];
 
-    return await deleteOption({ fieldId, fieldProps });
+    return await deleteOption({ fieldId, fieldProps, isTransaction });
+  },
+
+  updateField(field, params) {
+    if (params.fieldTypeId && field.fieldTypeId != params.fieldTypeId) {
+      return sequelize.transaction(async t => {
+        await module.exports.deleteField({
+          isTransaction: { transaction: t },
+          ...field,
+        });
+        params.name = params.name || field.name;
+        return await module.exports.createField({
+          id: field.id,
+          tableId: field.tableId,
+          isTransaction: { transaction: t },
+          ...params,
+        });
+      });
+    } else {
+      return fields.update(
+        {
+          name: params.name,
+        },
+        {
+          where: { id: field.id },
+        },
+      );
+    }
   },
 };
