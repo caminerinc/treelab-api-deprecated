@@ -59,8 +59,8 @@ describe('records模块', function(done) {
     });
   });
   describe('DELETE /api/delete-rows', function(done) {
-    it('rows: [recwEKHeMhcDnLnfc,recfPInitd1QpZ6aV]', function(done) {
-      let rows = ['recwEKHeMhcDnLnfc', 'recfPInitd1QpZ6aV'];
+    it('rows: [recwEKHeMhcDnLnfc]', function(done) {
+      let rows = ['recwEKHeMhcDnLnfc'];
       chai
         .request('http://localhost:8000')
         .delete('/api/delete-rows')
