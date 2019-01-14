@@ -8,7 +8,7 @@ module.exports = {
         {
           model: tables,
           as: 'tables',
-          attributes: [['id']],
+          attributes: ['id'],
         },
       ],
     });
@@ -24,6 +24,13 @@ module.exports = {
     return bases.findOne({
       attributes: ['id', 'name'],
       where: { id },
+    });
+  },
+  deleteBase({ baseId: id }) {
+    return bases.destroy({
+      where: {
+        id,
+      },
     });
   },
 };

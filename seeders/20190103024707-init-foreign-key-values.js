@@ -9,6 +9,7 @@ module.exports = {
           {
             fieldValueId: 8,
             symmetricFieldValueId: 9,
+            name: 'link',
             createdAt: '2018-05-05T04:09:06.024Z',
             updatedAt: '2018-05-05T04:09:06.024Z',
           },

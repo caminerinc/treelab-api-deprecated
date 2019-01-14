@@ -1,6 +1,6 @@
 const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getBases, createBase } = require('../controllers/bases');
+const { getBases, createBase, deleteBase } = require('../controllers/bases');
 const { createTable } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const socketIo = require('../../lib/core/socketIo');
@@ -11,7 +11,7 @@ const adaptBases = bases => {
     return {
       id: base.id,
       name: base.name,
-      primaryTableId: base.tables[0] ? base.tables[0].primaryTableId : null,
+      primaryTableId: base.tables[0] ? base.tables[0].id : null,
     };
   });
 };
@@ -41,5 +41,10 @@ module.exports = {
         field,
       },
     });
+  },
+  async resolveDeleteBase(ctx) {
+    checkKeyExists(ctx.params, 'baseId');
+    await deleteBase(ctx.params);
+    ctx.body = { message: 'success' };
   },
 };
