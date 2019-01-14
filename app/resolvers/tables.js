@@ -5,10 +5,15 @@ const {
   createTable,
   getTable,
   deleteTable,
+  findSymmetricFieldId,
 } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
-const { createPosition } = require('../controllers/positions');
+const {
+  createPosition,
+  deleteParentId,
+  deletePositions,
+} = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -153,7 +158,21 @@ module.exports = {
   },
   async resolveDeleteTable(ctx) {
     checkKeyExists(ctx.params, 'tableId');
-    await deleteTable(params);
+
+    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
+    const fieldId = [];
+    for (let i = 0; i < symmetricFieldIds.flds.length; i++) {
+      fieldId.push(
+        symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId || null,
+      );
+    }
+    await deleteTable(ctx.params.tableId, fieldId);
+    await deleteParentId(ctx.params.tableId);
+    await deletePositions({
+      deletePositions: [ctx.params.tableId],
+      parentId: symmetricFieldIds.baseId,
+      type: 'table',
+    });
     ctx.body = { message: 'success' };
   },
 };
