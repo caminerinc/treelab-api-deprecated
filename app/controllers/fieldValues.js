@@ -6,6 +6,8 @@ const {
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
+const { createField } = require('./fields');
+const { createRecord } = require('./records');
 
 const CREATE_MAP = {
   multipleAttachment: createMultipleAttachment,
@@ -97,10 +99,30 @@ module.exports = {
     });
   },
 
-  async bulkCopyFieldValue({ sourceColumnConfigs, sourceCellValues2dArray }) {
-    async function transactionSteps(t) {
-      const transact = { transaction: t };
+  async bulkCopyFieldValue({
+    sourceColumnConfigs,
+    sourceCellValues2dArray,
+    tableId,
+  }) {
+    let fieldIds = [];
+    for (let i = 0; i < sourceColumnConfigs.length; i++) {
+      const field = sourceColumnConfigs[i];
+      field.tableId = tableId;
+      const result = await createField(field);
+      if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
+        upsertFieldValue({
+          fieldTypeId: field.fieldTypeId,
+        });
+      }
+      if (field.fieldTypeId == 3) {
+        fieldIds.push([result.foreignFieldId, result.symmetricFieldId]);
+      } else {
+        fieldIds.push(result.fieldId);
+      }
     }
-    return await sequelize.transaction(transactionSteps);
+    for (let i = 0; i < sourceCellValues2dArray.length; i++) {
+      const result = await createRecord({ tableId });
+    }
+    return fieldIds;
   },
 };

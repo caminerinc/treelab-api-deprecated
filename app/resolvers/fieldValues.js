@@ -54,8 +54,24 @@ module.exports = {
 
   async resolveBulkCopyFieldValue(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'sourceColumnConfigs', 'sourceCellValues2dArray');
-    await bulkCopyFieldValue(params);
+    checkKeyExists(
+      params,
+      'sourceColumnConfigs',
+      'sourceCellValues2dArray',
+      'tableId',
+    );
+    params.sourceColumnConfigs = JSON.parse(params.sourceColumnConfigs);
+    params.sourceCellValues2dArray = JSON.parse(params.sourceCellValues2dArray);
+    if (
+      !Array.isArray(params.sourceColumnConfigs) ||
+      !Array.isArray(params.sourceCellValues2dArray)
+    ) {
+      ctx.status = 422;
+      return (ctx.body = {
+        error: 'sourceColumnConfigs and sourceCellValues2dArray must be array',
+      });
+    }
+    ctx.body = await bulkCopyFieldValue(params);
     socketIo.sync({
       op: 'bulkCopyFieldValue',
       body: params,
