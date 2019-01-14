@@ -10,6 +10,7 @@ const {
 const {
   resolveCreateField,
   resolveDeleteField,
+  resolveResizeColumn,
 } = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,
@@ -52,6 +53,7 @@ router.post('/api/table', resolveCreateTable);
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
 router.delete('/api/delete-field', resolveDeleteField);
+router.post('/api/resize-column', resolveResizeColumn);
 
 //Record
 router.post('/api/record', checkTableExist, resolveCreateRecord);

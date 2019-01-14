@@ -22,5 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
+  positions.associate = function(models) {
+    positions.belongsTo(models.fields, {
+      foreignKey: 'id',
+      as: 'field',
+    });
+  };
   return positions;
 };

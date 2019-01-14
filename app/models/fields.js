@@ -24,6 +24,11 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.INTEGER,
       },
+      width: {
+        allowNull: false,
+        defaultValue: 100,
+        type: DataTypes.INTEGER,
+      },
     },
     {},
   );

@@ -3,6 +3,7 @@ const {
   createField,
   deleteField,
   findFieldType,
+  updateFieldWidth,
 } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
@@ -62,6 +63,13 @@ module.exports = {
       });
     }
     await deleteField(field);
+    ctx.body = { message: 'success' };
+  },
+  async resolveResizeColumn(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'fieldId', 'width');
+
+    await updateFieldWidth(params);
     ctx.body = { message: 'success' };
   },
 };

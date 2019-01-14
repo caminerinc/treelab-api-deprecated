@@ -146,4 +146,16 @@ module.exports = {
 
     return await deleteOption({ fieldId, fieldProps });
   },
+  updateFieldWidth({ fieldId: id, width }) {
+    return fields.update(
+      {
+        width,
+      },
+      {
+        where: {
+          id,
+        },
+      },
+    );
+  },
 };

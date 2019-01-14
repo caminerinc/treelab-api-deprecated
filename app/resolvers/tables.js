@@ -46,6 +46,8 @@ const adaptTables = tables => {
 };
 
 const adaptTable = table => {
+  console.log(JSON.stringify(table.positions));
+  console.log(JSON.stringify(table.recs));
   return {
     tableDatas: {
       ...pick(table, ['id']),
@@ -58,7 +60,7 @@ const adaptTable = table => {
             if (i.type === 'field') return i;
           })
           .map(i => {
-            return { id: i.id, position: i.position };
+            return { id: i.id, position: i.position, width: i.field.width };
           }),
         rowOrder: table.positions
           .filter(i => {

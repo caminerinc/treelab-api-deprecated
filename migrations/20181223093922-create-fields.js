@@ -18,6 +18,11 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER,
       },
+      width: {
+        allowNull: false,
+        defaultValue: 100,
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
