@@ -263,24 +263,24 @@ describe('fieldValues模块', function(done) {
         });
     });
     it('JSON parse error', function(done) {
-      const _params = JSON.stringify(JSON.parse(params));
+      const _params = JSON.parse(JSON.stringify(params));
       _params.sourceColumnConfigs = '[}';
       chai
         .request('http://localhost:8000')
         .post('/api/bulk-copy-field-value')
-        .send(params)
+        .send(_params)
         .end((err, res) => {
           res.should.have.status(500);
           done();
         });
     });
     it('not array', function(done) {
-      const _params = JSON.stringify(JSON.parse(params));
+      const _params = JSON.parse(JSON.stringify(params));
       _params.sourceColumnConfigs = '{}';
       chai
         .request('http://localhost:8000')
         .post('/api/bulk-copy-field-value')
-        .send(params)
+        .send(_params)
         .end((err, res) => {
           res.should.have.status(422);
           res.body.should.have.property('error');

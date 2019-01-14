@@ -53,7 +53,6 @@ module.exports = {
       params.recordId,
       params.fieldId,
     );
-
     const result = await createArrayValue({
       fieldTypeId: params.fieldTypeId,
       fieldValueId: fieldValue.id,
