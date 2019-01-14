@@ -5,7 +5,7 @@ const expect = chai.expect;
 const { findIndex } = require('lodash');
 
 chai.use(chaiHttp);
-describe.only('bases模块', function(done) {
+describe('bases模块', function(done) {
   describe('delete /api/base/:baseId', function(done) {
     describe('ERROR', function(done) {
       it('not baseId', function(done) {
