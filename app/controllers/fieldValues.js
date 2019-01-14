@@ -19,13 +19,14 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 
-function createMultipleAttachment({ fieldValueId, value }) {
+async function createMultipleAttachment({ fieldValueId, value }) {
   checkKeyExists(value, 'url', 'fileName', 'fileType');
-  return multipleAttachmentValues.create({
+  return await multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
 }
+
 function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
   async function transactionSteps(t) {
@@ -34,7 +35,7 @@ function createForeignKeyValue({ fieldValueId, value }) {
     const symmetricFieldValue = await fieldValues
       .findCreateFind({ where: { recordId, fieldId } }, transact)
       .spread(fieldValue => fieldValue);
-    return await foreignKeyValues.create(
+    await foreignKeyValues.create(
       {
         fieldValueId,
         symmetricFieldValueId: symmetricFieldValue.id,
@@ -78,7 +79,7 @@ module.exports = {
     });
   },
 
-  createArrayValue(params) {
+  createArrayType(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createValue = CREATE_MAP[fieldProps.name];
     return createValue(params);
@@ -104,25 +105,52 @@ module.exports = {
     sourceCellValues2dArray,
     tableId,
   }) {
-    let fieldIds = [];
     for (let i = 0; i < sourceColumnConfigs.length; i++) {
       const field = sourceColumnConfigs[i];
       field.tableId = tableId;
-      const result = await createField(field);
-      if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
-        upsertFieldValue({
-          fieldTypeId: field.fieldTypeId,
-        });
-      }
-      if (field.fieldTypeId == 3) {
-        fieldIds.push([result.foreignFieldId, result.symmetricFieldId]);
-      } else {
-        fieldIds.push(result.fieldId);
+      const fieldResult = await createField(field);
+      for (let j = 0; j < sourceCellValues2dArray.length; j++) {
+        const values = sourceCellValues2dArray[j][i];
+        const recordResult = await createRecord({ tableId });
+        if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
+          module.exports.upsertFieldValue({
+            fieldTypeId: field.fieldTypeId,
+            recordId: recordResult.id,
+            fieldId: fieldResult.fieldId,
+            value: values,
+          });
+        } else if (field.fieldTypeId == 3) {
+          for (let k = 0; k < values.length; k++) {
+            const fieldValueResult = await module.exports.findOrCreateFieldValue(
+              recordResult.id,
+              fieldResult.foreignFieldId,
+            );
+            await module.exports.createArrayType({
+              fieldTypeId: field.fieldTypeId,
+              fieldValueId: fieldValueResult.id,
+              value: {
+                name: values[k].foreignRowDisplayName,
+                foreignRowId: values[k].foreignRowId,
+                foreignColumnId: fieldResult.symmetricFieldId,
+              },
+            });
+          }
+        } else if (field.fieldTypeId == 4) {
+          for (let k = 0; k < values.length; k++) {
+            const fieldValueResult = await findOrCreateFieldValue(
+              recordResult.id,
+              fieldResult.fieldId,
+            );
+            await createArrayType({
+              fieldTypeId: field.fieldTypeId,
+              fieldValueId: fieldValueResult.id,
+              value: values[k],
+            });
+          }
+        } else {
+          throw new Error('unsupported fieldType');
+        }
       }
     }
-    for (let i = 0; i < sourceCellValues2dArray.length; i++) {
-      const result = await createRecord({ tableId });
-    }
-    return fieldIds;
   },
 };

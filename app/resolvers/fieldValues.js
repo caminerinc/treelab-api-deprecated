@@ -88,7 +88,8 @@ module.exports = {
         error: 'sourceColumnConfigs and sourceCellValues2dArray must be array',
       });
     }
-    ctx.body = await bulkCopyFieldValue(params);
+    await bulkCopyFieldValue(params);
+    ctx.body = { message: 'sucess' };
     socketIo.sync({
       op: 'bulkCopyFieldValue',
       body: params,
