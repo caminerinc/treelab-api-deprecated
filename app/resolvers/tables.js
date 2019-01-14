@@ -170,7 +170,7 @@ module.exports = {
       );
     }
     await deleteTable(ctx.params.tableId, fieldId);
-    await deleteParentId(ctx.params.tableId);
+    await deleteParentId([ctx.params.tableId]);
     const positions = await getPositionsByIds([ctx.params.tableId]);
     await deletePositions({
       deletePositions: [positions[0].position],
