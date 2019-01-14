@@ -1,6 +1,11 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getTables, createTable, getTable } = require('../controllers/tables');
+const {
+  getTables,
+  createTable,
+  getTable,
+  deleteTable,
+} = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
 const { createPosition } = require('../controllers/positions');
@@ -145,5 +150,10 @@ module.exports = {
         field,
       },
     });
+  },
+  async resolveDeleteTable(ctx) {
+    checkKeyExists(ctx.params, 'tableId');
+    await deleteTable(params);
+    ctx.body = { message: 'success' };
   },
 };

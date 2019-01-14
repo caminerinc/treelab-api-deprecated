@@ -124,4 +124,8 @@ module.exports = {
   getEasyTable(id) {
     return tables.findOne({ where: { id } });
   },
+
+  deleteTable({ tableId: id }) {
+    return tables.destroy({ where: { id } });
+  },
 };
