@@ -6,7 +6,6 @@ const {
   deleteFieldValue,
   deleteArrayValue,
 } = require('../controllers/fieldValues');
-const { findFieldType } = require('../controllers/fields');
 const socketIo = require('../../lib/core/socketIo');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
@@ -71,10 +70,8 @@ module.exports = {
   },
   async resolveDeleteArrayValue(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'itemId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'itemId', 'fieldTypeId');
 
-    const field = await findFieldType(params);
-    params.fieldTypeId = field.fieldTypeId;
     const fieldValue = await deleteArrayValue(params);
 
     ctx.body = { message: 'success' };

@@ -61,7 +61,7 @@ async function upsertGenericFieldValue(params, fieldProps) {
     },
   );
 }
-async function deleteMultipleAttachment({ itemId: id }) {
+function deleteMultipleAttachment({ itemId: id }) {
   return multipleAttachmentValues.destroy({
     where: { id },
   });
@@ -138,7 +138,7 @@ module.exports = {
 
   deleteArrayValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    const createValue = DELETE_ARRAY_MAP[fieldProps.name];
-    return createValue(params, fieldProps);
+    const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
+    return deleteValue(params, fieldProps);
   },
 };
