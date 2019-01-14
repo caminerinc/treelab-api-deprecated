@@ -4,7 +4,7 @@ const should = chai.should();
 const expect = chai.expect;
 
 chai.use(chaiHttp);
-describe('tables模块', function(done) {
+describe.only('tables模块', function(done) {
   describe('GET /api/tables/:baseId', function(done) {
     describe('ERROR', function(done) {
       it('not baseId', function(done) {
@@ -75,6 +75,42 @@ describe('tables模块', function(done) {
           .get('/api/table/tblNGUPdSs9Va4X5u')
           .end((err, res) => {
             res.should.have.status(200);
+            done();
+          });
+      });
+    });
+  });
+
+  describe.only('delete /api/table/:tableId', function(done) {
+    describe('ERROR', function(done) {
+      it('not baseId', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .delete('/api/table')
+          .end((err, res) => {
+            res.should.have.status(405);
+            done();
+          });
+      });
+    });
+
+    describe('OK', function(done) {
+      it('tableId: tblNGUPdSs9Va4X5u', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .delete('/api/table/tblNGUPdSs9Va4X5u')
+          .end((err, res) => {
+            res.should.have.status(200);
+
+            done();
+          });
+      });
+      it('check: tblNGUPdSs9Va4X5u', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .get('/api/table/tblNGUPdSs9Va4X5u')
+          .end((err, res) => {
+            res.should.have.status(400);
             done();
           });
       });

@@ -13,6 +13,7 @@ const {
   createPosition,
   deleteParentId,
   deletePositions,
+  getPositionsByIds,
 } = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
@@ -163,13 +164,16 @@ module.exports = {
     const fieldId = [];
     for (let i = 0; i < symmetricFieldIds.flds.length; i++) {
       fieldId.push(
-        symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId || null,
+        symmetricFieldIds.flds[i].foreignKeyTypes
+          ? symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId
+          : null,
       );
     }
     await deleteTable(ctx.params.tableId, fieldId);
     await deleteParentId(ctx.params.tableId);
+    const positions = await getPositionsByIds([ctx.params.tableId]);
     await deletePositions({
-      deletePositions: [ctx.params.tableId],
+      deletePositions: [positions[0].position],
       parentId: symmetricFieldIds.baseId,
       type: 'table',
     });

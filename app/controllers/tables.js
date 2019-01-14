@@ -150,7 +150,7 @@ module.exports = {
       ],
     });
   },
-  async deleteTable({ tableId: id }, fieldId) {
+  async deleteTable(id, fieldId) {
     return sequelize.transaction(async t => {
       await fields.destroy(
         { where: { id: { $in: fieldId } } },
