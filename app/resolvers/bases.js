@@ -1,6 +1,11 @@
 const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getBases, createBase, deleteBase } = require('../controllers/bases');
+const {
+  getBases,
+  createBase,
+  deleteBase,
+  findSymmetricFieldId,
+} = require('../controllers/bases');
 const { createTable } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const socketIo = require('../../lib/core/socketIo');
@@ -44,7 +49,9 @@ module.exports = {
   },
   async resolveDeleteBase(ctx) {
     checkKeyExists(ctx.params, 'baseId');
-    await deleteBase(ctx.params);
+    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
+    await deleteBase(ctx.params.baseId, symmetricFieldIds);
+
     ctx.body = { message: 'success' };
   },
 };
