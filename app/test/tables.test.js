@@ -4,7 +4,7 @@ const should = chai.should();
 const expect = chai.expect;
 
 chai.use(chaiHttp);
-describe.only('tables模块', function(done) {
+describe('tables模块', function(done) {
   describe('GET /api/tables/:baseId', function(done) {
     describe('ERROR', function(done) {
       it('not baseId', function(done) {
@@ -81,7 +81,7 @@ describe.only('tables模块', function(done) {
     });
   });
 
-  describe.only('delete /api/table/:tableId', function(done) {
+  describe('delete /api/table/:tableId', function(done) {
     describe('ERROR', function(done) {
       it('not baseId', function(done) {
         chai
