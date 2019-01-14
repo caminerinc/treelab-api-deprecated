@@ -1,4 +1,4 @@
-const { pick } = require('lodash');
+const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const {
   getBases,
@@ -6,9 +6,10 @@ const {
   deleteBase,
   findSymmetricFieldId,
 } = require('../controllers/bases');
-const { createTable } = require('../controllers/tables');
+const { createTable, getTableByBaseId } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const socketIo = require('../../lib/core/socketIo');
+const { deleteParentId } = require('../controllers/positions');
 
 const adaptBases = bases => {
   return Array.from(bases, base => {
@@ -51,7 +52,9 @@ module.exports = {
     checkKeyExists(ctx.params, 'baseId');
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     await deleteBase(ctx.params.baseId, symmetricFieldIds);
-
+    let tableIds = await getTableByBaseId(ctx.params);
+    tableIds = map(tableIds, 'id');
+    await deleteParentId([ctx.params.baseId, ...tableIds]);
     ctx.body = { message: 'success' };
   },
 };

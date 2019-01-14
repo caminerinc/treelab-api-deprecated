@@ -89,4 +89,9 @@ module.exports = {
     }
     return await sequelize.transaction(transactionSteps);
   },
+  deleteParentId(parentId) {
+    return positions.destroy({
+      where: { parentId: { $in: parentId } },
+    });
+  },
 };
