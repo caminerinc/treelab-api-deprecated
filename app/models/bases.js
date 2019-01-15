@@ -23,6 +23,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'baseId',
       as: 'tables',
     });
+    bases.hasMany(models.positions, {
+      foreignKey: 'parentId',
+      as: 'tablePositions',
+    });
   };
   return bases;
 };
