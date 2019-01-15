@@ -114,7 +114,7 @@ describe('fieldValues模块', function(done) {
             });
           });
       });
-      it('number', function(done) {
+      /* it('number', function(done) {
         chai
           .request('http://localhost:8000')
           .put('/api/primitive-field')
@@ -131,7 +131,7 @@ describe('fieldValues模块', function(done) {
               done();
             });
           });
-      });
+      }); */
     });
   });
   describe('POST /api/array-field', function(done) {
@@ -163,7 +163,7 @@ describe('fieldValues模块', function(done) {
       });
     });
     describe('OK', function(done) {
-      it('foreignKey', function(done) {
+      /* it('foreignKey', function(done) {
         chai
           .request('http://localhost:8000')
           .post('/api/array-field')
@@ -180,7 +180,7 @@ describe('fieldValues模块', function(done) {
               done();
             });
           });
-      });
+      }); */
       it('multipleAttachment', function(done) {
         chai
           .request('http://localhost:8000')
