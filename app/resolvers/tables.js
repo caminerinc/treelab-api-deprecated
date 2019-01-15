@@ -1,9 +1,7 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const { getTables, createTable, getTable } = require('../controllers/tables');
-const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
-const { createPosition } = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -125,25 +123,11 @@ module.exports = {
       ctx.status = 400;
       return (ctx.body = { error: 'base does not exist' });
     }
-    const table = await createTable(params);
-    await createPosition({
-      parentId: params.baseId,
-      id: table.id,
-      type: 'table',
-    });
-    const field = await createField({
-      tableId: table.id,
-      name: 'Field 1',
-      fieldTypeId: 1,
-    });
-    await createPosition({ parentId: table.id, id: field.id, type: 'field' });
-    ctx.body = table;
+    const result = await createTable(params);
+    ctx.body = result.table;
     socketIo.sync({
       op: 'createTable',
-      body: {
-        table: table,
-        field,
-      },
+      body: result,
     });
   },
 };

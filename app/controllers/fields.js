@@ -80,58 +80,51 @@ const DELETE_MAP = {
   foreignKey: deleteForeignField,
   multipleAttachment: deleteGenericField,
 };
-async function deleteGenericField({ fieldId }, transact) {
-  return await fields.destroy(
-    {
-      where: { id: fieldId },
-      cascade: true,
-    },
-    transact,
-  );
+async function deleteGenericField({ fieldId }, transaction) {
+  return await fields.destroy({
+    where: { id: fieldId },
+    cascade: true,
+    transaction,
+  });
 }
-async function deleteForeignField({ fieldId, fieldProps }, transact) {
-  const symmetricFieldId = await fields.findOne(
-    {
-      where: {
-        id: fieldId,
+async function deleteForeignField({ fieldId, fieldProps }, transaction) {
+  const symmetricFieldId = await fields.findOne({
+    where: {
+      id: fieldId,
+    },
+    attributes: [
+      [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
+    ],
+    include: [
+      {
+        model: foreignKeyTypes,
+        attributes: [],
+        as: fieldProps.typeName,
       },
-      attributes: [
-        [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
-      ],
-      include: [
-        {
-          model: foreignKeyTypes,
-          attributes: [],
-          as: fieldProps.typeName,
-        },
-      ],
-      raw: true,
-    },
-    transact,
-  );
-  await fields.destroy(
-    {
-      where: { id: fieldId },
-      cascade: true,
-    },
-    transact,
-  );
-  return await fields.destroy(
-    {
-      where: { id: symmetricFieldId.id },
-      cascade: true,
-    },
-    transact,
-  );
+    ],
+    raw: true,
+    transaction,
+  });
+  await fields.destroy({
+    where: { id: fieldId },
+    cascade: true,
+    transaction,
+  });
+  await fields.destroy({
+    where: { id: symmetricFieldId.id },
+    cascade: true,
+    transaction,
+  });
+  return { fieldId, symmetricFieldId: symmetricFieldId.id };
 }
 
 module.exports = {
-  async createField(params) {
+  async createField(params, t1) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createOption = TYPE_OPTION_MAP[fieldProps.name];
     const fieldParams = pick(params, ['tableId', 'name', 'fieldTypeId']);
     async function transactionSteps(t) {
-      const transact = { transaction: t };
+      const transact = { transaction: t1 || t };
       const result = await createOption(
         fieldParams,
         params.typeOptions,
@@ -148,7 +141,7 @@ module.exports = {
         );
         await createPosition(
           {
-            parentId: params.tableId,
+            parentId: params.typeOptions.foreignTableId,
             id: result.symmetricFieldId,
             type: 'field',
           },
@@ -166,7 +159,9 @@ module.exports = {
       }
       return result;
     }
-    return await sequelize.transaction(transactionSteps);
+    return t1
+      ? transactionSteps()
+      : await sequelize.transaction(transactionSteps);
   },
 
   async findFieldType({ fieldId: id }) {
@@ -181,9 +176,11 @@ module.exports = {
     const fieldProps = FIELD_TYPES[fieldTypeId];
     const deleteOption = DELETE_MAP[fieldProps.name];
     async function transactionSteps(t) {
-      const transact = { transaction: t };
-      await deleteOption({ fieldId, fieldProps }, transact);
-      const result = await getPositionsByIds([fieldId]);
+      const ids = await deleteOption({ fieldId, fieldProps }, t);
+      const result = await getPositionsByIds([
+        ids.fieldId,
+        ids.symmetricFieldId,
+      ]);
       if (result.length) {
         await deletePositions(
           {
@@ -191,7 +188,7 @@ module.exports = {
             parentId: result[0].parentId,
             type: 'field',
           },
-          transact,
+          t,
         );
       }
     }

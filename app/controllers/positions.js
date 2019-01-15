@@ -57,7 +57,7 @@ module.exports = {
     });
   },
 
-  async deletePositions({ deletePositions, parentId, type }, transact) {
+  async deletePositions({ deletePositions, parentId, type }, transaction) {
     deletePositions = Array.from(deletePositions, i => parseInt(i));
     deletePositions.sort();
     const len = deletePositions.length;
@@ -73,16 +73,14 @@ module.exports = {
     sql += ` when position > ${
       deletePositions[len - 1]
     } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
-    await positions.destroy(
-      {
-        where: {
-          position: { $in: deletePositions },
-          parentId,
-          type,
-        },
+    await positions.destroy({
+      where: {
+        position: { $in: deletePositions },
+        parentId,
+        type,
       },
-      transact,
-    );
-    await sequelize.query(sql, { replacements: [parentId, type] }, transact);
+      transaction,
+    });
+    await sequelize.query(sql, { replacements: [parentId, type], transaction });
   },
 };
