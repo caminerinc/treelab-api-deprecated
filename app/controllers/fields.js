@@ -7,7 +7,11 @@ const {
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
-const { createPosition } = require('../controllers/positions');
+const {
+  createPosition,
+  deletePositions,
+  getPositionsByIds,
+} = require('../controllers/positions');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -76,50 +80,49 @@ const DELETE_MAP = {
   foreignKey: deleteForeignField,
   multipleAttachment: deleteGenericField,
 };
-async function deleteGenericField({ fieldId }) {
-  return await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-  });
+async function deleteGenericField({ fieldId }, transact) {
+  return await fields.destroy(
+    {
+      where: { id: fieldId },
+      cascade: true,
+    },
+    transact,
+  );
 }
-async function deleteForeignField({ fieldId, fieldProps }) {
-  async function transactionSteps(t) {
-    const transact = { transaction: t };
-    const symmetricFieldId = await fields.findOne(
-      {
-        where: {
-          id: fieldId,
+async function deleteForeignField({ fieldId, fieldProps }, transact) {
+  const symmetricFieldId = await fields.findOne(
+    {
+      where: {
+        id: fieldId,
+      },
+      attributes: [
+        [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
+      ],
+      include: [
+        {
+          model: foreignKeyTypes,
+          attributes: [],
+          as: fieldProps.typeName,
         },
-        attributes: [
-          [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
-        ],
-        include: [
-          {
-            model: foreignKeyTypes,
-            attributes: [],
-            as: fieldProps.typeName,
-          },
-        ],
-        raw: true,
-      },
-      transact,
-    );
-    await fields.destroy(
-      {
-        where: { id: fieldId },
-        cascade: true,
-      },
-      transact,
-    );
-    return await fields.destroy(
-      {
-        where: { id: symmetricFieldId.id },
-        cascade: true,
-      },
-      transact,
-    );
-  }
-  return await sequelize.transaction(transactionSteps);
+      ],
+      raw: true,
+    },
+    transact,
+  );
+  await fields.destroy(
+    {
+      where: { id: fieldId },
+      cascade: true,
+    },
+    transact,
+  );
+  return await fields.destroy(
+    {
+      where: { id: symmetricFieldId.id },
+      cascade: true,
+    },
+    transact,
+  );
 }
 
 module.exports = {
@@ -177,7 +180,21 @@ module.exports = {
   async deleteField({ fieldId, fieldTypeId }) {
     const fieldProps = FIELD_TYPES[fieldTypeId];
     const deleteOption = DELETE_MAP[fieldProps.name];
-
-    return await deleteOption({ fieldId, fieldProps });
+    async function transactionSteps(t) {
+      const transact = { transaction: t };
+      await deleteOption({ fieldId, fieldProps }, transact);
+      const result = await getPositionsByIds([fieldId]);
+      if (result.length) {
+        await deletePositions(
+          {
+            deletePositions: Array.from(result, i => i.position),
+            parentId: result[0].parentId,
+            type: 'field',
+          },
+          transact,
+        );
+      }
+    }
+    return await sequelize.transaction(transactionSteps);
   },
 };

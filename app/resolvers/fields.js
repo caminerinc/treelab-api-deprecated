@@ -34,12 +34,11 @@ module.exports = {
   async resolveDeleteField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId');
-
     const field = await findFieldType(params);
     if (!field) {
       ctx.status = 400;
       return (ctx.body = {
-        error: `error fieldId: ${params.fieldId}`,
+        error: `fieldId(${params.fieldId}) dose not exist`,
       });
     }
     await deleteField(field);
