@@ -11,7 +11,7 @@ const adaptBases = bases => {
     return {
       id: base.id,
       name: base.name,
-      primaryTableId: base.tables[0] ? base.tables[0].primaryTableId : null,
+      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
     };
   });
 };
