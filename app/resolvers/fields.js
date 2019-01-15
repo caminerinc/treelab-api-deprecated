@@ -6,7 +6,6 @@ const {
 } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
-const { createPosition } = require('../controllers/positions');
 
 module.exports = {
   async resolveCreateField(ctx) {
@@ -25,24 +24,6 @@ module.exports = {
       });
     }
     const result = await createField(params);
-    if (fieldProps.name === 'foreignKey') {
-      await createPosition({
-        parentId: params.tableId,
-        id: result.foreignFieldId,
-        type: 'field',
-      });
-      await createPosition({
-        parentId: params.tableId,
-        id: result.symmetricFieldId,
-        type: 'field',
-      });
-    } else {
-      await createPosition({
-        parentId: params.tableId,
-        id: result.fieldId || result.id,
-        type: 'field',
-      });
-    }
     ctx.body = result;
     socketIo.sync({
       op: 'createField',

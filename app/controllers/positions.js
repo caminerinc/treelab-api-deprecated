@@ -34,13 +34,13 @@ module.exports = {
     return await sequelize.query(sql, { replacements: [parentId, type] });
   },
 
-  async createPosition({ parentId, id, type }) {
+  async createPosition({ parentId, id, type }, transact) {
     const lastPosition = await positions.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
       where: { parentId, type },
     });
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create({ id, position, parentId, type });
+    return await positions.create({ id, position, parentId, type }, transact);
   },
 
   async getPositions(parentId, type) {
