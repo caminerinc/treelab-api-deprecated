@@ -137,7 +137,6 @@ module.exports = {
             fieldTypeId: 3,
           },
           model: fields,
-          // attributes: [sequelize.col('foreignKeyTypes')],
           as: 'flds',
           include: [
             {
