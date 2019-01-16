@@ -166,30 +166,29 @@ module.exports = {
     return await deleteOption({ fieldId, fieldProps, isTransaction });
   },
 
-  updateField(field, params) {
-    if (params.fieldTypeId && field.fieldTypeId != params.fieldTypeId) {
-      return sequelize.transaction(async t => {
-        await module.exports.deleteField({
-          isTransaction: { transaction: t },
-          ...field,
-        });
-        params.name = params.name || field.name;
-        return await module.exports.createField({
-          id: field.id,
-          tableId: field.tableId,
-          isTransaction: { transaction: t },
-          ...params,
-        });
+  replaceField(field, params) {
+    return sequelize.transaction(async t => {
+      await module.exports.deleteField({
+        isTransaction: { transaction: t },
+        ...field,
       });
-    } else {
-      return fields.update(
-        {
-          name: params.name,
-        },
-        {
-          where: { id: field.id },
-        },
-      );
-    }
+      params.name = params.name || field.name;
+      return await module.exports.createField({
+        id: field.id,
+        tableId: field.tableId,
+        isTransaction: { transaction: t },
+        ...params,
+      });
+    });
+  },
+  updateField(field, params) {
+    return fields.update(
+      {
+        name: params.name,
+      },
+      {
+        where: { id: field.id },
+      },
+    );
   },
 };
