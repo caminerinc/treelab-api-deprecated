@@ -6,8 +6,8 @@ const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
 const adaptForeignKey = (fieldValue, fieldProps) => {
-  const foreignRecords = fieldValue[fieldProps.valueName].map(
-    fieldValues => fieldValues.symFldV.rec.id,
+  const foreignRecords = fieldValue[fieldProps.valueName].map(fieldValues =>
+    fieldValues.symFldV ? fieldValues.symFldV.rec.id : null,
   );
   const symmetricRecords = fieldValue[fieldProps.symmetricName].map(
     fieldValues => fieldValues.fldV.rec.id,
