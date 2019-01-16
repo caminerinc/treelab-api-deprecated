@@ -6,6 +6,7 @@ const {
   getTable,
   deleteTable,
   findSymmetricFieldId,
+  getEasyTable,
 } = require('../controllers/tables');
 const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
@@ -146,14 +147,18 @@ module.exports = {
   async resolveDeleteTable(ctx) {
     checkKeyExists(ctx.params, 'tableId');
 
+    const table = await getEasyTable(ctx.params.tableId);
+    if (!table) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'table does not exist' });
+    }
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     const fieldId = [];
     for (let i = 0; i < symmetricFieldIds.flds.length; i++) {
-      fieldId.push(
-        symmetricFieldIds.flds[i].foreignKeyTypes
-          ? symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId
-          : null,
-      );
+      if (!symmetricFieldIds.flds[i].foreignKeyTypes) {
+        continue;
+      }
+      fieldId.push(symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId);
     }
     await deleteTable(ctx.params.tableId, fieldId);
     await deleteParentId([ctx.params.tableId]);
