@@ -6,6 +6,8 @@ const {
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
+const { createField } = require('./fields');
+const { createRecord } = require('./records');
 
 const CREATE_MAP = {
   multipleAttachment: createMultipleAttachment,
@@ -28,6 +30,7 @@ function createMultipleAttachment({ fieldValueId, value }) {
     ...value,
   });
 }
+
 function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
   async function transactionSteps(t) {
@@ -140,5 +143,58 @@ module.exports = {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
     return deleteValue(params, fieldProps);
+  },
+  async bulkCopyFieldValue({
+    sourceColumnConfigs,
+    sourceCellValues2dArray,
+    tableId,
+  }) {
+    for (let i = 0; i < sourceColumnConfigs.length; i++) {
+      const field = sourceColumnConfigs[i];
+      field.tableId = tableId;
+      const fieldResult = await createField(field);
+      for (let j = 0; j < sourceCellValues2dArray.length; j++) {
+        const values = sourceCellValues2dArray[j][i];
+        const recordResult = await createRecord({ tableId });
+        if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
+          module.exports.upsertFieldValue({
+            fieldTypeId: field.fieldTypeId,
+            recordId: recordResult.id,
+            fieldId: fieldResult.fieldId,
+            value: values,
+          });
+        } else if (field.fieldTypeId == 3) {
+          for (let k = 0; k < values.length; k++) {
+            const fieldValueResult = await module.exports.findOrCreateFieldValue(
+              recordResult.id,
+              fieldResult.foreignFieldId,
+            );
+            await module.exports.createArrayValue({
+              fieldTypeId: field.fieldTypeId,
+              fieldValueId: fieldValueResult.id,
+              value: {
+                name: values[k].foreignRowDisplayName,
+                foreignRowId: values[k].foreignRowId,
+                foreignColumnId: fieldResult.symmetricFieldId,
+              },
+            });
+          }
+        } else if (field.fieldTypeId == 4) {
+          for (let k = 0; k < values.length; k++) {
+            const fieldValueResult = await findOrCreateFieldValue(
+              recordResult.id,
+              fieldResult.fieldId,
+            );
+            await createArrayValue({
+              fieldTypeId: field.fieldTypeId,
+              fieldValueId: fieldValueResult.id,
+              value: values[k],
+            });
+          }
+        } else {
+          throw new Error('unsupported fieldType');
+        }
+      }
+    }
   },
 };

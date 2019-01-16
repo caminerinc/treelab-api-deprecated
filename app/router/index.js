@@ -6,6 +6,7 @@ const {
   resolveGetTables,
   resolveGetTable,
   resolveCreateTable,
+  resolveDeleteTable,
 } = require('../resolvers/tables');
 const {
   resolveCreateField,
@@ -16,6 +17,7 @@ const {
   resolveUpdateArrayTypeByAdding,
   resolveClearFieldValue,
   resolveDeleteArrayValue,
+  resolveBulkCopyFieldValue,
 } = require('../resolvers/fieldValues');
 const {
   resolveCreateRecord,
@@ -49,6 +51,7 @@ router.post('/api/base', resolveCreateBase);
 router.get('/api/tables/:baseId', resolveGetTables);
 router.get('/api/table/:tableId', resolveGetTable);
 router.post('/api/table', resolveCreateTable);
+router.delete('/api/table/:tableId', resolveDeleteTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
@@ -63,6 +66,7 @@ router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
 router.delete('/api/clear-field-value', resolveClearFieldValue);
 router.delete('/api/array-field', resolveDeleteArrayValue);
+router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
 //Position
 router.put('/api/change-position', resolveChangePosition);

@@ -114,7 +114,7 @@ describe('fieldValues模块', function(done) {
             });
           });
       });
-      it('number', function(done) {
+      /* it('number', function(done) {
         chai
           .request('http://localhost:8000')
           .put('/api/primitive-field')
@@ -131,7 +131,7 @@ describe('fieldValues模块', function(done) {
               done();
             });
           });
-      });
+      }); */
     });
   });
   describe('POST /api/array-field', function(done) {
@@ -163,7 +163,7 @@ describe('fieldValues模块', function(done) {
       });
     });
     describe('OK', function(done) {
-      it('foreignKey', function(done) {
+      /* it('foreignKey', function(done) {
         chai
           .request('http://localhost:8000')
           .post('/api/array-field')
@@ -180,7 +180,7 @@ describe('fieldValues模块', function(done) {
               done();
             });
           });
-      });
+      }); */
       it('multipleAttachment', function(done) {
         chai
           .request('http://localhost:8000')
@@ -349,6 +349,50 @@ describe('fieldValues模块', function(done) {
             });
         });
       });
+    });
+  });
+  describe('POST /api/bulk-copy-field-value', function(done) {
+    const params = {
+      tableId: 'tblNGUPdSs9Va4X5u',
+      sourceColumnConfigs:
+        '[{"name":"Link to Fake2","fieldTypeId":"3","typeOptions":{"relationship":"one","foreignTableId":"tblNGUPdSs9Va4X5u","symmetricColumnId":"fld1e1cf1f8f80404b"}},{"name":"Names","fieldTypeId":"1","typeOptions":null},{"name":"Number","fieldTypeId":"2","typeOptions":{"format":"decimal","precision":1,"negative":false,"validatorName":"positive"}},{"name":"Field 5","fieldTypeId":"1","typeOptions":null}]',
+      sourceCellValues2dArray:
+        '[[[{"foreignRowId":"recwEKHeMhcDnLnfc","foreignRowDisplayName":"Gray"},{"foreignRowId":"recfPInitd1QpZ6aV","foreignRowDisplayName":"Green"}],"Derek",2,null],[[{"foreignRowId":"rec1db61c8d540400f","foreignRowDisplayName":"Blue"}],"Ricky",3,null]]',
+    };
+    it('ok', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/bulk-copy-field-value')
+        .send(params)
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+    it('JSON parse error', function(done) {
+      const _params = JSON.parse(JSON.stringify(params));
+      _params.sourceColumnConfigs = '[}';
+      chai
+        .request('http://localhost:8000')
+        .post('/api/bulk-copy-field-value')
+        .send(_params)
+        .end((err, res) => {
+          res.should.have.status(500);
+          done();
+        });
+    });
+    it('not array', function(done) {
+      const _params = JSON.parse(JSON.stringify(params));
+      _params.sourceColumnConfigs = '{}';
+      chai
+        .request('http://localhost:8000')
+        .post('/api/bulk-copy-field-value')
+        .send(_params)
+        .end((err, res) => {
+          res.should.have.status(422);
+          res.body.should.have.property('error');
+          done();
+        });
     });
   });
 });
