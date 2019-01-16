@@ -13,6 +13,7 @@ const {
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { createPosition } = require('../controllers/positions');
 const { createField } = require('../controllers/fields');
+const { createRecord } = require('../controllers/records');
 
 module.exports = {
   getTables(baseId) {
@@ -129,28 +130,39 @@ module.exports = {
 
   async createTable(params, t1) {
     async function transactionSteps(t) {
-      const transact = { transaction: t1 || t };
-      const table = await tables.create(params, transact);
+      const table = await tables.create(params, { transaction: t });
       await createPosition(
         {
           parentId: params.baseId,
           id: table.id,
           type: 'table',
         },
-        transact,
+        t,
       );
-      const field = await createField(
+      const field1 = await createField(
         {
           tableId: table.id,
-          name: 'Field 1',
+          name: 'Name',
           fieldTypeId: 1,
         },
-        t1 || t,
+        t,
       );
-      return { table, field };
+      const field2 = await createField(
+        {
+          tableId: table.id,
+          name: 'Description',
+          fieldTypeId: 1,
+        },
+        t,
+      );
+      let recordResults = [];
+      for (let i = 0; i < 3; i++) {
+        recordResults.push(await createRecord({ tableId: table.id }, t));
+      }
+      return { table, fields: [field1, field2], records: recordResults };
     }
     return t1
-      ? transactionSteps()
+      ? transactionSteps(t1)
       : await sequelize.transaction(transactionSteps);
   },
 

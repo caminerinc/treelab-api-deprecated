@@ -2,7 +2,10 @@ const { sequelize } = require('../models');
 const { positions } = require('../models');
 
 module.exports = {
-  async changePosition({ originalPositions, targetPosition, parentId, type }) {
+  async changePosition(
+    { originalPositions, targetPosition, parentId, type },
+    t,
+  ) {
     targetPosition = parseInt(targetPosition);
     originalPositions = Array.from(originalPositions, i => parseInt(i));
     originalPositions.sort();
@@ -31,33 +34,42 @@ module.exports = {
       }
     }
     sql += ` else position end where "parentId" = ? and "type" = ?`;
-    return await sequelize.query(sql, { replacements: [parentId, type] });
+    return await sequelize.query(sql, {
+      replacements: [parentId, type],
+      transaction: t,
+    });
   },
 
-  async createPosition({ parentId, id, type }, transact) {
+  async createPosition({ parentId, id, type }, t) {
     const lastPosition = await positions.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
       where: { parentId, type },
+      transaction: t,
     });
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create({ id, position, parentId, type }, transact);
+    return await positions.create(
+      { id, position, parentId, type },
+      { transaction: t },
+    );
   },
 
-  async getPositions(parentId, type) {
+  async getPositions(parentId, type, t) {
     return await positions.findAll({
       attributes: ['id', 'position'],
       where: { parentId, type },
       order: [['position', 'asc']],
+      transaction: t,
     });
   },
 
-  async getPositionsByIds(ids) {
+  async getPositionsByIds(ids, t) {
     return await positions.findAll({
       where: { id: { $in: ids } },
+      transaction: t,
     });
   },
 
-  async deletePositions({ deletePositions, parentId, type }, transaction) {
+  async deletePositions({ deletePositions, parentId, type }, t) {
     deletePositions = Array.from(deletePositions, i => parseInt(i));
     deletePositions.sort();
     const len = deletePositions.length;
@@ -79,8 +91,11 @@ module.exports = {
         parentId,
         type,
       },
-      transaction,
+      transaction: t,
     });
-    await sequelize.query(sql, { replacements: [parentId, type], transaction });
+    await sequelize.query(sql, {
+      replacements: [parentId, type],
+      transaction: t,
+    });
   },
 };

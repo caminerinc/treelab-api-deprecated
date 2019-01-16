@@ -42,7 +42,7 @@ module.exports = {
           id: base.id,
           type: 'base',
         },
-        transact,
+        t,
       );
       const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
       return { base, table };
