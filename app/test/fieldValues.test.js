@@ -272,6 +272,7 @@ describe('fieldValues模块', function(done) {
             recordId: 'rec1db61c8d540400f',
             fieldId: 'fld1e1cf1f8dc0403b',
             itemId: 'recfPInitd1QpZ6aE',
+            fieldTypeId: 3,
           })
           .end((err, res) => {
             res.should.have.status(200);
@@ -294,6 +295,7 @@ describe('fieldValues模块', function(done) {
             recordId: 'rec1db61c8d540400f',
             fieldId: 'fld1e1ced53340402b',
             itemId: attachmentId,
+            fieldTypeId: 4,
           })
           .end((err, res) => {
             res.should.have.status(200);
