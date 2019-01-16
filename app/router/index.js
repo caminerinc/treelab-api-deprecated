@@ -34,6 +34,7 @@ const {
   resolveGetModules,
   resolveExtraction,
 } = require('../resolvers/modules');
+const { resolveAddData } = require('../resolvers/test');
 
 const { checkTableExist } = require('../middlewares/tables');
 
@@ -82,5 +83,8 @@ router.get('/api/users', resolveGetUsers);
 router.post('/api/public/user', resolveCreateUser);
 router.post('/api/public/login', resolveLogin);
 router.get('/api/public/test-auth', resolveTestAuth);
+
+//Test
+router.get('/test/addData', resolveAddData);
 
 module.exports = router;
