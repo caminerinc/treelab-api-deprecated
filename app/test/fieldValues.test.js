@@ -248,7 +248,7 @@ describe('fieldValues模块', function(done) {
     const params = {
       tableId: 'tblNGUPdSs9Va4X5u',
       sourceColumnConfigs:
-        '[{"id":"fld1e1cf1f8dc0403b","name":"Link to Fake2","fieldTypeId":"3","typeOptions":{"relationship":"one","foreignTableId":"tblNGUPdSs9Va4X5u","symmetricColumnId":"fld1e1cf1f8f80404b"}},{"id":"fld6P01Q7FHyhilbD","name":"Names","fieldTypeId":"1","typeOptions":null},{"id":"fldPLW7ShJWufrdVY","name":"Number","fieldTypeId":"2","typeOptions":{"format":"decimal","precision":1,"negative":false,"validatorName":"positive"}},{"id":"fldoQb6vJicrR03jy","name":"Field 5","fieldTypeId":"1","typeOptions":null}]',
+        '[{"name":"Link to Fake2","fieldTypeId":"3","typeOptions":{"relationship":"one","foreignTableId":"tblNGUPdSs9Va4X5u","symmetricColumnId":"fld1e1cf1f8f80404b"}},{"name":"Names","fieldTypeId":"1","typeOptions":null},{"name":"Number","fieldTypeId":"2","typeOptions":{"format":"decimal","precision":1,"negative":false,"validatorName":"positive"}},{"name":"Field 5","fieldTypeId":"1","typeOptions":null}]',
       sourceCellValues2dArray:
         '[[[{"foreignRowId":"recwEKHeMhcDnLnfc","foreignRowDisplayName":"Gray"},{"foreignRowId":"recfPInitd1QpZ6aV","foreignRowDisplayName":"Green"}],"Derek",2,null],[[{"foreignRowId":"rec1db61c8d540400f","foreignRowDisplayName":"Blue"}],"Ricky",3,null]]',
     };

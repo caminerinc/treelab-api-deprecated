@@ -19,9 +19,9 @@ const UPSERT_MAP = {
   number: upsertGenericFieldValue,
 };
 
-async function createMultipleAttachment({ fieldValueId, value }) {
+function createMultipleAttachment({ fieldValueId, value }) {
   checkKeyExists(value, 'url', 'fileName', 'fileType');
-  return await multipleAttachmentValues.create({
+  return multipleAttachmentValues.create({
     fieldValueId,
     ...value,
   });
