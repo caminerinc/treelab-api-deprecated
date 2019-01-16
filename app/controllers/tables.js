@@ -11,6 +11,8 @@ const {
   positions,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { createPosition } = require('../controllers/positions');
+const { createField } = require('../controllers/fields');
 
 module.exports = {
   getTables(baseId) {
@@ -33,7 +35,15 @@ module.exports = {
             },
           ],
         },
+        {
+          model: positions,
+          as: 'pos',
+          attributes: ['position'],
+          where: { type: 'table' },
+          required: false,
+        },
       ],
+      order: [[sequelize.col('pos.position'), 'asc']],
     });
   },
 
@@ -117,8 +127,31 @@ module.exports = {
     });
   },
 
-  createTable(params) {
-    return tables.create(params);
+  async createTable(params, t1) {
+    async function transactionSteps(t) {
+      const transact = { transaction: t1 || t };
+      const table = await tables.create(params, transact);
+      await createPosition(
+        {
+          parentId: params.baseId,
+          id: table.id,
+          type: 'table',
+        },
+        transact,
+      );
+      const field = await createField(
+        {
+          tableId: table.id,
+          name: 'Field 1',
+          fieldTypeId: 1,
+        },
+        t1 || t,
+      );
+      return { table, field };
+    }
+    return t1
+      ? transactionSteps()
+      : await sequelize.transaction(transactionSteps);
   },
 
   getEasyTable(id) {

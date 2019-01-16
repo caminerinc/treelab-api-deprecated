@@ -19,8 +19,8 @@ const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
 const adaptForeignKey = (fieldValue, fieldProps) => {
-  const foreignRecords = fieldValue[fieldProps.valueName].map(
-    fieldValues => fieldValues.symFldV.rec.id,
+  const foreignRecords = fieldValue[fieldProps.valueName].map(fieldValues =>
+    fieldValues.symFldV ? fieldValues.symFldV.rec.id : null,
   );
   const symmetricRecords = fieldValue[fieldProps.symmetricName].map(
     fieldValues => fieldValues.fldV.rec.id,
@@ -136,25 +136,11 @@ module.exports = {
       ctx.status = 400;
       return (ctx.body = { error: 'base does not exist' });
     }
-    const table = await createTable(params);
-    await createPosition({
-      parentId: params.baseId,
-      id: table.id,
-      type: 'table',
-    });
-    const field = await createField({
-      tableId: table.id,
-      name: 'Field 1',
-      fieldTypeId: 1,
-    });
-    await createPosition({ parentId: table.id, id: field.id, type: 'field' });
-    ctx.body = table;
+    const result = await createTable(params);
+    ctx.body = result.table;
     socketIo.sync({
       op: 'createTable',
-      body: {
-        table: table,
-        field,
-      },
+      body: result,
     });
   },
   async resolveDeleteTable(ctx) {

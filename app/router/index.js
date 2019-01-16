@@ -16,6 +16,7 @@ const {
   resolveCreateOrUpdatePrimitiveField,
   resolveUpdateArrayTypeByAdding,
   resolveClearFieldValue,
+  resolveBulkCopyFieldValue,
 } = require('../resolvers/fieldValues');
 const {
   resolveCreateRecord,
@@ -63,6 +64,7 @@ router.delete('/api/delete-rows', resolveDeleteRecord);
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
 router.delete('/api/clear-field-value', resolveClearFieldValue);
+router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
 //Position
 router.put('/api/change-position', resolveChangePosition);
