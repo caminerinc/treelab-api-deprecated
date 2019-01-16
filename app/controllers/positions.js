@@ -98,4 +98,9 @@ module.exports = {
       transaction: t,
     });
   },
+  async deleteParentId(parentId) {
+    return await positions.destroy({
+      where: { parentId: { $in: parentId } },
+    });
+  },
 };

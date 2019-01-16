@@ -1,7 +1,21 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getTables, createTable, getTable } = require('../controllers/tables');
+const {
+  getTables,
+  createTable,
+  getTable,
+  deleteTable,
+  findSymmetricFieldId,
+  getEasyTable,
+} = require('../controllers/tables');
+const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
+const {
+  createPosition,
+  deleteParentId,
+  deletePositions,
+  getPositionsByIds,
+} = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -129,5 +143,31 @@ module.exports = {
       op: 'createTable',
       body: result,
     });
+  },
+  async resolveDeleteTable(ctx) {
+    checkKeyExists(ctx.params, 'tableId');
+
+    const table = await getEasyTable(ctx.params.tableId);
+    if (!table) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'table does not exist' });
+    }
+    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
+    const fieldId = [];
+    for (let i = 0; i < symmetricFieldIds.flds.length; i++) {
+      if (!symmetricFieldIds.flds[i].foreignKeyTypes) {
+        continue;
+      }
+      fieldId.push(symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId);
+    }
+    await deleteTable(ctx.params.tableId, fieldId);
+    await deleteParentId([ctx.params.tableId]);
+    const positions = await getPositionsByIds([ctx.params.tableId]);
+    await deletePositions({
+      deletePositions: [positions[0].position],
+      parentId: symmetricFieldIds.baseId,
+      type: 'table',
+    });
+    ctx.body = { message: 'success' };
   },
 };
