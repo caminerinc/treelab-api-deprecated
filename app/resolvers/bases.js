@@ -6,8 +6,7 @@ const {
   deleteBase,
   findSymmetricFieldId,
 } = require('../controllers/bases');
-const { createTable, getTableByBaseId } = require('../controllers/tables');
-const { createField } = require('../controllers/fields');
+const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
 const { deleteParentId } = require('../controllers/positions');
 
@@ -17,7 +16,7 @@ const adaptBases = bases => {
     return {
       id: base.id,
       name: base.name,
-      primaryTableId: base.tables[0] ? base.tables[0].id : null,
+      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
     };
   });
 };
@@ -31,21 +30,11 @@ module.exports = {
   async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const bases = await createBase(params);
-    const table = await createTable({ baseId: bases.id, name: 'Table 1' });
-    const field = await createField({
-      tableId: table.id,
-      name: 'Field 1',
-      fieldTypeId: 1,
-    });
-    ctx.body = pick(bases, ['id', 'name', 'createdAt']);
+    const result = await createBase(params);
+    ctx.body = pick(result.base, ['id', 'name', 'createdAt']);
     socketIo.sync({
       op: 'createBase',
-      body: {
-        base: ctx.body,
-        table,
-        field,
-      },
+      body: result,
     });
   },
   async resolveDeleteBase(ctx) {
