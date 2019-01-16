@@ -62,7 +62,6 @@ module.exports = {
       include: [
         {
           model: tables,
-          // attributes: [sequelize.col('foreignKeyTypes')],
           as: 'tables',
           include: [
             {
@@ -70,7 +69,6 @@ module.exports = {
                 fieldTypeId: 3,
               },
               model: fields,
-              // attributes: ['flds->foreignKeyTypes'],
               as: 'flds',
               include: [
                 {
@@ -86,7 +84,6 @@ module.exports = {
     });
     const flds = [];
     for (let i = 0; i < base.tables.length; i++) {
-      // flds = flds.concat(base.tables[i].flds);
       flds.push(...base.tables[i].flds);
     }
     const symmetricFieldId = [];
