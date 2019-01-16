@@ -147,6 +147,8 @@ module.exports = {
         },
         t,
       );
+      field1.name = 'Name';
+      field1.fieldTypeId = 1;
       const field2 = await createField(
         {
           tableId: table.id,
@@ -155,6 +157,8 @@ module.exports = {
         },
         t,
       );
+      field2.name = 'Description';
+      field2.fieldTypeId = 1;
       let recordResults = [];
       for (let i = 0; i < 3; i++) {
         recordResults.push(await createRecord({ tableId: table.id }, t));

@@ -124,7 +124,7 @@ module.exports = {
       return (ctx.body = { error: 'base does not exist' });
     }
     const result = await createTable(params);
-    ctx.body = result.table;
+    ctx.body = result;
     socketIo.sync({
       op: 'createTable',
       body: result,
