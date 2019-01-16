@@ -6,6 +6,7 @@ const {
   resolveGetTables,
   resolveGetTable,
   resolveCreateTable,
+  resolveDeleteTable,
 } = require('../resolvers/tables');
 const {
   resolveCreateField,
@@ -49,6 +50,7 @@ router.post('/api/base', resolveCreateBase);
 router.get('/api/tables/:baseId', resolveGetTables);
 router.get('/api/table/:tableId', resolveGetTable);
 router.post('/api/table', resolveCreateTable);
+router.delete('/api/table/:tableId', resolveDeleteTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);

@@ -83,4 +83,9 @@ module.exports = {
     });
     await sequelize.query(sql, { replacements: [parentId, type], transaction });
   },
+  async deleteParentId(parentId) {
+    return await positions.destroy({
+      where: { parentId: { $in: parentId } },
+    });
+  },
 };

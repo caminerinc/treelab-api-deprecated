@@ -157,4 +157,38 @@ module.exports = {
   getEasyTable(id) {
     return tables.findOne({ where: { id } });
   },
+
+  findSymmetricFieldId({ tableId: id }) {
+    return tables.findOne({
+      where: {
+        id,
+      },
+      attributes: ['baseId', sequelize.col('flds->foreignKeyTypes')],
+      include: [
+        {
+          where: {
+            fieldTypeId: 3,
+          },
+          model: fields,
+          as: 'flds',
+          include: [
+            {
+              model: foreignKeyTypes,
+              attributes: ['symmetricFieldId'],
+              as: 'foreignKeyTypes',
+            },
+          ],
+        },
+      ],
+    });
+  },
+  async deleteTable(id, fieldId) {
+    return sequelize.transaction(async t => {
+      await fields.destroy(
+        { where: { id: { $in: fieldId } } },
+        { transaction: t },
+      );
+      return await tables.destroy({ where: { id } }, { transaction: t });
+    });
+  },
 };
