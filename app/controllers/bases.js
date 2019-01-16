@@ -1,4 +1,6 @@
 const { bases, positions, sequelize } = require('../models');
+const { createPosition } = require('../controllers/positions');
+const { createTable } = require('../controllers/tables');
 
 module.exports = {
   getBases() {
@@ -12,15 +14,40 @@ module.exports = {
           where: { type: 'table' },
           required: false,
         },
+        {
+          model: positions,
+          as: 'pos',
+          attributes: ['position'],
+          where: { type: 'base' },
+          required: false,
+        },
       ],
       order: [[sequelize.col('tablePositions.position'), 'asc']],
+      order: [[sequelize.col('pos.position'), 'asc']],
     });
   },
 
   async createBase(params) {
-    return await bases.create({
-      name: params.name,
-    });
+    async function transactionSteps(t) {
+      const transact = { transaction: t };
+      const base = await bases.create(
+        {
+          name: params.name,
+        },
+        transact,
+      );
+      await createPosition(
+        {
+          parentId: 'baseParent', //TODO base的父级未确定
+          id: base.id,
+          type: 'base',
+        },
+        transact,
+      );
+      const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
+      return { base, table };
+    }
+    return await sequelize.transaction(transactionSteps);
   },
 
   getBase(id) {
