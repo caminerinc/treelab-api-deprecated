@@ -218,7 +218,7 @@ module.exports = {
           tableId: field.tableId,
           ...params,
         },
-        { transaction: t },
+        t,
       );
       return result;
     });
