@@ -173,6 +173,7 @@ module.exports = {
   getEasyTable(id) {
     return tables.findOne({ where: { id } });
   },
+
   getTableByBaseId({ baseId }) {
     return tables.findAll({ where: { baseId }, attributes: ['id'] });
   },
