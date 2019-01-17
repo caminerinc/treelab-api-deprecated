@@ -1,7 +1,11 @@
 const Router = require('koa-router');
 const router = new Router();
 
-const { resolveGetBases, resolveCreateBase } = require('../resolvers/bases');
+const {
+  resolveGetBases,
+  resolveCreateBase,
+  resolveDeleteBase,
+} = require('../resolvers/bases');
 const {
   resolveGetTables,
   resolveGetTable,
@@ -45,6 +49,7 @@ router.get('/api/public/health-check', ctx => {
 // Base
 router.get('/api/bases', resolveGetBases);
 router.post('/api/base', resolveCreateBase);
+router.delete('/api/base/:baseId', resolveDeleteBase);
 
 //Table
 router.get('/api/tables/:baseId', resolveGetTables);

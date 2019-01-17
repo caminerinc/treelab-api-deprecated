@@ -88,4 +88,9 @@ module.exports = {
       where: { parentId: { $in: parentId } },
     });
   },
+  deleteParentId(parentId) {
+    return positions.destroy({
+      where: { parentId: { $in: parentId } },
+    });
+  },
 };
