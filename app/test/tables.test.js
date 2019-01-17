@@ -116,4 +116,47 @@ describe('tables模块', function(done) {
       });
     });
   });
+
+  describe('post /api/table', function(done) {
+    it('not baseId', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/table')
+        .send({ name: 'test' })
+        .end((err, res) => {
+          res.should.have.status(422);
+          done();
+        });
+    });
+    it('not name', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/table')
+        .send({ baseId: 'bse1jT7ZIHLmjH4' })
+        .end((err, res) => {
+          res.should.have.status(422);
+          done();
+        });
+    });
+    it('base dose not exist', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/table')
+        .send({ baseId: 'test', name: 'test' })
+        .end((err, res) => {
+          res.should.have.status(400);
+          done();
+        });
+    });
+    it('OK', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/table')
+        .send({ baseId: 'bse1jT7ZIHLmjH4', name: 'testForMocha' })
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
 });
