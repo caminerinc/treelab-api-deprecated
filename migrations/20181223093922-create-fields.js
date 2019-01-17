@@ -19,8 +19,6 @@ module.exports = {
         type: Sequelize.INTEGER,
       },
       width: {
-        allowNull: false,
-        defaultValue: 100,
         type: Sequelize.INTEGER,
       },
       createdAt: {

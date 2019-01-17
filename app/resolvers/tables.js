@@ -58,8 +58,6 @@ const adaptTable = table => {
             if (i.type === 'field') return i;
           })
           .map(i => {
-            console.log('======================================');
-            console.log(i);
             return {
               id: i.id,
               position: i.position,
