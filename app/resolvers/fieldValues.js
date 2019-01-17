@@ -4,6 +4,7 @@ const {
   findOrCreateFieldValue,
   upsertFieldValue,
   deleteFieldValue,
+  deleteArrayValue,
   bulkCopyFieldValue,
 } = require('../controllers/fieldValues');
 const socketIo = require('../../lib/core/socketIo');
@@ -66,6 +67,14 @@ module.exports = {
       op: 'updateArrayTypeByAdding',
       body: result,
     });
+  },
+  async resolveDeleteArrayValue(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId', 'itemId', 'fieldTypeId');
+
+    const fieldValue = await deleteArrayValue(params);
+
+    ctx.body = { message: 'success' };
   },
 
   async resolveBulkCopyFieldValue(ctx) {
