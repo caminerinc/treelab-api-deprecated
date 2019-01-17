@@ -1,11 +1,16 @@
 const Router = require('koa-router');
 const router = new Router();
 
-const { resolveGetBases, resolveCreateBase } = require('../resolvers/bases');
+const {
+  resolveGetBases,
+  resolveCreateBase,
+  resolveDeleteBase,
+} = require('../resolvers/bases');
 const {
   resolveGetTables,
   resolveGetTable,
   resolveCreateTable,
+  resolveDeleteTable,
 } = require('../resolvers/tables');
 const {
   resolveCreateField,
@@ -16,6 +21,8 @@ const {
   resolveCreateOrUpdatePrimitiveField,
   resolveUpdateArrayTypeByAdding,
   resolveClearFieldValue,
+  resolveDeleteArrayValue,
+  resolveBulkCopyFieldValue,
 } = require('../resolvers/fieldValues');
 const {
   resolveCreateRecord,
@@ -44,11 +51,13 @@ router.get('/api/public/health-check', ctx => {
 // Base
 router.get('/api/bases', resolveGetBases);
 router.post('/api/base', resolveCreateBase);
+router.delete('/api/base/:baseId', resolveDeleteBase);
 
 //Table
 router.get('/api/tables/:baseId', resolveGetTables);
 router.get('/api/table/:tableId', resolveGetTable);
 router.post('/api/table', resolveCreateTable);
+router.delete('/api/table/:tableId', resolveDeleteTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
@@ -63,6 +72,8 @@ router.delete('/api/delete-rows', resolveDeleteRecord);
 router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
 router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
 router.delete('/api/clear-field-value', resolveClearFieldValue);
+router.delete('/api/array-field', resolveDeleteArrayValue);
+router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
 //Position
 router.put('/api/change-position', resolveChangePosition);

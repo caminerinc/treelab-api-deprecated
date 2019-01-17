@@ -34,13 +34,13 @@ module.exports = {
     return await sequelize.query(sql, { replacements: [parentId, type] });
   },
 
-  async createPosition({ parentId, id, type }) {
+  async createPosition({ parentId, id, type }, transact) {
     const lastPosition = await positions.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
       where: { parentId, type },
     });
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create({ id, position, parentId, type });
+    return await positions.create({ id, position, parentId, type }, transact);
   },
 
   async getPositions(parentId, type) {
@@ -57,7 +57,7 @@ module.exports = {
     });
   },
 
-  async deletePositions({ deletePositions, parentId, type }) {
+  async deletePositions({ deletePositions, parentId, type }, transaction) {
     deletePositions = Array.from(deletePositions, i => parseInt(i));
     deletePositions.sort();
     const len = deletePositions.length;
@@ -73,20 +73,24 @@ module.exports = {
     sql += ` when position > ${
       deletePositions[len - 1]
     } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
-    async function transactionSteps(t) {
-      const transact = { transaction: t };
-      await positions.destroy(
-        {
-          where: {
-            position: { $in: deletePositions },
-            parentId,
-            type,
-          },
-        },
-        transact,
-      );
-      await sequelize.query(sql, { replacements: [parentId, type] }, transact);
-    }
-    return await sequelize.transaction(transactionSteps);
+    await positions.destroy({
+      where: {
+        position: { $in: deletePositions },
+        parentId,
+        type,
+      },
+      transaction,
+    });
+    await sequelize.query(sql, { replacements: [parentId, type], transaction });
+  },
+  async deleteParentId(parentId) {
+    return await positions.destroy({
+      where: { parentId: { $in: parentId } },
+    });
+  },
+  deleteParentId(parentId) {
+    return positions.destroy({
+      where: { parentId: { $in: parentId } },
+    });
   },
 };

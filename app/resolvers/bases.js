@@ -1,9 +1,14 @@
-const { pick } = require('lodash');
+const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getBases, createBase } = require('../controllers/bases');
-const { createTable } = require('../controllers/tables');
-const { createField } = require('../controllers/fields');
+const {
+  getBases,
+  createBase,
+  deleteBase,
+  findSymmetricFieldId,
+} = require('../controllers/bases');
+const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
+const { deleteParentId } = require('../controllers/positions');
 
 const adaptBases = bases => {
   return Array.from(bases, base => {
@@ -11,7 +16,7 @@ const adaptBases = bases => {
     return {
       id: base.id,
       name: base.name,
-      primaryTableId: base.tables[0] ? base.tables[0].primaryTableId : null,
+      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
     };
   });
 };
@@ -25,21 +30,20 @@ module.exports = {
   async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const bases = await createBase(params);
-    const table = await createTable({ baseId: bases.id, name: 'Table 1' });
-    const field = await createField({
-      tableId: table.id,
-      name: 'Field 1',
-      fieldTypeId: 1,
-    });
-    ctx.body = pick(bases, ['id', 'name', 'createdAt']);
+    const result = await createBase(params);
+    ctx.body = pick(result.base, ['id', 'name', 'createdAt']);
     socketIo.sync({
       op: 'createBase',
-      body: {
-        base: ctx.body,
-        table,
-        field,
-      },
+      body: result,
     });
+  },
+  async resolveDeleteBase(ctx) {
+    checkKeyExists(ctx.params, 'baseId');
+    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
+    await deleteBase(ctx.params.baseId, symmetricFieldIds);
+    let tableIds = await getTableByBaseId(ctx.params);
+    tableIds = map(tableIds, 'id');
+    await deleteParentId([ctx.params.baseId, ...tableIds]);
+    ctx.body = { message: 'success' };
   },
 };

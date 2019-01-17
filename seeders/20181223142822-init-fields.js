@@ -91,6 +91,14 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          id: 'fld1e6d1c73f80402b',
+          name: 'Field 1',
+          fieldTypeId: 1,
+          tableId: 'tbl1e6d1c73b404017',
+          createdAt: '2019-01-14T02:58:19.798Z',
+          updatedAt: '2019-01-14T02:58:19.798Z',
+        },
       ],
       {},
     );
