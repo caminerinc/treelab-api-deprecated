@@ -4,6 +4,7 @@ const {
   fields,
   foreignKeyTypes,
   sequelize,
+  positions,
 } = require('../models');
 const { createPosition } = require('../controllers/positions');
 const { createTable } = require('../controllers/tables');
