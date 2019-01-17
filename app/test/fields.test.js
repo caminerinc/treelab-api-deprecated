@@ -40,10 +40,10 @@ function checkForeignField(params, done) {
       done();
     });
 }
-describe.only('fields模块', function(done) {
+describe('fields模块', function(done) {
   let textId, foreignKeyId;
   describe('POST /api/field', function(done) {
-    describe.skip('ERROR', function(done) {
+    describe('ERROR', function(done) {
       it('not tableId', function(done) {
         chai
           .request('http://localhost:8000')
@@ -197,7 +197,7 @@ describe.only('fields模块', function(done) {
   });
 
   describe('PUT /api/field', function(done) {
-    describe.skip('ERROR', function(done) {
+    describe('ERROR', function(done) {
       it('Missing parameters', function(done) {
         chai
           .request('http://localhost:8000')
@@ -255,7 +255,7 @@ describe.only('fields模块', function(done) {
             checkForeignField(res.body, done);
           });
       });
-      it.skip('foreignKey --> text', function(done) {
+      it('foreignKey --> text', function(done) {
         chai
           .request('http://localhost:8000')
           .put('/api/field')
@@ -272,7 +272,7 @@ describe.only('fields模块', function(done) {
       });
     });
   });
-  describe.skip('DELETE /api/delete-field', function(done) {
+  describe('DELETE /api/delete-field', function(done) {
     describe('ERROR', function(done) {
       it('not fieldId', function(done) {
         chai

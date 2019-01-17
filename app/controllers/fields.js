@@ -88,8 +88,6 @@ async function deleteGenericField({ fieldId }, transaction) {
   });
 }
 async function deleteForeignField({ fieldId, fieldProps }, transaction) {
-  console.log('deleteForeignField-----------------------------------');
-  console.log(fieldId);
   const symmetricFieldId = await fields.findOne({
     where: {
       id: fieldId,
@@ -129,7 +127,7 @@ async function createFieldStep(params, transact) {
     result,
   };
 }
-function deleteFieldStep({ fieldId, fieldTypeId }, t) {
+function deleteFieldStep({ id: fieldId, fieldTypeId }, t) {
   const fieldProps = FIELD_TYPES[fieldTypeId];
   const deleteOption = DELETE_MAP[fieldProps.name];
 
@@ -182,12 +180,9 @@ module.exports = {
     });
   },
 
-  async deleteField({ id: fieldId, fieldTypeId }, t1) {
+  async deleteField({ id, fieldTypeId }, t1) {
     async function transactionSteps(t) {
-      const ids = await deleteFieldStep(
-        { fieldId, fieldTypeId, fieldProps },
-        t,
-      );
+      const ids = await deleteFieldStep({ id, fieldTypeId }, t);
       const result = await getPositionsByIds([
         ids.fieldId,
         ids.symmetricFieldId,
@@ -216,16 +211,16 @@ module.exports = {
         },
         t,
       );
-      console.log('deleteFieldStep----------------------------------------');
       params.name = params.name || field.name;
-      return await createFieldStep(
+      const { result } = await createFieldStep(
         {
           id: field.id,
           tableId: field.tableId,
           ...params,
         },
-        t,
+        { transaction: t },
       );
+      return result;
     });
   },
   updateField(field, params) {
