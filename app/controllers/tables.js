@@ -11,6 +11,9 @@ const {
   positions,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { createPosition } = require('../controllers/positions');
+const { createField } = require('../controllers/fields');
+const { createRecord } = require('../controllers/records');
 
 module.exports = {
   getTables(baseId) {
@@ -33,7 +36,15 @@ module.exports = {
             },
           ],
         },
+        {
+          model: positions,
+          as: 'pos',
+          attributes: ['position'],
+          where: { type: 'table' },
+          required: false,
+        },
       ],
+      order: [[sequelize.col('pos.position'), 'asc']],
     });
   },
 
@@ -124,11 +135,87 @@ module.exports = {
     });
   },
 
-  createTable(params) {
-    return tables.create(params);
+  async createTable(params, t1) {
+    async function transactionSteps(t) {
+      const table = await tables.create(params, { transaction: t });
+      await createPosition(
+        {
+          parentId: params.baseId,
+          id: table.id,
+          type: 'table',
+        },
+        t,
+      );
+      const field1 = await createField(
+        {
+          tableId: table.id,
+          name: 'Name',
+          fieldTypeId: 1,
+        },
+        t,
+      );
+      field1.name = 'Name';
+      field1.fieldTypeId = 1;
+      const field2 = await createField(
+        {
+          tableId: table.id,
+          name: 'Description',
+          fieldTypeId: 1,
+        },
+        t,
+      );
+      field2.name = 'Description';
+      field2.fieldTypeId = 1;
+      let recordResults = [];
+      for (let i = 0; i < 3; i++) {
+        recordResults.push(await createRecord({ tableId: table.id }, t));
+      }
+      return { table, fields: [field1, field2], records: recordResults };
+    }
+    return t1
+      ? transactionSteps(t1)
+      : await sequelize.transaction(transactionSteps);
   },
 
   getEasyTable(id) {
     return tables.findOne({ where: { id } });
+  },
+
+  getTableByBaseId({ baseId }) {
+    return tables.findAll({ where: { baseId }, attributes: ['id'] });
+  },
+
+  findSymmetricFieldId({ tableId: id }) {
+    return tables.findOne({
+      where: {
+        id,
+      },
+      attributes: ['baseId', sequelize.col('flds->foreignKeyTypes')],
+      include: [
+        {
+          where: {
+            fieldTypeId: 3,
+          },
+          model: fields,
+          as: 'flds',
+          include: [
+            {
+              model: foreignKeyTypes,
+              attributes: ['symmetricFieldId'],
+              as: 'foreignKeyTypes',
+            },
+          ],
+        },
+      ],
+    });
+  },
+  async deleteTable(id, fieldId) {
+    return sequelize.transaction(async t => {
+      await fields.destroy(
+        { where: { id: { $in: fieldId } } },
+        { transaction: t },
+      );
+      return await tables.destroy({ where: { id } }, { transaction: t });
+    });
   },
 };

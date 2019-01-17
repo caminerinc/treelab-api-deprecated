@@ -36,6 +36,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'parentId',
       as: 'positions',
     });
+    tables.hasOne(models.positions, {
+      foreignKey: 'id',
+      as: 'pos',
+    });
   };
   return tables;
 };

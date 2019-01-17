@@ -19,6 +19,13 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          id: 'tbl1e6d1c73b404017',
+          name: 'Table 1',
+          baseId: 'bse1jT7ZIDLmjH5',
+          createdAt: '2019-01-14T02:58:19.798Z',
+          updatedAt: '2019-01-14T02:58:19.798Z',
+        },
       ],
       {},
     );
