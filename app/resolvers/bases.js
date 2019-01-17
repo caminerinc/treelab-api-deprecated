@@ -1,7 +1,15 @@
-const { pick } = require('lodash');
+const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getBases, createBase } = require('../controllers/bases');
+const {
+  getBases,
+  createBase,
+  deleteBase,
+  findSymmetricFieldId,
+  getBase,
+} = require('../controllers/bases');
+const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
+const { deleteParentId } = require('../controllers/positions');
 
 const adaptBases = bases => {
   return Array.from(bases, base => {
@@ -29,5 +37,19 @@ module.exports = {
       op: 'createBase',
       body: result,
     });
+  },
+  async resolveDeleteBase(ctx) {
+    checkKeyExists(ctx.params, 'baseId');
+    const base = await getBase(ctx.params.baseId);
+    if (!base) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'base does not exist' });
+    }
+    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
+    await deleteBase(ctx.params.baseId, symmetricFieldIds);
+    let tableIds = await getTableByBaseId(ctx.params);
+    tableIds = map(tableIds, 'id');
+    await deleteParentId([ctx.params.baseId, ...tableIds]);
+    ctx.body = { message: 'success' };
   },
 };
