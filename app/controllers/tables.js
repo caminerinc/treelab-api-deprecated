@@ -85,7 +85,7 @@ module.exports = {
                         {
                           model: records,
                           as: 'rec',
-                          attributes: ['id'],
+                          attributes: ['id', 'tableId'],
                         },
                       ],
                     },
