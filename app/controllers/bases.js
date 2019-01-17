@@ -4,6 +4,7 @@ const {
   fields,
   foreignKeyTypes,
   sequelize,
+  positions,
 } = require('../models');
 const { createPosition } = require('../controllers/positions');
 const { createTable } = require('../controllers/tables');
@@ -48,7 +49,7 @@ module.exports = {
           id: base.id,
           type: 'base',
         },
-        transact,
+        t,
       );
       const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
       return { base, table };
@@ -112,14 +113,17 @@ module.exports = {
         },
       ],
     });
-    const flds = [];
-    for (let i = 0; i < base.tables.length; i++) {
-      flds.push(...base.tables[i].flds);
+    if (base && base.tables) {
+      const flds = [];
+      for (let i = 0; i < base.tables.length; i++) {
+        flds.push(...base.tables[i].flds);
+      }
+      const symmetricFieldId = [];
+      for (let i = 0; i < flds.length; i++) {
+        symmetricFieldId.push(flds[i].foreignKeyTypes.symmetricFieldId);
+      }
+      return symmetricFieldId;
     }
-    const symmetricFieldId = [];
-    for (let i = 0; i < flds.length; i++) {
-      symmetricFieldId.push(flds[i].foreignKeyTypes.symmetricFieldId);
-    }
-    return symmetricFieldId;
+    return [];
   },
 };
