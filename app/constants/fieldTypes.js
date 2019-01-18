@@ -26,6 +26,10 @@ const FIELD_TYPES = {
     valueName: 'multiAttV',
     isArrayValue: true,
   },
+  5: {
+    name: 'formula',
+    valueName: 'fmlV',
+  },
 };
 
 module.exports = {
