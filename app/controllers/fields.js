@@ -137,7 +137,6 @@ module.exports = {
   async createField(params, t1) {
     async function transactionSteps(t) {
       const { fieldProps, result } = await createFieldStep(params, t);
-      // const result = await createOption(fieldParams, params.typeOptions, t);
       if (fieldProps.name === 'foreignKey') {
         await createPosition(
           {
