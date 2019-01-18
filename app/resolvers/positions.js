@@ -15,6 +15,10 @@ const resolveChangePosition = async ctx => {
     ctx.status = 422;
     return (ctx.body = { error: 'originalPositions can not be empty' });
   }
+  if (!(params.targetPosition > 1)) {
+    ctx.status = 422;
+    return (ctx.body = { error: 'illegal targetPosition' });
+  }
   if (!Array.isArray(params.originalPositions))
     params.originalPositions = [params.originalPositions];
   await changePosition(params);
