@@ -8,10 +8,8 @@ const {
   findSymmetricFieldId,
   getEasyTable,
 } = require('../controllers/tables');
-const { createField } = require('../controllers/fields');
 const { getBase } = require('../controllers/bases');
 const {
-  createPosition,
   deleteParentId,
   deletePositions,
   getPositionsByIds,

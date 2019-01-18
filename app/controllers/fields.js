@@ -236,6 +236,7 @@ module.exports = {
       return result;
     });
   },
+
   updateField(field, params) {
     return fields.update(
       {
@@ -245,5 +246,15 @@ module.exports = {
         where: { id: field.id },
       },
     );
+  },
+
+  getFormulaFields(tableId) {
+    return fields.findAll({
+      attributes: ['id', 'name'],
+      where: {
+        tableId,
+        fieldTypeId: 5,
+      },
+    });
   },
 };
