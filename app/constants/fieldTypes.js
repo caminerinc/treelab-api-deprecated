@@ -29,6 +29,9 @@ const FIELD_TYPES = {
   5: {
     name: 'formula',
     valueName: 'fmlV',
+    typeModel: 'formulaTypes',
+    typeName: 'formulaTypes',
+    typeProps: ['count', 'sum', 'average'],
   },
 };
 

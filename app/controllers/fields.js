@@ -1,9 +1,10 @@
 const { pick } = require('lodash');
 const {
+  sequelize,
   fields,
   numberTypes,
   foreignKeyTypes,
-  sequelize,
+  formulaTypes,
 } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
@@ -18,6 +19,7 @@ const TYPE_OPTION_MAP = {
   number: createNumberOptions,
   foreignKey: createForeignKey,
   multipleAttachment: createGenericField,
+  formula: createFormulaField,
 };
 
 async function createGenericField(fieldParams, options, t) {
@@ -71,6 +73,18 @@ async function createForeignKey(fieldParams, options, t) {
   return {
     foreignFieldId: newField.id,
     symmetricFieldId: newSymmetricField.id,
+  };
+}
+
+async function createFormulaField(fieldParams, options, t) {
+  checkKeyExists(options, 'format');
+  const newField = await fields.create(fieldParams, { transaction: t });
+  await formulaTypes.create(
+    Object.assign({}, options, { fieldId: newField.id }),
+    t,
+  );
+  return {
+    fieldId: newField.id,
   };
 }
 
@@ -137,7 +151,6 @@ module.exports = {
   async createField(params, t1) {
     async function transactionSteps(t) {
       const { fieldProps, result } = await createFieldStep(params, t);
-      // const result = await createOption(fieldParams, params.typeOptions, t);
       if (fieldProps.name === 'foreignKey') {
         await createPosition(
           {

@@ -40,6 +40,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldId',
       as: FIELD_TYPES[3].typeName,
     });
+    fields.hasOne(models[FIELD_TYPES[5].typeModel], {
+      foreignKey: 'fieldId',
+      as: FIELD_TYPES[5].typeName,
+    });
   };
   return fields;
 };
