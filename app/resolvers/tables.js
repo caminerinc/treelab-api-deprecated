@@ -150,6 +150,11 @@ module.exports = {
       return (ctx.body = { error: 'base does not exist' });
     }
     const result = await createTable(params);
+    result.fields = result.fields.map(i =>
+      Object.assign({}, i, {
+        fieldTypeName: FIELD_TYPES[i.fieldTypeId].name,
+      }),
+    );
     ctx.body = result;
     socketIo.sync({
       op: 'createTable',
