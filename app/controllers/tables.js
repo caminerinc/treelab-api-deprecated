@@ -86,7 +86,7 @@ module.exports = {
                         {
                           model: records,
                           as: 'rec',
-                          attributes: ['id'],
+                          attributes: ['id', 'tableId'],
                         },
                       ],
                     },
@@ -105,7 +105,7 @@ module.exports = {
                         {
                           model: records,
                           as: 'rec',
-                          attributes: ['id'],
+                          attributes: ['id', 'tableId'],
                         },
                       ],
                     },
@@ -209,6 +209,7 @@ module.exports = {
       ],
     });
   },
+
   async deleteTable(id, fieldId) {
     return sequelize.transaction(async t => {
       await fields.destroy(
