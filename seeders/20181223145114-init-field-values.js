@@ -65,6 +65,13 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          recordId: 'rec1db61c8d540400f',
+          fieldId: 'fld1e1ce9eefc0401b',
+          textValue: 'lim',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );

@@ -13,19 +13,31 @@ const {
   deleteParentId,
   deletePositions,
   getPositionsByIds,
+  getPrimaryFieldId,
 } = require('../controllers/positions');
+const { findFieldValue } = require('../controllers/fieldValues');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
-const adaptForeignKey = (fieldValue, fieldProps) => {
-  const foreignRecords = fieldValue[fieldProps.valueName].map(fieldValues =>
-    fieldValues.symFldV ? fieldValues.symFldV.rec.id : null,
-  );
-  const symmetricRecords = fieldValue[fieldProps.symmetricName].map(
-    fieldValues => fieldValues.fldV.rec.id,
-  );
-
-  return foreignRecords.concat(symmetricRecords);
+const adaptForeignKey = async (fieldValue, fieldProps) => {
+  let foreignRecords = [];
+  for (const foreignKeyValues of fieldValue[fieldProps.valueName]) {
+    const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
+    if (fgn) {
+      const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
+      const foreignDisplayName = await findFieldValue(
+        fgn.rec.dataValues.id,
+        primaryFieldId.id,
+      );
+      foreignRecords.push({
+        foreignRowId: fgn.dataValues.rec.id,
+        foreignDisplayName:
+          foreignDisplayName.dataValues.textValue ||
+          foreignDisplayName.dataValues.numberValue,
+      });
+    }
+  }
+  return foreignRecords;
 };
 
 const ADAPT_MAP = {
@@ -55,11 +67,11 @@ const adaptTables = tables => {
   };
 };
 
-const adaptTable = table => {
+const adaptTable = async table => {
   return {
     tableDatas: {
       ...pick(table, ['id']),
-      rowsById: getRowsById(table.recs),
+      rowsById: await getRowsById(table.recs),
     },
     viewDatas: [
       {
@@ -82,31 +94,33 @@ const adaptTable = table => {
   };
 };
 
-const getRowsById = records =>
-  records.reduce((rowAccum, record) => {
+const getRowsById = async records => {
+  let rowAccum = {};
+  for (const record of records) {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: getCellValuesByColumnId(record.fldVs),
+      cellValuesByColumnId: await getCellValuesByColumnId(record.fldVs),
     };
-    return rowAccum;
-  }, {});
+  }
+  return rowAccum;
+};
 
-const getCellValuesByColumnId = fieldValues =>
-  fieldValues.reduce((cellAccum, fieldValue) => {
+const getCellValuesByColumnId = async fieldValues => {
+  let cellAccum = {};
+  for (const fieldValue of fieldValues) {
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
     if (!fieldProps)
       throw new Error('field type id does not exist in fieldValue');
-
     const adaptData = ADAPT_MAP[fieldProps.name];
     if (adaptData) {
-      cellAccum[fieldValue.fieldId] = adaptData(fieldValue, fieldProps);
+      cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
     } else {
       cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
     }
-
-    return cellAccum;
-  }, {});
+  }
+  return cellAccum;
+};
 
 module.exports = {
   async resolveGetTables(ctx) {
@@ -124,7 +138,7 @@ module.exports = {
       ctx.status = 400;
       return (ctx.body = { error: 'table does not exist' });
     }
-    ctx.body = adaptTable(table);
+    ctx.body = await adaptTable(table);
   },
 
   async resolveCreateTable(ctx) {
@@ -142,6 +156,7 @@ module.exports = {
       body: result,
     });
   },
+
   async resolveDeleteTable(ctx) {
     checkKeyExists(ctx.params, 'tableId');
 
