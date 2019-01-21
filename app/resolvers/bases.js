@@ -32,10 +32,15 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
     const result = await createBase(params);
-    ctx.body = pick(result.base, ['id', 'name', 'createdAt']);
+    ctx.body = {
+      id: result.base.id,
+      name: result.base.name,
+      createdAt: result.base.createdAt,
+      tableId: result.table.table.id,
+    };
     socketIo.sync({
       op: 'createBase',
-      body: result,
+      body: ctx.body,
     });
   },
   async resolveDeleteBase(ctx) {

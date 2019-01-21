@@ -257,4 +257,17 @@ module.exports = {
       },
     });
   },
+  
+  updateFieldWidth({ fieldId: id, width }) {
+    return fields.update(
+      {
+        width,
+      },
+      {
+        where: {
+          id,
+        },
+      },
+    );
+  },
 };
