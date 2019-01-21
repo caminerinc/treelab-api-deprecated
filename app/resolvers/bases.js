@@ -40,7 +40,7 @@ module.exports = {
     };
     socketIo.sync({
       op: 'createBase',
-      body: result,
+      body: ctx.body,
     });
   },
   async resolveDeleteBase(ctx) {
