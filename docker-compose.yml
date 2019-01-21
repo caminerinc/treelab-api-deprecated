@@ -7,3 +7,5 @@ services:
     container_name: elephante_psql
     environment:
       POSTGRES_PASSWORD: psql_password
+    volumes:
+      - ./postgresql/data:/var/lib/postgresql/data
