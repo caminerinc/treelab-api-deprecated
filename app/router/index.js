@@ -15,6 +15,7 @@ const {
 const {
   resolveCreateField,
   resolveDeleteField,
+  resolveResizeColumn,
   resolveUpdateField,
 } = require('../resolvers/fields');
 const {
@@ -62,6 +63,7 @@ router.delete('/api/table/:tableId', resolveDeleteTable);
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);
 router.delete('/api/delete-field', resolveDeleteField);
+router.post('/api/resize-column', resolveResizeColumn);
 router.put('/api/field', resolveUpdateField);
 
 //Record

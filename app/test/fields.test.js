@@ -196,6 +196,51 @@ describe('fields模块', function(done) {
     });
   });
 
+  describe('POST /api/resize-column', function(done) {
+    describe('ERROR', function(done) {
+      it('Missing parameters', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .post('/api/resize-column')
+          .send({})
+          .end((err, res) => {
+            res.should.have.status(422);
+            done();
+          });
+      });
+      describe('OK', function(done) {
+        it('fieldId: fldnQ4OWns9ZF88nC, width: 200', function(done) {
+          chai
+            .request('http://localhost:8000')
+            .post('/api/resize-column')
+            .send({
+              fieldId: 'fldnQ4OWns9ZF88nC',
+              width: 200,
+            })
+            .end((err, res) => {
+              res.should.have.status(200);
+              done();
+            });
+        });
+        it('check width', function(done) {
+          chai
+            .request('http://localhost:8000')
+            .get('/api/table/tblNGUPdSs9Va4X5u')
+            .end((err, res) => {
+              res.should.have.status(200);
+              const field = findIndex(
+                res.body.viewDatas[0].columnOrder,
+                function(o) {
+                  return o.id == 'fldnQ4OWns9ZF88nC';
+                },
+              );
+              res.body.viewDatas[0].columnOrder[field].width.should.be.eql(200);
+              done();
+            });
+        });
+      });
+    });
+  });
   describe('PUT /api/field', function(done) {
     describe('ERROR', function(done) {
       it('Missing parameters', function(done) {

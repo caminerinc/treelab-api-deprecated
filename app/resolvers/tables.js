@@ -80,7 +80,11 @@ const adaptTable = async table => {
             if (i.type === 'field') return i;
           })
           .map(i => {
-            return { id: i.id, position: i.position };
+            return {
+              id: i.id,
+              position: i.position,
+              width: i.field ? i.field.width : null,
+            };
           }),
         rowOrder: table.positions
           .filter(i => {

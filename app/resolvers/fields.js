@@ -3,6 +3,7 @@ const {
   createField,
   deleteField,
   findFieldType,
+  updateFieldWidth,
   updateField,
   replaceField,
 } = require('../controllers/fields');
@@ -44,6 +45,13 @@ module.exports = {
       });
     }
     await deleteField(field);
+    ctx.body = { message: 'success' };
+  },
+  async resolveResizeColumn(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'fieldId', 'width');
+
+    await updateFieldWidth(params);
     ctx.body = { message: 'success' };
   },
 

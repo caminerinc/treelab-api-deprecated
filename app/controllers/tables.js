@@ -65,7 +65,7 @@ module.exports = {
               include: [
                 {
                   model: fields,
-                  attributes: ['fieldTypeId'],
+                  attributes: ['fieldTypeId', 'width'],
                   as: 'fld',
                 },
                 {
@@ -119,6 +119,13 @@ module.exports = {
           model: positions,
           as: 'positions',
           attributes: ['id', 'position', 'type'],
+          include: [
+            {
+              model: fields,
+              as: 'field',
+              attributes: ['width'],
+            },
+          ],
         },
       ],
       order: [
