@@ -124,6 +124,10 @@ module.exports = {
     return createValue(params);
   },
 
+  findFieldValue(recordId, fieldId) {
+    return fieldValues.findOne({ where: { recordId, fieldId } });
+  },
+
   findOrCreateFieldValue(recordId, fieldId) {
     return fieldValues
       .findOrCreate({
@@ -144,6 +148,7 @@ module.exports = {
     const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
     return deleteValue(params, fieldProps);
   },
+
   async bulkCopyFieldValue({
     sourceColumnConfigs,
     sourceCellValues2dArray,

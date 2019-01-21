@@ -98,14 +98,21 @@ module.exports = {
       transaction: t,
     });
   },
-  async deleteParentId(parentId) {
-    return await positions.destroy({
-      where: { parentId: { $in: parentId } },
-    });
-  },
+
   deleteParentId(parentId) {
     return positions.destroy({
       where: { parentId: { $in: parentId } },
+    });
+  },
+
+  getPrimaryFieldId(tableId) {
+    return positions.findOne({
+      attributes: ['id'],
+      where: {
+        parentId: tableId,
+        position: 1,
+        type: 'field',
+      },
     });
   },
 };
