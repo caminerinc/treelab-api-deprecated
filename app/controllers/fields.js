@@ -28,7 +28,7 @@ async function createGenericField(fieldParams, options, t) {
 }
 
 async function createNumberOptions(fieldParams, options, t) {
-  checkKeyExists(options, 'format', 'precision', 'negative');
+  checkKeyExists(options, 'format', 'negative');
   const field = await fields.create(fieldParams, { transaction: t });
   await numberTypes.create(
     {
