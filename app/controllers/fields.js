@@ -250,14 +250,26 @@ module.exports = {
 
   getFormulaFields(tableId) {
     return fields.findAll({
-      attributes: ['id', 'name'],
       where: {
         tableId,
         fieldTypeId: 5,
       },
+      include: [
+        {
+          model: formulaTypes,
+          as: 'formulaTypes',
+          attributes: [
+            'formulaText',
+            'format',
+            'precision',
+            'symbol',
+            'fieldId',
+          ],
+        },
+      ],
     });
   },
-  
+
   updateFieldWidth({ fieldId: id, width }) {
     return fields.update(
       {

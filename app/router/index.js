@@ -1,11 +1,7 @@
 const Router = require('koa-router');
 const router = new Router();
 
-const {
-  resolveGetBases,
-  resolveCreateBase,
-  resolveDeleteBase,
-} = require('../resolvers/bases');
+const { resolveGetBases, resolveCreateBase, resolveDeleteBase } = require('../resolvers/bases');
 const {
   resolveGetTables,
   resolveGetTable,
@@ -25,22 +21,11 @@ const {
   resolveDeleteArrayValue,
   resolveBulkCopyFieldValue,
 } = require('../resolvers/fieldValues');
-const {
-  resolveCreateRecord,
-  resolveDeleteRecord,
-} = require('../resolvers/records');
-const {
-  resolveGetUsers,
-  resolveCreateUser,
-  resolveLogin,
-  resolveTestAuth,
-} = require('../resolvers/users');
+const { resolveCreateRecord, resolveDeleteRecord } = require('../resolvers/records');
+const { resolveGetUsers, resolveCreateUser, resolveLogin, resolveTestAuth } = require('../resolvers/users');
 const { resolveChangePosition } = require('../resolvers/positions');
 const { resolveGetPouches, resolveGetPouch } = require('../resolvers/pouches');
-const {
-  resolveGetModules,
-  resolveExtraction,
-} = require('../resolvers/modules');
+const { resolveGetModules, resolveExtraction } = require('../resolvers/modules');
 
 const { checkTableExist } = require('../middlewares/tables');
 

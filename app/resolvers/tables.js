@@ -1,5 +1,6 @@
 const { get, pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
+const Formula = require('../util/formula');
 const {
   getTables,
   createTable,
@@ -16,6 +17,7 @@ const {
   getPrimaryFieldId,
 } = require('../controllers/positions');
 const { findFieldValue } = require('../controllers/fieldValues');
+const { getFormulaFields } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 
@@ -25,15 +27,11 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
     const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
     if (fgn) {
       const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
-      const foreignDisplayName = await findFieldValue(
-        fgn.rec.dataValues.id,
-        primaryFieldId.id,
-      );
+      const foreignDisplayName = await findFieldValue(fgn.rec.dataValues.id, primaryFieldId.id);
       foreignRecords.push({
         foreignRowId: fgn.dataValues.rec.id,
         foreignDisplayName:
-          foreignDisplayName.dataValues.textValue ||
-          foreignDisplayName.dataValues.numberValue,
+          foreignDisplayName.dataValues.textValue || foreignDisplayName.dataValues.numberValue,
       });
     }
   }
@@ -52,10 +50,7 @@ const adaptTables = tables => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
         if (fieldProps.isTypeOptionsRequired) {
-          otherProps.typeOptions = pick(
-            get(field, fieldProps.typeName),
-            fieldProps.typeProps,
-          );
+          otherProps.typeOptions = pick(get(field, fieldProps.typeName), fieldProps.typeProps);
         }
         return {
           ...pick(field, ['id', 'name']),
@@ -68,10 +63,11 @@ const adaptTables = tables => {
 };
 
 const adaptTable = async table => {
+  const formulaFields = await getFormulaFields(table.id);
   return {
     tableDatas: {
       ...pick(table, ['id']),
-      rowsById: await getRowsById(table.recs),
+      rowsById: await getRowsById(table.recs, formulaFields),
     },
     viewDatas: [
       {
@@ -98,29 +94,35 @@ const adaptTable = async table => {
   };
 };
 
-const getRowsById = async records => {
+const getRowsById = async (records, formulaFields) => {
   let rowAccum = {};
   for (const record of records) {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: await getCellValuesByColumnId(record.fldVs),
+      cellValuesByColumnId: await getCellValuesByColumnId(record.fldVs, formulaFields),
     };
   }
   return rowAccum;
 };
 
-const getCellValuesByColumnId = async fieldValues => {
+const getCellValuesByColumnId = async (fieldValues, formulaFields) => {
   let cellAccum = {};
   for (const fieldValue of fieldValues) {
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    if (!fieldProps)
-      throw new Error('field type id does not exist in fieldValue');
+    if (!fieldProps) throw new Error('field type id does not exist in fieldValue');
     const adaptData = ADAPT_MAP[fieldProps.name];
     if (adaptData) {
       cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
     } else {
       cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
+    }
+  }
+  if (formulaFields.length) {
+    // console.log(JSON.stringify(formulaFields));
+    const formula = new Formula();
+    for (const formulaField of formulaFields) {
+      formula.process(formulaField.formulaTypes.formulaText);
     }
   }
   return cellAccum;

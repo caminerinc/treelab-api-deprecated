@@ -1,6 +1,6 @@
 {
     "parser": "flow",
-    "printWidth": 80,
+    "printWidth": 110,
     "semi": true,
     "singleQuote": true,
     "tabWidth": 2,
