@@ -35,8 +35,7 @@ module.exports = {
     ctx.body = {
       id: result.base.id,
       name: result.base.name,
-      createdAt: result.base.createdAt,
-      tableId: result.table.table.id,
+      primaryTableId: result.table.table.id,
     };
     socketIo.sync({
       op: 'createBase',
