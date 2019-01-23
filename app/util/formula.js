@@ -1,7 +1,7 @@
 class Formula {
   constructor() {
     this.reservedWord = ['sum', 'average'];
-    this.opt = ['{', '}', '(', ')', '*', '/', '%', '+', '-', '\\', '.'];
+    this.operatorOrDelimiter = ['{', '}', '(', ')', '*', '/', '%', '+', '-', '\\', '.'];
   }
 
   process(str, fields) {
@@ -18,45 +18,48 @@ class Formula {
     error.message = 'invalid formula';
     for (const i in str) {
       const char = str[i];
-      if (char === '\\') {
-        escapeFlag = true;
-        continue;
-      }
-      escapeFlag = false;
-      console.log(char);
-      //   if (fieldFlag && char !== '}') {
-      //     field += char;
-      //     continue;
-      //   }
       if (this.isNumber(char)) {
         token += char;
       } else if (this.isLetter(char)) {
         token += char;
-      } else if (char === '.') {
-        if (token.indexOf('.') !== -1) throw error;
-        token += char;
-      } else if (char === '{') {
-        fieldFlag = true;
-        field = '';
-      } else if (this.opt[char]) {
-        if (token) {
-          if (char === '(') {
-            if (this.reservedWord.indexOf(token) === -1)
-              throw new Error(`unsuported function ${token} in formula`);
-          }
-          if (this.isNumber(token[0])) {
-            numStack.push(token);
-          } else {
-            tokenStack.push(token);
-          }
-          token = '';
+      } else if (this.operatorOrDelimiter.indexOf(char) !== -1) {
+        if (escapeFlag) {
+          token += char;
+          escapeFlag = false;
+          continue;
         }
-        if (optStack.length) {
-          const lastOpt = optStack[optStack.length - 1];
+        if (char === '\\') {
+          escapeFlag = true;
+          continue;
+        } else if (char === '.') {
+          if (token.indexOf('.') !== -1) throw error;
+          token += char;
+        } else if (char === '{') {
+          fieldFlag = true;
+          field = '';
+        } else if (this.opt[char]) {
+          if (token) {
+            if (char === '(') {
+              if (this.reservedWord.indexOf(token) === -1)
+                throw new Error(`unsuported function ${token} in formula`);
+            }
+            if (this.isNumber(token[0])) {
+              numStack.push(token);
+            } else {
+              tokenStack.push(token);
+            }
+            token = '';
+          }
+          if (optStack.length) {
+            const lastOpt = optStack[optStack.length - 1];
+          } else {
+            optStack.push(char);
+          }
         } else {
-          optStack.push(char);
+          throw error;
         }
       } else {
+        error.message = 'invalid formula,unsupported operator or delimiter';
         throw error;
       }
     }
