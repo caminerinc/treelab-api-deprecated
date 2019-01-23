@@ -99,15 +99,18 @@ const getRowsById = async (records, formulaFields) => {
   for (const record of records) {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: await getCellValuesByColumnId(record.fldVs, formulaFields),
+      cellValuesByColumnId: await getCellValuesByRecord(record, formulaFields),
     };
   }
   return rowAccum;
 };
 
-const getCellValuesByColumnId = async (fieldValues, formulaFields) => {
+const getCellValuesByRecord = async (record, formulaFields) => {
+  const fieldValues = record.fldVs;
   let cellAccum = {};
+  let fields = {};
   for (const fieldValue of fieldValues) {
+    fields[fieldValue.fld.name] = fieldValue.numberValue || fieldValue.textValue;
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
     if (!fieldProps) throw new Error('field type id does not exist in fieldValue');
@@ -119,10 +122,9 @@ const getCellValuesByColumnId = async (fieldValues, formulaFields) => {
     }
   }
   if (formulaFields.length) {
-    // console.log(JSON.stringify(formulaFields));
     const formula = new Formula();
     for (const formulaField of formulaFields) {
-      formula.process(formulaField.formulaTypes.formulaText);
+      cellAccum[formulaField.id] = formula.process(formulaField.formulaTypes.formulaText, fields);
     }
   }
   return cellAccum;
