@@ -1,4 +1,4 @@
-const { get, pick, forEach } = require('lodash');
+const { get, pick, forEach, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const {
   getTables,
@@ -195,7 +195,7 @@ module.exports = {
     forEach(symmetricField, async (v, k) => {
       const symmetricFieldPositions = await getPositionsByIds(v);
       await deletePositions({
-        deletePositions: symmetricFieldPositions,
+        deletePositions: map(symmetricFieldPositions, 'position'),
         parentId: k,
         type: 'field',
       });
