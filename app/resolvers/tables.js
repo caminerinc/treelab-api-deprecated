@@ -1,4 +1,4 @@
-const { get, pick } = require('lodash');
+const { get, pick, forEach, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const {
   getTables,
@@ -177,12 +177,29 @@ module.exports = {
     }
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     const fieldId = [];
-    for (let i = 0; i < symmetricFieldIds.flds.length; i++) {
-      if (!symmetricFieldIds.flds[i].foreignKeyTypes) {
-        continue;
+    const symmetricField = {};
+    forEach(symmetricFieldIds.flds, field => {
+      if (!field.foreignKeyTypes) {
+        return;
       }
-      fieldId.push(symmetricFieldIds.flds[i].foreignKeyTypes.symmetricFieldId);
-    }
+      let symmetricFieldId = get(field, 'foreignKeyTypes.symmetricFieldId');
+      fieldId.push(symmetricFieldId);
+      let symmetricTableId = get(
+        field,
+        'foreignKeyTypes.symmetricField.tableId',
+      );
+      symmetricField[symmetricTableId]
+        ? symmetricField[symmetricTableId].push(symmetricFieldId)
+        : (symmetricField[symmetricTableId] = [symmetricFieldId]);
+    });
+    forEach(symmetricField, async (v, k) => {
+      const symmetricFieldPositions = await getPositionsByIds(v);
+      await deletePositions({
+        deletePositions: map(symmetricFieldPositions, 'position'),
+        parentId: k,
+        type: 'field',
+      });
+    });
     await deleteTable(ctx.params.tableId, fieldId);
     await deleteParentId([ctx.params.tableId]);
     const positions = await getPositionsByIds([ctx.params.tableId]);
