@@ -30,8 +30,9 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
       const foreignDisplayName = await findFieldValue(fgn.rec.dataValues.id, primaryFieldId.id);
       foreignRecords.push({
         foreignRowId: fgn.dataValues.rec.id,
-        foreignDisplayName:
-          foreignDisplayName.dataValues.textValue || foreignDisplayName.dataValues.numberValue,
+        foreignDisplayName: foreignDisplayName
+          ? foreignDisplayName.dataValues.textValue || foreignDisplayName.dataValues.numberValue
+          : null,
       });
     }
   }

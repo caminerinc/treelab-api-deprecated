@@ -10,7 +10,6 @@ class Formula {
     let optStack = [];
     let numStack = [];
     let token = '';
-    let field = '';
     let fieldFlag = false;
     let escapeFlag = false;
     let error = new Error();
@@ -18,16 +17,17 @@ class Formula {
     error.message = 'invalid formula';
     for (const i in str) {
       const char = str[i];
+      if (escapeFlag) {
+        token += char;
+        escapeFlag = false;
+        continue;
+      }
       if (this.isNumber(char)) {
         token += char;
       } else if (this.isLetter(char)) {
         token += char;
       } else if (this.operatorOrDelimiter.indexOf(char) !== -1) {
-        if (escapeFlag) {
-          token += char;
-          escapeFlag = false;
-          continue;
-        }
+        if (token) tokenStack.push(token);
         if (char === '\\') {
           escapeFlag = true;
           continue;
@@ -36,7 +36,13 @@ class Formula {
           token += char;
         } else if (char === '{') {
           fieldFlag = true;
-          field = '';
+          token = '';
+        } else if (char === '}') {
+          fieldFlag = false;
+          if (!fields[token]) {
+            error.message = `field ${token} dose not exist`;
+            throw error;
+          }
         } else if (this.opt[char]) {
           if (token) {
             if (char === '(') {
