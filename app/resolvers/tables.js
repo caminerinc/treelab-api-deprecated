@@ -31,9 +31,10 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
       );
       foreignRecords.push({
         foreignRowId: fgn.dataValues.rec.id,
-        foreignDisplayName:
-          foreignDisplayName.dataValues.textValue ||
-          foreignDisplayName.dataValues.numberValue,
+        foreignDisplayName: foreignDisplayName
+          ? foreignDisplayName.dataValues.textValue ||
+            foreignDisplayName.dataValues.numberValue
+          : null,
       });
     }
   }
