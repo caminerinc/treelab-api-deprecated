@@ -29,15 +29,13 @@ module.exports = {
     ctx.body = { bases: adaptBases(bases) };
   },
 
-  async resolveCreateBase(ctx) {
+  async resolveCreateBase(ctx, db) {
+    // Resolvers will receive request ctx and db instance.
+    // Only db will go down the chain
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const result = await createBase(params);
-    ctx.body = {
-      id: result.base.id,
-      name: result.base.name,
-      primaryTableId: result.table.table.id,
-    };
+    // Create base returns data ready to be used, no unpacking at this layer.
+    ctx.body = await createBase(db, params);
     socketIo.sync({
       op: 'createBase',
       body: ctx.body,
