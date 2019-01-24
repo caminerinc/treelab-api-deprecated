@@ -40,17 +40,14 @@ module.exports = {
     });
   },
 
-  async createPosition({ parentId, id, type }, t) {
-    const lastPosition = await positions.findOne({
-      attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
-      where: { parentId, type },
-      transaction: t,
-    });
+  async createPosition(db, { parentId, baseId, type }) {
+    // Simple and composable function:
+    // Receives a db (either default or transactional)
+    // Receives the arguments to create a position
+    const lastPosition = await positions.findLast(db, parentId, type);
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create(
-      { id, position, parentId, type },
-      { transaction: t },
-    );
+    // Do its magic and returns a position (either to another service or resolver layer)
+    return positions.create(db, baseId, position /*??*/, parentId, type);
   },
 
   async getPositions(parentId, type, t) {
