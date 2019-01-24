@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const router = new Router();
+const { sequelize } = require('../models');
 
 const {
   resolveGetBases,
@@ -44,6 +45,15 @@ const {
 
 const { checkTableExist } = require('../middlewares/tables');
 
+// The goal here is to send a variable db down the chain
+// this db variable will be the db connection that was created
+// during server start up.
+const wrapDbInstance = (resolverFn) => {
+  return (ctx) => {
+    return resolverFn(ctx, sequelize);
+  }
+}
+
 // App
 router.get('/api/public/health-check', ctx => {
   ctx.body = 'Connection established';
@@ -51,7 +61,7 @@ router.get('/api/public/health-check', ctx => {
 
 // Base
 router.get('/api/bases', resolveGetBases);
-router.post('/api/base', resolveCreateBase);
+router.post('/api/base', wrapDbInstance(resolveCreateBase));
 router.delete('/api/base/:baseId', resolveDeleteBase);
 
 //Table
