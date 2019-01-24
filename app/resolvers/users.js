@@ -1,6 +1,7 @@
 const { createUser, getAllUsers, getUser } = require('../controllers/users');
 const { checkKeyExists } = require('../util/helper');
 const { EMAIL_REGEX } = require('../constants/validations');
+const { error, ECodes } = require('../util/error');
 const { authenticate, createAuthToken, getToken } = require('../util/auth');
 
 module.exports = {
@@ -19,13 +20,11 @@ module.exports = {
     );
 
     if (!EMAIL_REGEX.test(ctx.request.body.email)) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'Incorrect email format' });
+      error(400, ECodes.INVALID_EMAIL);
     }
     const user = await getUser(ctx.request.body);
     if (user) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'The email already exists' });
+      error(400, ECodes.USER_ALREADY_EXISTS);
     }
     await createUser(ctx.request.body);
     ctx.body = { message: 'success' };
