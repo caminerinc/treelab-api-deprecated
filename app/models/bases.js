@@ -2,6 +2,7 @@ const { createUid } = require('../util/helper');
 const { PREFIX_TYPE } = require('../constants/app');
 
 module.exports = (sequelize, DataTypes) => {
+  // Model definitions should be hidden to the controller.
   const bases = sequelize.define(
     'bases',
     {
@@ -32,5 +33,17 @@ module.exports = (sequelize, DataTypes) => {
       as: 'pos',
     });
   };
-  return bases;
+  const createBase = async (db, name) => {
+    return await bases.create(
+      {
+        name: name,
+      },
+      {transaction: db},
+    );
+  }
+  // Controller should only interact with these simple functions, the DB magic
+  // is hidden here.
+  return {
+    createBase,
+  };
 };
