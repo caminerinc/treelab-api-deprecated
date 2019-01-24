@@ -3,7 +3,7 @@ const {
   tables,
   fields,
   foreignKeyTypes,
-  sequelize,
+  sequelize, // this should be removed when all function are updated to receive db
   positions,
 } = require('../models');
 const { createPosition } = require('../controllers/positions');
@@ -34,27 +34,29 @@ module.exports = {
     });
   },
 
-  async createBase(params) {
+  async createBase(db, params) {
     async function transactionSteps(t) {
-      const transact = { transaction: t };
-      const base = await bases.create(
-        {
-          name: params.name,
-        },
-        transact,
-      );
-      await createPosition(
+      // bases.createBase is hidding all the database mess.
+      // It receives which db needs to create, in this case its the
+      // transactional database t
+      const base = bases.createBase(t, params.name);
+      // Position needs to be created in the same transaction db `t`
+      await createPosition(t,
         {
           parentId: 'baseParent', //TODO base的父级未确定
           id: base.id,
           type: 'base',
-        },
-        t,
+        }
       );
-      const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
-      return { base, table };
+      // Same here, creating table in the transactional db t
+      const table = await createTable(t, { baseId: base.id, name: 'Table 1' });
+      return {
+        id: result.base.id,
+        name: result.base.name,
+        primaryTableId: result.table.table.id,
+      };
     }
-    return await sequelize.transaction(transactionSteps);
+    return await db.transaction(transactionSteps);
   },
 
   getBase(id) {
