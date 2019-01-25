@@ -1,5 +1,6 @@
 const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
+const { error, ECodes } = require('../util/error');
 const {
   getBases,
   createBase,
@@ -47,8 +48,7 @@ module.exports = {
     checkKeyExists(ctx.params, 'baseId');
     const base = await getBase(ctx.params.baseId);
     if (!base) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'base does not exist' });
+      error(400, ECodes.BASE_NOT_FOUND);
     }
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     await deleteBase(ctx.params.baseId, symmetricFieldIds);
