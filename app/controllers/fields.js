@@ -4,7 +4,7 @@ const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
 const { createPosition, deletePositions, getPositionsByIds } = require('../controllers/positions');
 
-const TYPE_OPTION_MAP = {
+const CREATE_OPTION_MAP = {
   text: createGenericField,
   number: createNumberOptions,
   foreignKey: createForeignKey,
@@ -75,6 +75,47 @@ async function createFormulaField(fieldParams, options, t) {
   };
 }
 
+const UPDATE_OPTION_MAP = {
+  number: updateNumberOptions,
+  foreignKey: updateForeignKey,
+  formula: updateFormulaField,
+};
+
+function updateNumberOptions(fieldId, options, t) {
+  checkKeyExists(options, 'format', 'negative');
+  return numberTypes.update(options, { where: { fieldId }, transaction: t });
+}
+
+async function updateForeignKey(fieldId, options, t) {
+  checkKeyExists(options, 'relationship', 'foreignTableId');
+  await fields.update(options, { where: { fieldId }, transaction: t });
+  await foreignKeyTypes.create(
+    {
+      ...options,
+      symmetricFieldId: newSymmetricField.id,
+      fieldId: newField.id,
+    },
+    { transaction: t },
+  );
+  await foreignKeyTypes.create(
+    {
+      relationship: options.relationship,
+      foreignTableId: fieldParams.tableId,
+      symmetricFieldId: newField.id,
+      fieldId: newSymmetricField.id,
+    },
+    { transaction: t },
+  );
+  return {
+    foreignFieldId: newField.id,
+    symmetricFieldId: newSymmetricField.id,
+  };
+}
+
+function updateFormulaField(fieldId, options, t) {
+  return formulaTypes.update(options, { fieldId }, t);
+}
+
 const DELETE_MAP = {
   text: deleteGenericField,
   number: deleteGenericField,
@@ -119,7 +160,7 @@ async function deleteForeignField({ fieldId, fieldProps }, t) {
 }
 async function createFieldStep(params, t) {
   const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  const createOption = TYPE_OPTION_MAP[fieldProps.name];
+  const createOption = CREATE_OPTION_MAP[fieldProps.name];
   const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
   const result = await createOption(fieldParams, params.typeOptions, t);
   return {
@@ -216,15 +257,17 @@ module.exports = {
     });
   },
 
-  updateField(field, params) {
-    return fields.update(
-      {
-        name: params.name,
-      },
-      {
-        where: { id: field.id },
-      },
-    );
+  updateField(params, t1) {
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const updateOption = UPDATE_OPTION_MAP[fieldProps.name];
+    async function transactionSteps(t) {
+      if (params.name)
+        await fields.update({ name: params.name }, { where: { id: params.fieldId }, transaction: t });
+      if (updateOption) {
+        return await updateOption(params.fieldId, params.typeOptions, t1);
+      }
+    }
+    return t1 ? transactionSteps(t1) : sequelize.transaction(transactionSteps);
   },
 
   getFormulaFields(tableId) {

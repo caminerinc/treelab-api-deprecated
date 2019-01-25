@@ -88,11 +88,10 @@ describe('fields模块', function(done) {
           .send({
             tableId: 'tblNGUPdSs9Va4X5u',
             name: 'age',
-            fieldTypeId: '5',
+            fieldTypeId: '10',
             typeOptions: {
               format: 'decimal',
               precision: 1,
-              negative: false,
             },
           })
           .end((err, res) => {
@@ -193,26 +192,27 @@ describe('fields模块', function(done) {
             checkNewField(res.body, done);
           });
       });
-      it('formula', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/field')
-          .send({
-            tableId: 'tblNGUPdSs9Va4X5u',
-            name: 'formula Field',
-            fieldTypeId: '5',
-            typeOptions: {
-              formulaText: 'Sum({first NamE}, sum({first name}, {aGe})) + (-11.2) * 2 - (1 + 2) ',
-              format: 'integer',
-              precision: 1,
-              symbol: '$',
-            },
-          })
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('fieldId');
-          });
-      });
+      // it('formula', function(done) {
+      //   chai
+      //     .request('http://localhost:8000')
+      //     .post('/api/field')
+      //     .send({
+      //       tableId: 'tblNGUPdSs9Va4X5u',
+      //       name: 'formula Field',
+      //       fieldTypeId: '5',
+      //       typeOptions: {
+      //         formulaText: 'Sum({first NamE}, sum({first name}, {aGe})) + (-11.2) * 2 - (1 + 2) ',
+      //         format: 'integer',
+      //         precision: 1,
+      //         symbol: '$',
+      //       },
+      //     })
+      //     .end((err, res) => {
+      //       res.should.have.status(200);
+      //       res.body.should.have.property('fieldId');
+      //       done();
+      //     });
+      // });
     });
   });
 

@@ -40,6 +40,11 @@ module.exports = {
           },
           onDelete: 'cascade',
         });
+      })
+      .then(() => {
+        return queryInterface.addConstraint('uk_fieldName', ['name', 'tableId'], {
+          type: 'unique',
+        });
       });
   },
   down: (queryInterface, Sequelize) => {

@@ -49,9 +49,7 @@ describe('records模块', function(done) {
             res.body.should.have.property('recordId');
             checkNewRecord((_err, _res) => {
               _res.should.have.status(200);
-              _res.body.tableDatas.rowsById.should.have.property(
-                res.body.recordId,
-              );
+              _res.body.tableDatas.rowsById.should.have.property(res.body.recordId);
               done();
             });
           });

@@ -47,6 +47,7 @@ module.exports = {
     await deleteField(field);
     ctx.body = { message: 'success' };
   },
+
   async resolveResizeColumn(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId', 'width');
@@ -66,7 +67,7 @@ module.exports = {
         error: `field is not found`,
       });
     }
-    if (params.fieldTypeId && field.fieldTypeId != params.fieldTypeId) {
+    if (params.fieldTypeId) {
       const fieldProps = FIELD_TYPES[params.fieldTypeId];
       if (!fieldProps) {
         ctx.status = 400;
@@ -74,9 +75,13 @@ module.exports = {
           error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
         });
       }
-      ctx.body = await replaceField(field, params);
+      if (field.fieldTypeId == params.fieldTypeId) {
+        await updateField(params);
+      } else {
+        ctx.body = await replaceField(field, params);
+      }
     } else {
-      await updateField(field, params);
+      await updateField(params);
       ctx.body = { message: 'success' };
     }
   },
