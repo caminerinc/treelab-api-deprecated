@@ -196,8 +196,13 @@ module.exports = {
           include: [
             {
               model: foreignKeyTypes,
-              attributes: ['symmetricFieldId'],
               as: 'foreignKeyTypes',
+              include: [
+                {
+                  model: fields,
+                  as: 'symmetricField',
+                },
+              ],
             },
           ],
         },
