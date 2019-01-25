@@ -51,4 +51,34 @@ describe('bases模块', function(done) {
       });
     });
   });
+
+  describe('get /api/base/:baseId', function(done) {
+    it('not baseId', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/base/')
+        .end((err, res) => {
+          res.should.have.status(405);
+          done();
+        });
+    });
+    it('not base', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/base/bse1jT7ZIDLmjH1')
+        .end((err, res) => {
+          res.should.have.status(400);
+          done();
+        });
+    });
+    it('OK', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/base/bse1jT7ZIHLmjH4')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
 });

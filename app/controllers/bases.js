@@ -59,7 +59,7 @@ module.exports = {
 
   getBase(id) {
     return bases.findOne({
-      attributes: ['id', 'name'],
+      attributes: ['id', 'name', 'createdAt'],
       where: { id },
     });
   },
