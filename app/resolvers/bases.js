@@ -66,7 +66,6 @@ module.exports = {
       ctx.status = 400;
       return (ctx.body = { error: 'base does not exist' });
     }
-    console.log(base);
     ctx.body = base;
   },
 };
