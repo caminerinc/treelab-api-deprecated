@@ -42,6 +42,7 @@ module.exports = {
       body: ctx.body,
     });
   },
+
   async resolveDeleteBase(ctx) {
     checkKeyExists(ctx.params, 'baseId');
     const base = await getBase(ctx.params.baseId);
@@ -55,5 +56,17 @@ module.exports = {
     tableIds = map(tableIds, 'id');
     await deleteParentId([ctx.params.baseId, ...tableIds]);
     ctx.body = { message: 'success' };
+  },
+
+  async resolveGetBase(ctx) {
+    const params = ctx.params;
+    checkKeyExists(params, 'baseId');
+    const base = await getBase(params.baseId);
+    if (!base) {
+      ctx.status = 400;
+      return (ctx.body = { error: 'base does not exist' });
+    }
+    console.log(base);
+    ctx.body = base;
   },
 };

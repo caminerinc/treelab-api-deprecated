@@ -5,6 +5,7 @@ const {
   resolveGetBases,
   resolveCreateBase,
   resolveDeleteBase,
+  resolveGetBase,
 } = require('../resolvers/bases');
 const {
   resolveGetTables,
@@ -53,6 +54,7 @@ router.get('/api/public/health-check', ctx => {
 router.get('/api/bases', resolveGetBases);
 router.post('/api/base', resolveCreateBase);
 router.delete('/api/base/:baseId', resolveDeleteBase);
+router.get('/api/base/:baseId', resolveGetBase);
 
 //Table
 router.get('/api/tables/:baseId', resolveGetTables);
