@@ -123,7 +123,7 @@ module.exports = {
             {
               model: fields,
               as: 'field',
-              attributes: ['width'],
+              attributes: ['name', 'width'],
             },
           ],
         },

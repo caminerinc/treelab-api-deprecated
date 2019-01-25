@@ -111,6 +111,15 @@ module.exports = {
           createdAt: '2019-01-14T02:58:19.798Z',
           updatedAt: '2019-01-14T02:58:19.798Z',
         },
+        {
+          id: 'fld1f010c256c0401b',
+          name: 'formulaField',
+          fieldTypeId: 5,
+          tableId: 'tblNGUPdSs9Va4X5u',
+          width: 100,
+          createdAt: '2019-01-14T02:58:19.798Z',
+          updatedAt: '2019-01-14T02:58:19.798Z',
+        },
       ],
       {},
     );

@@ -65,10 +65,14 @@ const adaptTables = tables => {
 
 const adaptTable = async table => {
   const formulaFields = await getFormulaFields(table.id);
+  let fieldNames = [];
+  table.positions.forEach(i => {
+    if (i.field) fieldNames.push(i.field.name);
+  });
   return {
     tableDatas: {
       ...pick(table, ['id']),
-      rowsById: await getRowsById(table.recs, formulaFields),
+      rowsById: await getRowsById(table.recs, formulaFields, fieldNames),
     },
     viewDatas: [
       {
@@ -80,6 +84,7 @@ const adaptTable = async table => {
             return {
               id: i.id,
               position: i.position,
+              name: i.field.name,
               width: i.field ? i.field.width : null,
             };
           }),
@@ -95,21 +100,22 @@ const adaptTable = async table => {
   };
 };
 
-const getRowsById = async (records, formulaFields) => {
+const getRowsById = async (records, formulaFields, fieldNames) => {
   let rowAccum = {};
   for (const record of records) {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: await getCellValuesByRecord(record, formulaFields),
+      cellValuesByColumnId: await getCellValuesByRecord(record, formulaFields, fieldNames),
     };
   }
   return rowAccum;
 };
 
-const getCellValuesByRecord = async (record, formulaFields) => {
+const getCellValuesByRecord = async (record, formulaFields, fieldNames) => {
   const fieldValues = record.fldVs;
   let cellAccum = {};
   let fields = {};
+  fieldNames.forEach(i => (fields[i] = null));
   for (const fieldValue of fieldValues) {
     fields[fieldValue.fld.name] = fieldValue.numberValue || fieldValue.textValue;
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');

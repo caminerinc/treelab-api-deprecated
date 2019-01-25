@@ -1,20 +1,31 @@
 class Formula {
   constructor() {
     this.reservedWord = ['sum', 'average'];
-    this.operatorOrDelimiter = ['{', '}', '(', ')', '*', '/', '%', '+', '-', '\\', '.'];
+    this.operatorOrDelimiter = ['{', '}', '(', ')', '*', '/', '%', '+', '-', '\\', '.', ','];
+    this.priority = { '*': 10, '/': 10, '%': 10, '+': 9, '-': 9 };
   }
 
+  /**
+   * process formulaText
+   * @param {String} str - formulaText
+   * @param {Object} fields - field names should be lower case, example: { fieldname1: 'Field 1', fieldname2: 'Field 2' }
+   */
   process(str, fields) {
-    str = this.pretreatment(str);
-    let tokenStack = [];
-    let optStack = [];
-    let numStack = [];
+    const { preStr, preFields } = this.pretreatment(str, fields);
+    const scanResult = this.scan(preStr, preFields);
+    return this.processScanResult(scanResult);
+  }
+
+  scan(str, fields) {
+    let scanResult = [];
     let token = '';
     let fieldFlag = false;
     let escapeFlag = false;
-    let error = new Error();
+    let funcFlag = '';
+    let lIndexForFunc = 0;
+    let rIndexForFunc = 0;
+    let error = new Error('invalid formula');
     error.status = 422;
-    error.message = 'invalid formula';
     for (const i in str) {
       const char = str[i];
       if (escapeFlag) {
@@ -26,8 +37,13 @@ class Formula {
         token += char;
       } else if (this.isLetter(char)) {
         token += char;
+      } else if (char === ' ') {
+        if (fieldFlag) token += char;
       } else if (this.operatorOrDelimiter.indexOf(char) !== -1) {
-        if (token) tokenStack.push(token);
+        if (fieldFlag && char !== '}') {
+          token += char;
+          continue;
+        }
         if (char === '\\') {
           escapeFlag = true;
           continue;
@@ -35,32 +51,66 @@ class Formula {
           if (token.indexOf('.') !== -1) throw error;
           token += char;
         } else if (char === '{') {
-          fieldFlag = true;
-          token = '';
-        } else if (char === '}') {
-          fieldFlag = false;
-          if (!fields[token]) {
-            error.message = `field ${token} dose not exist`;
+          if (token.length) {
+            error.message = `invalid formula, numbers or letters cannot be next to braces`;
             throw error;
           }
-        } else if (this.opt[char]) {
-          if (token) {
-            if (char === '(') {
-              if (this.reservedWord.indexOf(token) === -1)
-                throw new Error(`unsuported function ${token} in formula`);
-            }
-            if (this.isNumber(token[0])) {
-              numStack.push(token);
-            } else {
-              tokenStack.push(token);
-            }
-            token = '';
+          fieldFlag = true;
+        } else if (char === '}') {
+          fieldFlag = false;
+          if (fields[token] === undefined) {
+            error.message = `invalid formula, field(${token}) dose not exist`;
+            throw error;
           }
-          if (optStack.length) {
-            const lastOpt = optStack[optStack.length - 1];
+          if (funcFlag) {
+            funcFlag += `"${fields[token]}"`;
           } else {
-            optStack.push(char);
+            scanResult.push(fields[token]);
           }
+          token = '';
+        } else if (char === '(') {
+          if (token.length) {
+            if (this.reservedWord.indexOf(token) === -1) {
+              error.message = `invalid formula, unsupported function: ${token}`;
+              throw error;
+            }
+            funcFlag += token + '(';
+            lIndexForFunc++;
+            token = '';
+          } else {
+            scanResult.push(char);
+          }
+        } else if (char === ',') {
+          if (!funcFlag) {
+            error.message = 'invalid formula, the comma can only be used inside the method';
+            throw error;
+          }
+          funcFlag += token + ',';
+          token = '';
+        } else if (char === ')') {
+          if (funcFlag) {
+            funcFlag += `${token}` + ')';
+            rIndexForFunc++;
+            if (lIndexForFunc === rIndexForFunc) {
+              try {
+                scanResult.push(eval(funcFlag));
+              } catch (e) {
+                console.error(e);
+                throw error;
+              }
+              funcFlag = '';
+              lIndexForFunc = 0;
+              rIndexForFunc = 0;
+            }
+          } else {
+            if (token.length) scanResult.push(token);
+            scanResult.push(char);
+          }
+          token = '';
+        } else if (['*', '/', '%', '+', '-'].indexOf(char) !== -1) {
+          if (token.length) scanResult.push(token);
+          scanResult.push(char);
+          token = '';
         } else {
           throw error;
         }
@@ -69,35 +119,78 @@ class Formula {
         throw error;
       }
     }
-    // console.log(tokenStack, optStack, numStack);
-    // for (const char of str) {
-    //   if (isNumber(char)) {
-    //     numStack.push(char);
-    //   } else if (this.opt[char]) {
-    //     if (optStack.length) {
-    //       const lastOpt = optStack[optStack.length - 1];
-    //       if (this.opt[char] < this.opt[lastOpt]) {
-    //         if (numStack.length < 2) throw new Error('illegal formula');
-    //         const result = eval(numStack.pop() + optStack.pop() + numStack.pop());
-    //         numStack.push(result);
-    //       } else if (this.opt[char] > this.opt[lastOpt]) {
-    //         optStack.push(char);
-    //       } else {
-    //       }
-    //     } else {
-    //       optStack.push(char);
-    //     }
-    //   }
-    // }
+    if (token) scanResult.push(token);
+    if (funcFlag || fieldFlag || escapeFlag || lIndexForFunc !== rIndexForFunc) throw error;
+    return scanResult;
   }
 
-  pretreatment(str) {
-    if (typeof str !== 'string') throw new Error('The argument must be a string');
-    str = str.replace(/\s+/g, '').toLowerCase();
-    return str;
+  processScanResult(scanResult) {
+    console.log(scanResult);
+    let opStack = [];
+    let operandStack = [];
+    let error = new Error('invalid formula');
+    error.status = 422;
+    for (const i in scanResult) {
+      const token = scanResult[i];
+      if (this.priority[token] !== undefined) {
+        const lastOp = opStack.length ? opStack[opStack.length - 1] : null;
+        if (!lastOp || this.priority[lastOp] < this.priority[token]) {
+          opStack.push(token);
+        } else if (lastOp === '(' && (token === '*' || token === '/' || token === '%')) {
+          throw error;
+        } else if (lastOp === '(') {
+          if (token === '-') operandStack.push(0);
+          opStack.push(token);
+        } else if (this.priority[lastOp] > this.priority[token]) {
+          const op = opStack.pop();
+          const operand2 = operandStack.pop();
+          const operand1 = operandStack.pop();
+          const calculateResult = this.calculate(op, operand1, operand2);
+          operandStack.push(calculateResult);
+        } else if (token === '(') {
+          opStack.push(token);
+        } else if (token === ')') {
+          while (opStack.length && opStack[opStack.length - 1] !== '(') {
+            const op = opStack.pop();
+            const operand2 = operandStack.pop();
+            const operand1 = operandStack.pop();
+            const calculateResult = this.calculate(op, operand1, operand2);
+            operandStack.push(calculateResult);
+            opStack.pop();
+          }
+        } else if (this.priority[lastOp] === this.priority[token]) {
+          const op = opStack.pop();
+          const operand2 = operandStack.pop();
+          const operand1 = operandStack.pop();
+          const calculateResult = this.calculate(op, operand1, operand2);
+          operandStack.push(calculateResult);
+          opStack.push(token);
+        }
+      } else {
+        operandStack.push(token);
+      }
+    }
   }
 
-  isNumber(s) {
+  calculate(op, operand1, operand2) {
+    if (['+', '-', '*', '/', '%']) {
+      return eval(operand1 + op + operand2);
+    } else {
+      throw new Error(`invalid operator: ${op}`);
+    }
+  }
+
+  pretreatment(str, fields) {
+    if (typeof str !== 'string') throw new Error('The first argument should be a string');
+    if (typeof fields !== 'object') throw new Error('The last argument should be an object');
+    let newFields = {};
+    for (const fieldName in fields) {
+      newFields[fieldName.toLowerCase()] = fields[fieldName];
+    }
+    return { preStr: str.toLowerCase(), preFields: newFields };
+  }
+
+  isNumber(char) {
     return new RegExp(/^[0-9]$/).test(char);
   }
 
@@ -105,7 +198,17 @@ class Formula {
     return new RegExp(/^[a-z]$/).test(char);
   }
 
-  sum() {}
+  isNumberString(s) {
+    return new RegExp(/^(-?\d+)(\.\d+)?$/).test(s);
+  }
+}
+
+function sum(...params) {
+  return [...params].reduce((s, i) => (s += Number(i)), 0);
+}
+
+function average(...params) {
+  return sum(...params) / [...params].length;
 }
 
 module.exports = Formula;
