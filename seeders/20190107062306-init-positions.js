@@ -109,16 +109,7 @@ module.exports = {
         },
         {
           id: 'fld1f010c256c0401b',
-          name: 'formulaField',
-          fieldTypeId: 6,
-          tableId: 'tblNGUPdSs9Va4X5u',
-          width: 100,
-          createdAt: '2019-01-14T02:58:19.798Z',
-          updatedAt: '2019-01-14T02:58:19.798Z',
-        },
-        {
-          id: 'fld1e1cf1f8f80404b',
-          parentId: 'tblsnmRLfttLmAYQ8',
+          parentId: 'tblNGUPdSs9Va4X5u',
           position: 6,
           type: 'field',
           createdAt: '2018-05-05T04:09:06.024Z',
@@ -149,17 +140,9 @@ module.exports = {
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 'fld1e1ce9eefc0401b',
-          parentId: 'tblsnmRLfttLmAYQ8',
-          position: 4,
-          type: 'field',
-          createdAt: '2018-05-05T04:09:06.024Z',
-          updatedAt: '2018-05-05T04:09:06.024Z',
-        },
-        {
           id: 'fld1e1ced53340402b',
           parentId: 'tblsnmRLfttLmAYQ8',
-          position: 5,
+          position: 4,
           type: 'field',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
@@ -168,6 +151,14 @@ module.exports = {
           id: 'fld1e1cf1f8dc0403b',
           parentId: 'tblsnmRLfttLmAYQ8',
           position: 5,
+          type: 'field',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
+          id: 'fld1e1cf1f8f80404b',
+          parentId: 'tblsnmRLfttLmAYQ8',
+          position: 6,
           type: 'field',
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
@@ -197,14 +188,6 @@ module.exports = {
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
-          id: 'rec1db61c8d540400f',
-          parentId: 'tblsnmRLfttLmAYQ8',
-          position: 1,
-          type: 'record',
-          createdAt: '2018-05-05T04:09:06.024Z',
-          updatedAt: '2018-05-05T04:09:06.024Z',
-        },
-        {
           id: 'fld1e6d1c73f80402b',
           parentId: 'tbl1e6d1c73b404017',
           position: 1,
@@ -218,6 +201,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('bases', null, {});
+    return queryInterface.bulkDelete('positions', null, {});
   },
 };

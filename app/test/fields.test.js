@@ -193,6 +193,26 @@ describe('fields模块', function(done) {
             checkNewField(res.body, done);
           });
       });
+      it('formula', function(done) {
+        chai
+          .request('http://localhost:8000')
+          .post('/api/field')
+          .send({
+            tableId: 'tblNGUPdSs9Va4X5u',
+            name: 'formula Field',
+            fieldTypeId: '5',
+            typeOptions: {
+              formulaText: 'Sum({first NamE}, sum({first name}, {aGe})) + (-11.2) * 2 - (1 + 2) ',
+              format: 'integer',
+              precision: 1,
+              symbol: '$',
+            },
+          })
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.body.should.have.property('fieldId');
+          });
+      });
     });
   });
 
@@ -228,12 +248,9 @@ describe('fields模块', function(done) {
             .get('/api/table/tblNGUPdSs9Va4X5u')
             .end((err, res) => {
               res.should.have.status(200);
-              const field = findIndex(
-                res.body.viewDatas[0].columnOrder,
-                function(o) {
-                  return o.id == 'fldnQ4OWns9ZF88nC';
-                },
-              );
+              const field = findIndex(res.body.viewDatas[0].columnOrder, function(o) {
+                return o.id == 'fldnQ4OWns9ZF88nC';
+              });
               res.body.viewDatas[0].columnOrder[field].width.should.be.eql(200);
               done();
             });
@@ -271,7 +288,7 @@ describe('fields模块', function(done) {
           .put('/api/field')
           .send({
             fieldId: 'fldnQ4OWns9ZF88nC',
-            fieldTypeId: '5',
+            fieldTypeId: '10',
           })
           .end((err, res) => {
             res.should.have.status(400);
@@ -410,12 +427,9 @@ describe('fields模块', function(done) {
             let multipleAttachment = findIndex(columns, function(o) {
               return o.id == 'fldIwYLcbYWSUa4aK';
             });
-            let symmetricField = findIndex(
-              res.body.tableSchemas[1].columns,
-              function(o) {
-                return o.id == 'fld6tojhqApRQfJ2d';
-              },
-            );
+            let symmetricField = findIndex(res.body.tableSchemas[1].columns, function(o) {
+              return o.id == 'fld6tojhqApRQfJ2d';
+            });
             expect(txt, 'error txt').to.eql(-1);
             expect(number, 'error number').to.eql(-1);
             expect(foreignKey, 'error foreignKey').to.eql(-1);

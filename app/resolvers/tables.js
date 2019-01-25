@@ -131,7 +131,8 @@ const getCellValuesByRecord = async (record, formulaFields, fieldNames) => {
   if (formulaFields.length) {
     const formula = new Formula();
     for (const formulaField of formulaFields) {
-      cellAccum[formulaField.id] = formula.process(formulaField.formulaTypes.formulaText, fields);
+      const result = formula.process(formulaField.formulaTypes.formulaText, fields);
+      cellAccum[formulaField.id] = isNaN(result) ? 'NaN' : result;
     }
   }
   return cellAccum;

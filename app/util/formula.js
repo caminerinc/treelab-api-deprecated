@@ -2,18 +2,17 @@ class Formula {
   constructor() {
     this.reservedWord = ['sum', 'average'];
     this.operatorOrDelimiter = ['{', '}', '(', ')', '*', '/', '%', '+', '-', '\\', '.', ','];
-    this.priority = { '*': 10, '/': 10, '%': 10, '+': 9, '-': 9 };
   }
 
   /**
    * process formulaText
    * @param {String} str - formulaText
-   * @param {Object} fields - field names should be lower case, example: { fieldname1: 'Field 1', fieldname2: 'Field 2' }
+   * @param {Object} fields - example: { FieldName1: 'Field 1', FieldName2: 'Field 2' }
    */
   process(str, fields) {
     const { preStr, preFields } = this.pretreatment(str, fields);
     const scanResult = this.scan(preStr, preFields);
-    return this.processScanResult(scanResult);
+    return this.calculate(scanResult);
   }
 
   scan(str, fields) {
@@ -124,60 +123,17 @@ class Formula {
     return scanResult;
   }
 
-  processScanResult(scanResult) {
-    console.log(scanResult);
-    let opStack = [];
-    let operandStack = [];
+  calculate(scanResult) {
+    let result = null;
     let error = new Error('invalid formula');
     error.status = 422;
-    for (const i in scanResult) {
-      const token = scanResult[i];
-      if (this.priority[token] !== undefined) {
-        const lastOp = opStack.length ? opStack[opStack.length - 1] : null;
-        if (!lastOp || this.priority[lastOp] < this.priority[token]) {
-          opStack.push(token);
-        } else if (lastOp === '(' && (token === '*' || token === '/' || token === '%')) {
-          throw error;
-        } else if (lastOp === '(') {
-          if (token === '-') operandStack.push(0);
-          opStack.push(token);
-        } else if (this.priority[lastOp] > this.priority[token]) {
-          const op = opStack.pop();
-          const operand2 = operandStack.pop();
-          const operand1 = operandStack.pop();
-          const calculateResult = this.calculate(op, operand1, operand2);
-          operandStack.push(calculateResult);
-        } else if (token === '(') {
-          opStack.push(token);
-        } else if (token === ')') {
-          while (opStack.length && opStack[opStack.length - 1] !== '(') {
-            const op = opStack.pop();
-            const operand2 = operandStack.pop();
-            const operand1 = operandStack.pop();
-            const calculateResult = this.calculate(op, operand1, operand2);
-            operandStack.push(calculateResult);
-            opStack.pop();
-          }
-        } else if (this.priority[lastOp] === this.priority[token]) {
-          const op = opStack.pop();
-          const operand2 = operandStack.pop();
-          const operand1 = operandStack.pop();
-          const calculateResult = this.calculate(op, operand1, operand2);
-          operandStack.push(calculateResult);
-          opStack.push(token);
-        }
-      } else {
-        operandStack.push(token);
-      }
+    try {
+      result = eval(scanResult.join(''));
+    } catch (e) {
+      console.error(e);
+      throw error;
     }
-  }
-
-  calculate(op, operand1, operand2) {
-    if (['+', '-', '*', '/', '%']) {
-      return eval(operand1 + op + operand2);
-    } else {
-      throw new Error(`invalid operator: ${op}`);
-    }
+    return result;
   }
 
   pretreatment(str, fields) {
