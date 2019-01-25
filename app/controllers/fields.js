@@ -1,17 +1,8 @@
 const { pick } = require('lodash');
-const {
-  fields,
-  numberTypes,
-  foreignKeyTypes,
-  sequelize,
-} = require('../models');
+const { fields, numberTypes, foreignKeyTypes, sequelize } = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
-const {
-  createPosition,
-  deletePositions,
-  getPositionsByIds,
-} = require('../controllers/positions');
+const { createPosition, deletePositions, getPositionsByIds } = require('../controllers/positions');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -92,9 +83,7 @@ async function deleteForeignField({ fieldId, fieldProps }, t) {
     where: {
       id: fieldId,
     },
-    attributes: [
-      [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
-    ],
+    attributes: [[sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id']],
     include: [
       {
         model: foreignKeyTypes,
@@ -166,9 +155,7 @@ module.exports = {
       }
       return result;
     }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+    return t1 ? transactionSteps(t1) : await sequelize.transaction(transactionSteps);
   },
 
   async findFieldType({ fieldId: id }) {
@@ -182,10 +169,7 @@ module.exports = {
   async deleteField({ id, fieldTypeId }, t1) {
     async function transactionSteps(t) {
       const ids = await deleteFieldStep({ id, fieldTypeId }, t);
-      const result = await getPositionsByIds(
-        [ids.fieldId, ids.symmetricFieldId],
-        t,
-      );
+      const result = await getPositionsByIds([ids.fieldId, ids.symmetricFieldId], t);
       if (result.length) {
         await deletePositions(
           {
@@ -197,9 +181,7 @@ module.exports = {
         );
       }
     }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+    return t1 ? transactionSteps(t1) : await sequelize.transaction(transactionSteps);
   },
 
   replaceField(field, params) {

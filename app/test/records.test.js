@@ -18,7 +18,7 @@ describe('records模块', function(done) {
           .post('/api/record')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -30,7 +30,7 @@ describe('records模块', function(done) {
             tableId: '111111111',
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -49,9 +49,7 @@ describe('records模块', function(done) {
             res.body.should.have.property('recordId');
             checkNewRecord((_err, _res) => {
               _res.should.have.status(200);
-              _res.body.tableDatas.rowsById.should.have.property(
-                res.body.recordId,
-              );
+              _res.body.tableDatas.rowsById.should.have.property(res.body.recordId);
               done();
             });
           });
