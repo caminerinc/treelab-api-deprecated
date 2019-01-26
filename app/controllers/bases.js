@@ -6,25 +6,22 @@ const {
   sequelize,
   positions,
 } = require('../models');
-const baseQueries = require('../queries/bases');
+const { createOneBase, getAllBases } = require('../queries/bases');
 const { createPosition } = require('../controllers/positions');
 const { createTable } = require('../controllers/tables');
 
 module.exports = {
   getBases(db) {
-    return baseQueries.getBases(db);
+    return getAllBases(db);
   },
 
-  async createBase(params) {
+  async createBase(db, params) {
     async function transactionSteps(t) {
-      const transact = { transaction: t };
-      const base = await bases.create(
-        {
-          name: params.name,
-        },
-        transact,
-      );
+      const base = await createOneBase(db, params.name);
+
+      // needs to be refactored
       await createPosition(
+        // looks like the ordering for new bases doesn't work correctly.
         {
           parentId: 'baseParent', //TODO base的父级未确定
           id: base.id,
@@ -32,10 +29,16 @@ module.exports = {
         },
         t,
       );
+      // also needs to be refactored
       const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
-      return { base, table };
+
+      return {
+        id: base.id,
+        name: base.name,
+        primaryTableId: table.table.id,
+      };
     }
-    return await sequelize.transaction(transactionSteps);
+    return await db.transaction(transactionSteps);
   },
 
   getBase(id) {
@@ -44,6 +47,7 @@ module.exports = {
       where: { id },
     });
   },
+
   deleteBase(id, fieldId) {
     return sequelize.transaction(async t => {
       await fields.destroy(

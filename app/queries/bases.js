@@ -1,8 +1,7 @@
 const { bases, positions } = require('../models');
 
 module.exports = {
-  getBases(db) {
-    // What would happen if this is actually a transaction DB that is sent down?
+  getAllBases(db) {
     return bases.findAll({
       attributes: ['id', 'name'],
       include: [
@@ -24,5 +23,12 @@ module.exports = {
       order: [[db.col('tablePositions.position'), 'asc']],
       order: [[db.col('pos.position'), 'asc']],
     });
+  },
+
+  createOneBase(db, name) {
+    // https://github.com/caminerinc/elephante-api/pull/66/commits/b1144234e1f94d95c00d9b1aacc5b667d0b926a6#diff-2e7a0decef51e69d9691c3b5268aa9caR40
+    // According to this, does this mean that its possible to send the actually sequelize db?
+    // It breaks if that happens, or what other db is there that it would send?
+    return bases.create({ name: name }, { transaction: db });
   },
 };

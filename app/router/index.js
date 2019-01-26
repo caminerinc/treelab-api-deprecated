@@ -57,7 +57,7 @@ router.get('/api/public/health-check', ctx => {
 
 // Base
 router.get('/api/bases', wrapDbInstance(resolveGetBases));
-router.post('/api/base', resolveCreateBase);
+router.post('/api/base', wrapDbInstance(resolveCreateBase));
 router.delete('/api/base/:baseId', resolveDeleteBase);
 router.get('/api/base/:baseId', resolveGetBase);
 
