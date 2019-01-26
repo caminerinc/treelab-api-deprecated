@@ -21,7 +21,6 @@ workflows:
   version: 2
   tagged-build-and-filter-build:
     jobs:
-      - build
       - build:
           filters:
             branches:
