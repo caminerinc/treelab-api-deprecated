@@ -19,9 +19,10 @@ jobs:
             fi
 workflows:
   version: 2
-  tagged-build:
+  tagged-build-and-filter-build:
     jobs:
       - build:
+      - build:
           filters:
-            tags:
-              only: /^v.*/
+            branches:
+              only: develop
