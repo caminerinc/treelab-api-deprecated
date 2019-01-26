@@ -6,7 +6,7 @@ jobs:
     working_directory: ~/elephante-api
     steps:
       - checkout
-      - run: echo "trying again maybe"
+      - run: echo "trying again"
       - run: 
           command: echo ${TESTING_VAR}
       - deploy:
