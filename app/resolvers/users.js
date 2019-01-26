@@ -22,10 +22,7 @@ module.exports = {
     if (!EMAIL_REGEX.test(ctx.request.body.email)) {
       error(400, ECodes.INVALID_EMAIL);
     }
-    const user = await getUser(ctx.request.body);
-    if (user) {
-      error(400, ECodes.USER_ALREADY_EXISTS);
-    }
+
     await createUser(ctx.request.body);
     ctx.body = { message: 'success' };
   },
