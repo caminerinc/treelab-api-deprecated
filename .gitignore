@@ -11,3 +11,5 @@ config/db-config.json
 *.DS_Store
 config/config.js
 postgresql
+
+.circleci/run-build-locally.sh
