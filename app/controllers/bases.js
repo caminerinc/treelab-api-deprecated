@@ -6,32 +6,13 @@ const {
   sequelize,
   positions,
 } = require('../models');
+const baseQueries = require('../queries/bases');
 const { createPosition } = require('../controllers/positions');
 const { createTable } = require('../controllers/tables');
 
 module.exports = {
-  getBases() {
-    return bases.findAll({
-      attributes: ['id', 'name'],
-      include: [
-        {
-          model: positions,
-          as: 'tablePositions',
-          attributes: ['id', 'position'],
-          where: { type: 'table' },
-          required: false,
-        },
-        {
-          model: positions,
-          as: 'pos',
-          attributes: ['position'],
-          where: { type: 'base' },
-          required: false,
-        },
-      ],
-      order: [[sequelize.col('tablePositions.position'), 'asc']],
-      order: [[sequelize.col('pos.position'), 'asc']],
-    });
+  getBases(db) {
+    return baseQueries.getBases(db);
   },
 
   async createBase(params) {

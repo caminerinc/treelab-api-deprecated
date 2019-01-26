@@ -12,20 +12,16 @@ const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
 const { deleteParentId } = require('../controllers/positions');
 
-const adaptBases = bases => {
-  return Array.from(bases, base => {
-    base = JSON.parse(JSON.stringify(base));
-    return {
-      id: base.id,
-      name: base.name,
-      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
-    };
-  });
-};
+const adaptBases = bases =>
+  bases.map(base => ({
+    id: base.id,
+    name: base.name,
+    primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
+  }));
 
 module.exports = {
-  async resolveGetBases(ctx) {
-    const bases = await getBases();
+  async resolveGetBases(ctx, db) {
+    const bases = await getBases(db);
     ctx.body = { bases: adaptBases(bases) };
   },
 

@@ -1,5 +1,6 @@
 const Router = require('koa-router');
 const router = new Router();
+const { sequelize } = require('../models');
 
 const {
   resolveGetBases,
@@ -45,13 +46,17 @@ const {
 
 const { checkTableExist } = require('../middlewares/tables');
 
+// What was the justification for creating the db instance here again? It looks like it still uses the first instance when you
+// start up the server anyways?
+const wrapDbInstance = resolverFn => ctx => resolverFn(ctx, sequelize);
+
 // App
 router.get('/api/public/health-check', ctx => {
   ctx.body = 'Connection established';
 });
 
 // Base
-router.get('/api/bases', resolveGetBases);
+router.get('/api/bases', wrapDbInstance(resolveGetBases));
 router.post('/api/base', resolveCreateBase);
 router.delete('/api/base/:baseId', resolveDeleteBase);
 router.get('/api/base/:baseId', resolveGetBase);
