@@ -67,7 +67,7 @@ describe('bases模块', function(done) {
         .request('http://localhost:8000')
         .get('/api/base/bse1jT7ZIDLmjH1')
         .end((err, res) => {
-          res.should.have.status(400);
+          res.should.have.status(403);
           done();
         });
     });

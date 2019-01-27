@@ -58,7 +58,7 @@ describe('fields模块', function(done) {
             },
           })
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -77,7 +77,7 @@ describe('fields模块', function(done) {
             },
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -95,7 +95,7 @@ describe('fields模块', function(done) {
             },
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -113,7 +113,7 @@ describe('fields模块', function(done) {
             },
           })
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -224,7 +224,7 @@ describe('fields模块', function(done) {
           .post('/api/resize-column')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -266,7 +266,7 @@ describe('fields模块', function(done) {
           .put('/api/field')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -278,7 +278,7 @@ describe('fields模块', function(done) {
             fieldId: '1111111111',
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -291,7 +291,7 @@ describe('fields模块', function(done) {
             fieldTypeId: '10',
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -342,7 +342,7 @@ describe('fields模块', function(done) {
           .delete('/api/delete-field')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -354,7 +354,7 @@ describe('fields模块', function(done) {
             fieldId: '11111111',
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });

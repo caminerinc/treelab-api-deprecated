@@ -7,7 +7,6 @@ const {
   getTable,
   deleteTable,
   findSymmetricFieldId,
-  getEasyTable,
 } = require('../controllers/tables');
 const { getBase } = require('../controllers/bases');
 const {
@@ -20,6 +19,7 @@ const { findFieldValue } = require('../controllers/fieldValues');
 const { getFormulaFields } = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
+const { error, Status, ECodes } = require('../util/error');
 
 const adaptForeignKey = async (fieldValue, fieldProps) => {
   let foreignRecords = [];
@@ -27,11 +27,15 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
     const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
     if (fgn) {
       const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
-      const foreignDisplayName = await findFieldValue(fgn.rec.dataValues.id, primaryFieldId.id);
+      const foreignDisplayName = await findFieldValue(
+        fgn.rec.dataValues.id,
+        primaryFieldId.id,
+      );
       foreignRecords.push({
         foreignRowId: fgn.dataValues.rec.id,
         foreignDisplayName: foreignDisplayName
-          ? foreignDisplayName.dataValues.textValue || foreignDisplayName.dataValues.numberValue
+          ? foreignDisplayName.dataValues.textValue ||
+            foreignDisplayName.dataValues.numberValue
           : null,
       });
     }
@@ -51,7 +55,10 @@ const adaptTables = tables => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
         if (fieldProps.isTypeOptionsRequired) {
-          otherProps.typeOptions = pick(get(field, fieldProps.typeName), fieldProps.typeProps);
+          otherProps.typeOptions = pick(
+            get(field, fieldProps.typeName),
+            fieldProps.typeProps,
+          );
         }
         return {
           ...pick(field, ['id', 'name']),
@@ -105,7 +112,11 @@ const getRowsById = async (records, formulaFields, fieldNames) => {
   for (const record of records) {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: await getCellValuesByRecord(record, formulaFields, fieldNames),
+      cellValuesByColumnId: await getCellValuesByRecord(
+        record,
+        formulaFields,
+        fieldNames,
+      ),
     };
   }
   return rowAccum;
@@ -117,10 +128,12 @@ const getCellValuesByRecord = async (record, formulaFields, fieldNames) => {
   let fields = {};
   fieldNames.forEach(i => (fields[i] = null));
   for (const fieldValue of fieldValues) {
-    fields[fieldValue.fld.name] = fieldValue.numberValue || fieldValue.textValue;
+    fields[fieldValue.fld.name] =
+      fieldValue.numberValue || fieldValue.textValue;
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    if (!fieldProps) throw new Error('field type id does not exist in fieldValue');
+    if (!fieldProps)
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, fieldTypeId);
     const adaptData = ADAPT_MAP[fieldProps.name];
     if (adaptData) {
       cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
@@ -131,7 +144,10 @@ const getCellValuesByRecord = async (record, formulaFields, fieldNames) => {
   if (formulaFields.length) {
     const formula = new Formula();
     for (const formulaField of formulaFields) {
-      const result = formula.process(formulaField.formulaTypes.formulaText, fields);
+      const result = formula.process(
+        formulaField.formulaTypes.formulaText,
+        fields,
+      );
       cellAccum[formulaField.id] = isNaN(result) ? 'NaN' : result;
     }
   }
@@ -150,21 +166,13 @@ module.exports = {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
     const table = await getTable(params.tableId);
-    if (!table) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'table does not exist' });
-    }
+    if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
     ctx.body = await adaptTable(table);
   },
 
   async resolveCreateTable(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'baseId', 'name');
-    const base = await getBase(params.baseId);
-    if (!base) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'base does not exist' });
-    }
+    checkKeyExists(params, 'name');
     const result = await createTable(params);
     result.fields = result.fields.map(i =>
       Object.assign({}, i, {
@@ -179,13 +187,6 @@ module.exports = {
   },
 
   async resolveDeleteTable(ctx) {
-    checkKeyExists(ctx.params, 'tableId');
-
-    const table = await getEasyTable(ctx.params.tableId);
-    if (!table) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'table does not exist' });
-    }
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     const fieldId = [];
     const symmetricField = {};

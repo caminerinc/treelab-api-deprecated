@@ -33,6 +33,7 @@ const { resolveGetPouches, resolveGetPouch } = require('../resolvers/pouches');
 const { resolveGetModules, resolveExtraction } = require('../resolvers/modules');
 
 const { checkTableExist } = require('../middlewares/tables');
+const { checkBaseExist } = require('../middlewares/bases');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -42,14 +43,14 @@ router.get('/api/public/health-check', ctx => {
 // Base
 router.get('/api/bases', resolveGetBases);
 router.post('/api/base', resolveCreateBase);
-router.delete('/api/base/:baseId', resolveDeleteBase);
-router.get('/api/base/:baseId', resolveGetBase);
+router.delete('/api/base/:baseId', checkBaseExist, resolveDeleteBase);
+router.get('/api/base/:baseId', checkBaseExist, resolveGetBase);
 
 //Table
 router.get('/api/tables/:baseId', resolveGetTables);
 router.get('/api/table/:tableId', resolveGetTable);
-router.post('/api/table', resolveCreateTable);
-router.delete('/api/table/:tableId', resolveDeleteTable);
+router.post('/api/table', checkBaseExist, resolveCreateTable);
+router.delete('/api/table/:tableId', checkTableExist, resolveDeleteTable);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);

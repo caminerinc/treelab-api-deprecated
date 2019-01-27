@@ -42,9 +42,8 @@ describe('module模块', function(done) {
           type: 'excel',
         })
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           res.body.should.be.a('object');
-          res.body.should.have.property('error');
           done();
         });
     });
@@ -57,9 +56,8 @@ describe('module模块', function(done) {
             'https://s3.cn-northwest-1.amazonaws.com.cn/sampledata/Extraction+Data+Summary/Aritizia/Buy+Chart/Buy_Chart.xlsx',
         })
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           res.body.should.be.a('object');
-          res.body.should.have.property('error');
           done();
         });
     });

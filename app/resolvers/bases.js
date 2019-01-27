@@ -5,7 +5,6 @@ const {
   createBase,
   deleteBase,
   findSymmetricFieldId,
-  getBase,
 } = require('../controllers/bases');
 const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
@@ -44,12 +43,6 @@ module.exports = {
   },
 
   async resolveDeleteBase(ctx) {
-    checkKeyExists(ctx.params, 'baseId');
-    const base = await getBase(ctx.params.baseId);
-    if (!base) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'base does not exist' });
-    }
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     await deleteBase(ctx.params.baseId, symmetricFieldIds);
     let tableIds = await getTableByBaseId(ctx.params);
@@ -59,13 +52,6 @@ module.exports = {
   },
 
   async resolveGetBase(ctx) {
-    const params = ctx.params;
-    checkKeyExists(params, 'baseId');
-    const base = await getBase(params.baseId);
-    if (!base) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'base does not exist' });
-    }
-    ctx.body = base;
+    ctx.body = ctx.base;
   },
 };

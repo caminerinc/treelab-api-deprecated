@@ -9,18 +9,19 @@ const {
 } = require('../controllers/fieldValues');
 const socketIo = require('../../lib/core/socketIo');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { error, Status, ECodes } = require('../util/error');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    if (fieldProps.isArrayValue) {
-      ctx.status = 400;
-      return (ctx.body = {
-        error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
-      });
-    }
+    if (fieldProps.isArrayValue)
+      error(
+        Status.Forbidden,
+        ECodes.UNSURPPORTED_FIELD_TYPE,
+        params.fieldTypeId,
+      );
     await upsertFieldValue(params);
     ctx.body = { message: 'success' };
     socketIo.sync({
@@ -44,12 +45,12 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    if (!fieldProps.isArrayValue) {
-      ctx.status = 400;
-      return (ctx.body = {
-        error: `unsupported fieldTypeId: ${params.fieldTypeId}`,
-      });
-    }
+    if (!fieldProps.isArrayValue)
+      error(
+        Status.Forbidden,
+        ECodes.UNSURPPORTED_FIELD_TYPE,
+        params.fieldTypeId,
+      );
     const fieldValue = await findOrCreateFieldValue(
       params.recordId,
       params.fieldId,
@@ -68,12 +69,11 @@ module.exports = {
       body: result,
     });
   },
+
   async resolveDeleteArrayValue(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'itemId', 'fieldTypeId');
-
     const fieldValue = await deleteArrayValue(params);
-
     ctx.body = { message: 'success' };
   },
 
@@ -90,12 +90,8 @@ module.exports = {
     if (
       !Array.isArray(params.sourceColumnConfigs) ||
       !Array.isArray(params.sourceCellValues2dArray)
-    ) {
-      ctx.status = 422;
-      return (ctx.body = {
-        error: 'sourceColumnConfigs and sourceCellValues2dArray must be array',
-      });
-    }
+    )
+      error(null, ECodes.BULK_COPY_PARAMS_MISSING);
     await bulkCopyFieldValue(params);
     ctx.body = { message: 'sucess' };
     socketIo.sync({
