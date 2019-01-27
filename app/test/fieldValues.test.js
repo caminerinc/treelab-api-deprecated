@@ -56,7 +56,7 @@ describe('fieldValues模块', function(done) {
           .put('/api/primitive-field')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -75,7 +75,7 @@ describe('fieldValues模块', function(done) {
             fieldTypeId: '3',
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -142,7 +142,7 @@ describe('fieldValues模块', function(done) {
           .post('/api/array-field')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -157,7 +157,7 @@ describe('fieldValues模块', function(done) {
             fieldTypeId: '1',
           })
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -216,7 +216,7 @@ describe('fieldValues模块', function(done) {
           .delete('/api/array-field')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -322,7 +322,7 @@ describe('fieldValues模块', function(done) {
           .delete('/api/clear-field-value')
           .send({})
           .end((err, res) => {
-            res.should.have.status(422);
+            res.should.have.status(400);
             done();
           });
       });
@@ -389,8 +389,7 @@ describe('fieldValues模块', function(done) {
         .post('/api/bulk-copy-field-value')
         .send(_params)
         .end((err, res) => {
-          res.should.have.status(422);
-          res.body.should.have.property('error');
+          res.should.have.status(400);
           done();
         });
     });

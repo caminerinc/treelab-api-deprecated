@@ -33,7 +33,7 @@ describe('positions模块', function(done) {
         .put('/api/change-position')
         .send(params)
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           done();
         });
     });
@@ -48,7 +48,7 @@ describe('positions模块', function(done) {
         .put('/api/change-position')
         .send(params)
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           done();
         });
     });
@@ -63,7 +63,7 @@ describe('positions模块', function(done) {
         .put('/api/change-position')
         .send(params)
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           done();
         });
     });
@@ -78,7 +78,7 @@ describe('positions模块', function(done) {
         .put('/api/change-position')
         .send(params)
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           done();
         });
     });

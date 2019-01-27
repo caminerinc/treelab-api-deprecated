@@ -63,7 +63,7 @@ describe('tables模块', function(done) {
           .request('http://localhost:8000')
           .get('/api/table/1111111')
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -110,7 +110,7 @@ describe('tables模块', function(done) {
           .request('http://localhost:8000')
           .get('/api/table/tblNGUPdSs9Va4X5u')
           .end((err, res) => {
-            res.should.have.status(400);
+            res.should.have.status(403);
             done();
           });
       });
@@ -124,7 +124,7 @@ describe('tables模块', function(done) {
         .post('/api/table')
         .send({ name: 'test' })
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           done();
         });
     });
@@ -134,7 +134,7 @@ describe('tables模块', function(done) {
         .post('/api/table')
         .send({ baseId: 'bse1jT7ZIHLmjH4' })
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           done();
         });
     });
@@ -144,7 +144,7 @@ describe('tables模块', function(done) {
         .post('/api/table')
         .send({ baseId: 'test', name: 'test' })
         .end((err, res) => {
-          res.should.have.status(400);
+          res.should.have.status(403);
           done();
         });
     });

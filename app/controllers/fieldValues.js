@@ -8,6 +8,7 @@ const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
 const { createField } = require('./fields');
 const { createRecord } = require('./records');
+const { error, Status, ECodes } = require('../util/error');
 
 const CREATE_MAP = {
   multipleAttachment: createMultipleAttachment,
@@ -197,7 +198,7 @@ module.exports = {
             });
           }
         } else {
-          throw new Error('unsupported fieldType');
+          error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
         }
       }
     }

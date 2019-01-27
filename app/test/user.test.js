@@ -46,7 +46,6 @@ describe('users模块', function(done) {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a('object');
-          res.body.should.have.property('error');
           done();
         });
     });
@@ -60,9 +59,8 @@ describe('users模块', function(done) {
           email: 'test@test.com',
         })
         .end((err, res) => {
-          res.should.have.status(422);
+          res.should.have.status(400);
           res.body.should.be.a('object');
-          res.body.should.have.property('error');
           done();
         });
     });
@@ -79,9 +77,6 @@ describe('users模块', function(done) {
         .end((err, res) => {
           res.should.have.status(400);
           res.body.should.be.a('object');
-          res.body.should.have
-            .property('error')
-            .eql('The email already exists');
           done();
         });
     });
@@ -114,7 +109,6 @@ describe('users模块', function(done) {
         .end((err, res) => {
           res.should.have.status(401);
           res.body.should.be.a('object');
-          res.body.should.have.property('error');
           done();
         });
     });
@@ -127,9 +121,8 @@ describe('users模块', function(done) {
           password: 'testtest',
         })
         .end((err, res) => {
-          res.should.have.status(402);
+          res.should.have.status(401);
           res.body.should.be.a('object');
-          res.body.should.have.property('error');
           done();
         });
     });

@@ -6,7 +6,6 @@ const {
   getTable,
   deleteTable,
   findSymmetricFieldId,
-  getEasyTable,
 } = require('../controllers/tables');
 const { getBase } = require('../controllers/bases');
 const {
@@ -18,6 +17,7 @@ const {
 const { findFieldValue } = require('../controllers/fieldValues');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
+const { error, Status, ECodes } = require('../util/error');
 
 const adaptForeignKey = async (fieldValue, fieldProps) => {
   let foreignRecords = [];
@@ -116,7 +116,7 @@ const getCellValuesByColumnId = async fieldValues => {
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
     if (!fieldProps)
-      throw new Error('field type id does not exist in fieldValue');
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, fieldTypeId);
     const adaptData = ADAPT_MAP[fieldProps.name];
     if (adaptData) {
       cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
@@ -139,21 +139,13 @@ module.exports = {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
     const table = await getTable(params.tableId);
-    if (!table) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'table does not exist' });
-    }
+    if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
     ctx.body = await adaptTable(table);
   },
 
   async resolveCreateTable(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'baseId', 'name');
-    const base = await getBase(params.baseId);
-    if (!base) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'base does not exist' });
-    }
+    checkKeyExists(params, 'name');
     const result = await createTable(params);
     result.fields = result.fields.map(i =>
       Object.assign({}, i, {
@@ -168,13 +160,6 @@ module.exports = {
   },
 
   async resolveDeleteTable(ctx) {
-    checkKeyExists(ctx.params, 'tableId');
-
-    const table = await getEasyTable(ctx.params.tableId);
-    if (!table) {
-      ctx.status = 400;
-      return (ctx.body = { error: 'table does not exist' });
-    }
     const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
     const fieldId = [];
     const symmetricField = {};

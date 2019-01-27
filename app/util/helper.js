@@ -2,6 +2,7 @@ const path = require('path');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
 const U64 = require('n64').U64;
+const { error, Status, ECodes } = require('../util/error');
 
 const PID = 1;
 let SEQUENCE = 0;
@@ -37,9 +38,6 @@ const sha1 = text => {
 };
 
 const createUid = type => {
-  if (!type) {
-    throw new Error('createUid failure, prefix missing');
-  }
   type = type.toString();
   let djb33 = function() {
     let lwrcase = Array.from(type.toLowerCase());
@@ -63,9 +61,7 @@ const createUid = type => {
 
 const checkKeyExists = (map, ...keys) => {
   for (let key of keys) {
-    let error = new Error(`${key} is required`);
-    error.status = 422;
-    if (!(key in map)) throw error;
+    if (!(key in map)) error(null, ECodes.REQUIRED, key);
   }
   return map;
 };

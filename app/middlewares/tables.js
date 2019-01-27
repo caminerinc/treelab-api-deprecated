@@ -1,16 +1,11 @@
 const { getEasyTable } = require('../controllers/tables');
+const { error, Status, ECodes } = require('../util/error');
 
 const checkTableExist = async (ctx, next) => {
   const tableId = ctx.request.body.tableId || ctx.params.tableId;
-  if (!tableId) {
-    ctx.status = 422;
-    return (ctx.body = { error: 'tableId is required' });
-  }
+  if (!tableId) error(null, ECodes.REQUIRED, 'tableId');
   const table = await getEasyTable(tableId);
-  if (!table) {
-    ctx.status = 400;
-    return (ctx.body = { error: 'table does not exist' });
-  }
+  if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
   ctx.table = table;
   await next();
 };
