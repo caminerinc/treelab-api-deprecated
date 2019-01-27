@@ -17,6 +17,7 @@ const getUser = ({ email }) => {
 };
 
 const createUser = async body => {
+  // @Moya: I got the user here, and moved the error down here too.
   const user = await getUser(body);
   if (user) {
     error(400, ECodes.USER_ALREADY_EXISTS);

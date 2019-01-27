@@ -29,6 +29,7 @@ module.exports = {
   async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
+    // @Moya: basically we can define sequelize transaction here now. So we don't have to pass DB at all or worry about it.
     ctx.body = await sequelize.transaction(() => createBase(params));
     socketIo.sync({
       op: 'createBase',
