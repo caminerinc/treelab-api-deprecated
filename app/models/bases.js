@@ -32,13 +32,6 @@ module.exports = (sequelize, DataTypes) => {
       as: 'pos',
     });
   };
-  /*
-    Looks like we really can't put queries here unless we do
-    bases.getBases = () => {}
 
-    However, when we do queries in here we also need other models for the associations.
-    I think the models/index.js file is set in stone for sequelize, so we really need it, unless
-    there is another way of writing it. Mainly I think its how they connect the associations.
-  */
   return bases;
 };

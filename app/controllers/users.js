@@ -11,9 +11,7 @@ const getAllUsers = () => {
 
 const getUser = ({ email }) => {
   return users.findOne({
-    where: {
-      email,
-    },
+    where: { email },
     raw: true,
   });
 };
