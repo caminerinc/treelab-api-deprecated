@@ -45,8 +45,8 @@ const ECodes = {
     message: 'Password is wrong.',
   },
   UNAUTHORIZED: {
-    code: 'PASSWORD_ERROR',
-    message: 'Password is wrong.',
+    code: 'UNAUTHORIZED',
+    message: 'Unauthorized.',
   },
 };
 
