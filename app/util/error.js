@@ -61,8 +61,8 @@ const Status = {
 
 /**
  * @param {Number=} status - default: Status.BadRequest
- * @param {String} ecode - use "?" to generate an error message
- * @param {String|Array=} params - used to replace "?"
+ * @param {Object} ecode - use "?" to generate an error message
+ * @param {Number|String|Array=} params - used to replace "?"
  */
 const error = (status, ecode, params) => {
   if (typeof status === 'object') {
