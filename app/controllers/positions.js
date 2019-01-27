@@ -40,17 +40,13 @@ module.exports = {
     });
   },
 
-  async createPosition({ parentId, id, type }, t) {
+  async createPosition({ parentId, id, type }) {
     const lastPosition = await positions.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
       where: { parentId, type },
-      transaction: t,
     });
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create(
-      { id, position, parentId, type },
-      { transaction: t },
-    );
+    return await positions.create({ id, position, parentId, type });
   },
 
   async getPositions(parentId, type, t) {

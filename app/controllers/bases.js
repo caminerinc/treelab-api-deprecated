@@ -11,34 +11,29 @@ const { createPosition } = require('../controllers/positions');
 const { createTable } = require('../controllers/tables');
 
 module.exports = {
-  getBases(db) {
-    return getAllBases(db);
+  getBases() {
+    return getAllBases();
   },
 
-  async createBase(db, params) {
-    async function transactionSteps(t) {
-      const base = await createOneBase(db, params.name);
-
-      // needs to be refactored
-      await createPosition(
-        // looks like the ordering for new bases doesn't work correctly.
-        {
-          parentId: 'baseParent', //TODO base的父级未确定
-          id: base.id,
-          type: 'base',
-        },
-        t,
-      );
-      // also needs to be refactored
-      const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
-
-      return {
+  async createBase(params) {
+    const base = await createOneBase(params.name);
+    // needs to be refactored
+    await createPosition(
+      // looks like the ordering for new bases doesn't work correctly.
+      {
+        parentId: 'baseParent', //TODO base的父级未确定
         id: base.id,
-        name: base.name,
-        primaryTableId: table.table.id,
-      };
-    }
-    return await db.transaction(transactionSteps);
+        type: 'base',
+      },
+    );
+    // also needs to be refactored
+    // const table = await createTable({ baseId: base.id, name: 'Table 1' });
+
+    return {
+      id: base.id,
+      name: base.name,
+      // primaryTableId: table.table.id,
+    };
   },
 
   getBase(id) {

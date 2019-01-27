@@ -1,7 +1,7 @@
-const { bases, positions } = require('../models');
+const { bases, positions, sequelize } = require('../models');
 
 module.exports = {
-  getAllBases(db) {
+  getAllBases() {
     return bases.findAll({
       attributes: ['id', 'name'],
       include: [
@@ -20,15 +20,12 @@ module.exports = {
           required: false,
         },
       ],
-      order: [[db.col('tablePositions.position'), 'asc']],
-      order: [[db.col('pos.position'), 'asc']],
+      order: [[sequelize.col('tablePositions.position'), 'asc']],
+      order: [[sequelize.col('pos.position'), 'asc']],
     });
   },
 
-  createOneBase(db, name) {
-    // https://github.com/caminerinc/elephante-api/pull/66/commits/b1144234e1f94d95c00d9b1aacc5b667d0b926a6#diff-2e7a0decef51e69d9691c3b5268aa9caR40
-    // According to this, does this mean that its possible to send the actually sequelize db?
-    // It breaks if that happens, or what other db is there that it would send?
-    return bases.create({ name: name }, { transaction: db });
+  createOneBase(name) {
+    return bases.create({ name: name });
   },
 };

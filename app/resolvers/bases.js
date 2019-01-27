@@ -1,4 +1,5 @@
-const { pick, map } = require('lodash');
+const { map } = require('lodash');
+const { sequelize } = require('../models');
 const { checkKeyExists } = require('../util/helper');
 const { error, ECodes } = require('../util/error');
 const {
@@ -20,16 +21,15 @@ const adaptBases = bases =>
   }));
 
 module.exports = {
-  async resolveGetBases(ctx, db) {
-    const bases = await getBases(db);
+  async resolveGetBases(ctx) {
+    const bases = await getBases();
     ctx.body = { bases: adaptBases(bases) };
   },
 
-  async resolveCreateBase(ctx, db) {
+  async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    ctx.body = await createBase(db, params);
-    // Is this an alright place to put websockets?
+    ctx.body = await sequelize.transaction(() => createBase(params));
     socketIo.sync({
       op: 'createBase',
       body: ctx.body,
