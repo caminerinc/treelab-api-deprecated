@@ -13,8 +13,8 @@ const resolveChangePosition = async ctx => {
     'type',
   );
   if (params.originalPositions.length === 0)
-    error(ECodes.ORIGINAL_POSITIONS_MISSING);
-  if (!(params.targetPosition > 1)) error(ECodes.ILLEGAL_TARGET_POSITION);
+    error(null, ECodes.ORIGINAL_POSITIONS_MISSING);
+  if (!(params.targetPosition > 1)) error(null, ECodes.ILLEGAL_TARGET_POSITION);
   if (!Array.isArray(params.originalPositions))
     params.originalPositions = [params.originalPositions];
   await changePosition(params);

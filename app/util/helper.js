@@ -61,7 +61,7 @@ const createUid = type => {
 
 const checkKeyExists = (map, ...keys) => {
   for (let key of keys) {
-    if (!(key in map)) error(ECodes.REQUIRED, key);
+    if (!(key in map)) error(null, ECodes.REQUIRED, key);
   }
   return map;
 };

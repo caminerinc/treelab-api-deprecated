@@ -91,7 +91,7 @@ module.exports = {
       !Array.isArray(params.sourceColumnConfigs) ||
       !Array.isArray(params.sourceCellValues2dArray)
     )
-      error(ECodes.BULK_COPY_PARAMS_MISSING);
+      error(null, ECodes.BULK_COPY_PARAMS_MISSING);
     await bulkCopyFieldValue(params);
     ctx.body = { message: 'sucess' };
     socketIo.sync({

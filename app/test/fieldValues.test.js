@@ -105,9 +105,11 @@ describe('fieldValues模块', function(done) {
             res.should.have.status(200);
             checkResult((_err, _res) => {
               _res.should.have.status(200);
-              _res.body.tableDatas.rowsById[sends.text.recordId].cellValuesByColumnId[
-                sends.text.fieldId
-              ].should.to.eql(sends.text.value);
+              _res.body.tableDatas.rowsById[
+                sends.text.recordId
+              ].cellValuesByColumnId[sends.text.fieldId].should.to.eql(
+                sends.text.value,
+              );
               done();
             });
           });
@@ -190,7 +192,9 @@ describe('fieldValues模块', function(done) {
             res.body.should.have.property('fieldValueId');
             checkResult((_err, _res) => {
               _res.should.have.status(200);
-              _res.body.tableDatas.rowsById[sends.multipleAttachment.recordId].cellValuesByColumnId[
+              _res.body.tableDatas.rowsById[
+                sends.multipleAttachment.recordId
+              ].cellValuesByColumnId[
                 sends.multipleAttachment.fieldId
               ][0].should.to.eql({
                 id: res.body.id,
@@ -275,9 +279,8 @@ describe('fieldValues模块', function(done) {
             checkResult((_err, _res) => {
               _res.should.have.status(200);
               let column =
-                _res.body.tableDatas.rowsById['rec1db61c8d540400f'].cellValuesByColumnId[
-                  'fld1e1cf1f8dc0403b'
-                ];
+                _res.body.tableDatas.rowsById['rec1db61c8d540400f']
+                  .cellValuesByColumnId['fld1e1cf1f8dc0403b'];
               column = column.indexOf('recfPInitd1QpZ6aE');
               column.should.be.eql(-1);
               done();
@@ -299,9 +302,8 @@ describe('fieldValues模块', function(done) {
             checkResult((_err, _res) => {
               _res.should.have.status(200);
               let column =
-                _res.body.tableDatas.rowsById['rec1db61c8d540400f'].cellValuesByColumnId[
-                  'fld1e1ced53340402b'
-                ];
+                _res.body.tableDatas.rowsById['rec1db61c8d540400f']
+                  .cellValuesByColumnId['fld1e1ced53340402b'];
               let multipleAttachment = findIndex(column, function(o) {
                 return o.id == attachmentId;
               });
@@ -339,9 +341,9 @@ describe('fieldValues模块', function(done) {
               res.should.have.status(200);
               checkResult((_err, _res) => {
                 _res.should.have.status(200);
-                _res.body.tableDatas.rowsById[value.recordId].cellValuesByColumnId.should.not.have.property(
-                  value.fieldId,
-                );
+                _res.body.tableDatas.rowsById[
+                  value.recordId
+                ].cellValuesByColumnId.should.not.have.property(value.fieldId);
                 done();
               });
             });

@@ -23,7 +23,7 @@ module.exports = {
         params.fieldTypeId,
       );
     if (fieldProps.isTypeOptionsRequired && !params.typeOptions)
-      error(ECodes.REQUIRED, 'typeOptions');
+      error(null, ECodes.REQUIRED, 'typeOptions');
     const result = await createField(params);
     ctx.body = result;
     socketIo.sync({
