@@ -15,10 +15,12 @@ module.exports = (sequelize, DataTypes) => {
       name: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'fields_tableId_name_uk',
       },
       tableId: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'fields_tableId_name_uk',
       },
       fieldTypeId: {
         allowNull: false,

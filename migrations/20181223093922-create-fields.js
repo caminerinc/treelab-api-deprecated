@@ -42,7 +42,7 @@ module.exports = {
         });
       })
       .then(() => {
-        return queryInterface.addConstraint('uk_fieldName', ['name', 'tableId'], {
+        return queryInterface.addConstraint('fields', ['tableId', 'name'], {
           type: 'unique',
         });
       });
