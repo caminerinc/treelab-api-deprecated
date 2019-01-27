@@ -16,7 +16,12 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    if (fieldProps.isArrayValue) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, params.fieldTypeId);
+    if (fieldProps.isArrayValue)
+      error(
+        Status.Forbidden,
+        ECodes.UNSURPPORTED_FIELD_TYPE,
+        params.fieldTypeId,
+      );
     await upsertFieldValue(params);
     ctx.body = { message: 'success' };
     socketIo.sync({
@@ -40,8 +45,16 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    if (!fieldProps.isArrayValue) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, params.fieldTypeId);
-    const fieldValue = await findOrCreateFieldValue(params.recordId, params.fieldId);
+    if (!fieldProps.isArrayValue)
+      error(
+        Status.Forbidden,
+        ECodes.UNSURPPORTED_FIELD_TYPE,
+        params.fieldTypeId,
+      );
+    const fieldValue = await findOrCreateFieldValue(
+      params.recordId,
+      params.fieldId,
+    );
     const result = await createArrayValue({
       fieldTypeId: params.fieldTypeId,
       fieldValueId: fieldValue.id,
@@ -66,10 +79,18 @@ module.exports = {
 
   async resolveBulkCopyFieldValue(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'sourceColumnConfigs', 'sourceCellValues2dArray', 'tableId');
+    checkKeyExists(
+      params,
+      'sourceColumnConfigs',
+      'sourceCellValues2dArray',
+      'tableId',
+    );
     params.sourceColumnConfigs = JSON.parse(params.sourceColumnConfigs);
     params.sourceCellValues2dArray = JSON.parse(params.sourceCellValues2dArray);
-    if (!Array.isArray(params.sourceColumnConfigs) || !Array.isArray(params.sourceCellValues2dArray))
+    if (
+      !Array.isArray(params.sourceColumnConfigs) ||
+      !Array.isArray(params.sourceCellValues2dArray)
+    )
       error(ECodes.BULK_COPY_PARAMS_MISSING);
     await bulkCopyFieldValue(params);
     ctx.body = { message: 'sucess' };

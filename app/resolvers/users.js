@@ -11,7 +11,13 @@ module.exports = {
   },
 
   async resolveCreateUser(ctx) {
-    checkKeyExists(ctx.request.body, 'firstName', 'lastName', 'password', 'email');
+    checkKeyExists(
+      ctx.request.body,
+      'firstName',
+      'lastName',
+      'password',
+      'email',
+    );
     if (!EMAIL_REGEX.test(ctx.request.body.email)) error(ECodes.INVALID_EMAIL);
     const user = await getUser(ctx.request.body);
     if (user) error(ECodes.USER_ALREADY_EXISTS);

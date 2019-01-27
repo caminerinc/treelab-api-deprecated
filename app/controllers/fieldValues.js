@@ -1,4 +1,9 @@
-const { fieldValues, multipleAttachmentValues, foreignKeyValues, sequelize } = require('../models');
+const {
+  fieldValues,
+  multipleAttachmentValues,
+  foreignKeyValues,
+  sequelize,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
 const { createField } = require('./fields');
@@ -65,7 +70,10 @@ function deleteMultipleAttachment({ itemId: id }) {
     where: { id },
   });
 }
-async function deleteForeignKeyValue({ recordId, fieldId, itemId }, fieldProps) {
+async function deleteForeignKeyValue(
+  { recordId, fieldId, itemId },
+  fieldProps,
+) {
   const {
     [fieldProps.valueName]: [{ fieldValueId, symmetricFieldValueId }],
   } = await fieldValues.findOne({
@@ -142,7 +150,11 @@ module.exports = {
     return deleteValue(params, fieldProps);
   },
 
-  async bulkCopyFieldValue({ sourceColumnConfigs, sourceCellValues2dArray, tableId }) {
+  async bulkCopyFieldValue({
+    sourceColumnConfigs,
+    sourceCellValues2dArray,
+    tableId,
+  }) {
     for (let i = 0; i < sourceColumnConfigs.length; i++) {
       const field = sourceColumnConfigs[i];
       field.tableId = tableId;
@@ -175,7 +187,10 @@ module.exports = {
           }
         } else if (field.fieldTypeId == 4) {
           for (let k = 0; k < values.length; k++) {
-            const fieldValueResult = await findOrCreateFieldValue(recordResult.id, fieldResult.fieldId);
+            const fieldValueResult = await findOrCreateFieldValue(
+              recordResult.id,
+              fieldResult.fieldId,
+            );
             await createArrayValue({
               fieldTypeId: field.fieldTypeId,
               fieldValueId: fieldValueResult.id,

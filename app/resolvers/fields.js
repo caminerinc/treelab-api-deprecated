@@ -16,8 +16,14 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'tableId', 'name', 'fieldTypeId');
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, params.fieldTypeId);
-    if (fieldProps.isTypeOptionsRequired && !params.typeOptions) error(ECodes.REQUIRED, 'typeOptions');
+    if (!fieldProps)
+      error(
+        Status.Forbidden,
+        ECodes.UNSURPPORTED_FIELD_TYPE,
+        params.fieldTypeId,
+      );
+    if (fieldProps.isTypeOptionsRequired && !params.typeOptions)
+      error(ECodes.REQUIRED, 'typeOptions');
     const result = await createField(params);
     ctx.body = result;
     socketIo.sync({
@@ -49,7 +55,12 @@ module.exports = {
     if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
     if (params.fieldTypeId && field.fieldTypeId != params.fieldTypeId) {
       const fieldProps = FIELD_TYPES[params.fieldTypeId];
-      if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, params.fieldTypeId);
+      if (!fieldProps)
+        error(
+          Status.Forbidden,
+          ECodes.UNSURPPORTED_FIELD_TYPE,
+          params.fieldTypeId,
+        );
       ctx.body = await replaceField(field, params);
     } else {
       await updateField(field, params);

@@ -1,6 +1,11 @@
 const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const { getBases, createBase, deleteBase, findSymmetricFieldId } = require('../controllers/bases');
+const {
+  getBases,
+  createBase,
+  deleteBase,
+  findSymmetricFieldId,
+} = require('../controllers/bases');
 const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
 const { deleteParentId } = require('../controllers/positions');

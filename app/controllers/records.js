@@ -1,5 +1,9 @@
 const { records, sequelize } = require('../models');
-const { createPosition, deletePositions, getPositionsByIds } = require('../controllers/positions');
+const {
+  createPosition,
+  deletePositions,
+  getPositionsByIds,
+} = require('../controllers/positions');
 
 module.exports = {
   async createRecord(params, t1) {
@@ -15,7 +19,9 @@ module.exports = {
       );
       return result;
     }
-    return t1 ? transactionSteps(t1) : await sequelize.transaction(transactionSteps);
+    return t1
+      ? transactionSteps(t1)
+      : await sequelize.transaction(transactionSteps);
   },
 
   async deleteRecord({ rows }) {

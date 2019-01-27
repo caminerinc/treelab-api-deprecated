@@ -2,13 +2,19 @@ const { sequelize } = require('../models');
 const { positions } = require('../models');
 
 module.exports = {
-  async changePosition({ originalPositions, targetPosition, parentId, type }, t) {
+  async changePosition(
+    { originalPositions, targetPosition, parentId, type },
+    t,
+  ) {
     targetPosition = parseInt(targetPosition);
     originalPositions = Array.from(originalPositions, i => parseInt(i));
     originalPositions.sort();
     const originLen = originalPositions.length;
     const minPosition = Math.min(originalPositions[0], targetPosition);
-    const maxPosition = Math.max(originalPositions[originLen - 1], targetPosition);
+    const maxPosition = Math.max(
+      originalPositions[originLen - 1],
+      targetPosition,
+    );
     const temp = originalPositions.reduce((sum, originalPosition) => {
       if (originalPosition < targetPosition) sum++;
       return sum;
@@ -41,7 +47,10 @@ module.exports = {
       transaction: t,
     });
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create({ id, position, parentId, type }, { transaction: t });
+    return await positions.create(
+      { id, position, parentId, type },
+      { transaction: t },
+    );
   },
 
   async getPositions(parentId, type, t) {

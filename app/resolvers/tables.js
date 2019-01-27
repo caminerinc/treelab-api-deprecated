@@ -25,11 +25,15 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
     const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
     if (fgn) {
       const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
-      const foreignDisplayName = await findFieldValue(fgn.rec.dataValues.id, primaryFieldId.id);
+      const foreignDisplayName = await findFieldValue(
+        fgn.rec.dataValues.id,
+        primaryFieldId.id,
+      );
       foreignRecords.push({
         foreignRowId: fgn.dataValues.rec.id,
         foreignDisplayName: foreignDisplayName
-          ? foreignDisplayName.dataValues.textValue || foreignDisplayName.dataValues.numberValue
+          ? foreignDisplayName.dataValues.textValue ||
+            foreignDisplayName.dataValues.numberValue
           : null,
       });
     }
@@ -49,7 +53,10 @@ const adaptTables = tables => {
         const fieldProps = FIELD_TYPES[field.fieldTypeId];
         const otherProps = {};
         if (fieldProps.isTypeOptionsRequired) {
-          otherProps.typeOptions = pick(get(field, fieldProps.typeName), fieldProps.typeProps);
+          otherProps.typeOptions = pick(
+            get(field, fieldProps.typeName),
+            fieldProps.typeProps,
+          );
         }
         return {
           ...pick(field, ['id', 'name']),
@@ -108,7 +115,8 @@ const getCellValuesByColumnId = async fieldValues => {
   for (const fieldValue of fieldValues) {
     const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
     const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, fieldTypeId);
+    if (!fieldProps)
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, fieldTypeId);
     const adaptData = ADAPT_MAP[fieldProps.name];
     if (adaptData) {
       cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
@@ -161,7 +169,10 @@ module.exports = {
       }
       let symmetricFieldId = get(field, 'foreignKeyTypes.symmetricFieldId');
       fieldId.push(symmetricFieldId);
-      let symmetricTableId = get(field, 'foreignKeyTypes.symmetricField.tableId');
+      let symmetricTableId = get(
+        field,
+        'foreignKeyTypes.symmetricField.tableId',
+      );
       symmetricField[symmetricTableId]
         ? symmetricField[symmetricTableId].push(symmetricFieldId)
         : (symmetricField[symmetricTableId] = [symmetricFieldId]);

@@ -5,10 +5,18 @@ const { error, Status, ECodes } = require('../util/error');
 
 const resolveChangePosition = async ctx => {
   const params = ctx.request.body;
-  checkKeyExists(params, 'originalPositions', 'targetPosition', 'parentId', 'type');
-  if (params.originalPositions.length === 0) error(ECodes.ORIGINAL_POSITIONS_MISSING);
+  checkKeyExists(
+    params,
+    'originalPositions',
+    'targetPosition',
+    'parentId',
+    'type',
+  );
+  if (params.originalPositions.length === 0)
+    error(ECodes.ORIGINAL_POSITIONS_MISSING);
   if (!(params.targetPosition > 1)) error(ECodes.ILLEGAL_TARGET_POSITION);
-  if (!Array.isArray(params.originalPositions)) params.originalPositions = [params.originalPositions];
+  if (!Array.isArray(params.originalPositions))
+    params.originalPositions = [params.originalPositions];
   await changePosition(params);
   ctx.body = { message: 'success' };
   socketIo.sync({
