@@ -173,6 +173,7 @@ async function deleteForeignField({ fieldId, fieldProps }, t) {
   });
   return { fieldId, symmetricFieldId: symmetricFieldId.id };
 }
+
 async function createFieldStep(params, t) {
   const fieldProps = FIELD_TYPES[params.fieldTypeId];
   const createOption = CREATE_OPTION_MAP[fieldProps.name];
