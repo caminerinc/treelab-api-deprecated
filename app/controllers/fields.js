@@ -1,8 +1,18 @@
 const { pick } = require('lodash');
-const { sequelize, fields, numberTypes, foreignKeyTypes, formulaTypes } = require('../models');
+const {
+  sequelize,
+  fields,
+  numberTypes,
+  foreignKeyTypes,
+  formulaTypes,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
-const { createPosition, deletePositions, getPositionsByIds } = require('../controllers/positions');
+const {
+  createPosition,
+  deletePositions,
+  getPositionsByIds,
+} = require('../controllers/positions');
 
 const CREATE_OPTION_MAP = {
   text: createGenericField,
@@ -69,7 +79,10 @@ async function createForeignKey(fieldParams, options, t) {
 async function createFormulaField(fieldParams, options, t) {
   checkKeyExists(options, 'format');
   const newField = await fields.create(fieldParams, { transaction: t });
-  await formulaTypes.create(Object.assign({}, options, { fieldId: newField.id }), t);
+  await formulaTypes.create(
+    Object.assign({}, options, { fieldId: newField.id }),
+    t,
+  );
   return {
     fieldId: newField.id,
   };
@@ -135,7 +148,9 @@ async function deleteForeignField({ fieldId, fieldProps }, t) {
     where: {
       id: fieldId,
     },
-    attributes: [[sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id']],
+    attributes: [
+      [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
+    ],
     include: [
       {
         model: foreignKeyTypes,
@@ -207,7 +222,9 @@ module.exports = {
       }
       return result;
     }
-    return t1 ? transactionSteps(t1) : await sequelize.transaction(transactionSteps);
+    return t1
+      ? transactionSteps(t1)
+      : await sequelize.transaction(transactionSteps);
   },
 
   async findFieldType({ fieldId: id }) {
@@ -221,7 +238,10 @@ module.exports = {
   async deleteField({ id, fieldTypeId }, t1) {
     async function transactionSteps(t) {
       const ids = await deleteFieldStep({ id, fieldTypeId }, t);
-      const result = await getPositionsByIds([ids.fieldId, ids.symmetricFieldId], t);
+      const result = await getPositionsByIds(
+        [ids.fieldId, ids.symmetricFieldId],
+        t,
+      );
       if (result.length) {
         await deletePositions(
           {
@@ -233,7 +253,9 @@ module.exports = {
         );
       }
     }
-    return t1 ? transactionSteps(t1) : await sequelize.transaction(transactionSteps);
+    return t1
+      ? transactionSteps(t1)
+      : await sequelize.transaction(transactionSteps);
   },
 
   replaceField(field, params) {
@@ -262,7 +284,10 @@ module.exports = {
     const updateOption = UPDATE_OPTION_MAP[fieldProps.name];
     async function transactionSteps(t) {
       if (params.name)
-        await fields.update({ name: params.name }, { where: { id: params.fieldId }, transaction: t });
+        await fields.update(
+          { name: params.name },
+          { where: { id: params.fieldId }, transaction: t },
+        );
       if (updateOption) {
         return await updateOption(params.fieldId, params.typeOptions, t1);
       }
@@ -280,7 +305,13 @@ module.exports = {
         {
           model: formulaTypes,
           as: 'formulaTypes',
-          attributes: ['formulaText', 'format', 'precision', 'symbol', 'fieldId'],
+          attributes: [
+            'formulaText',
+            'format',
+            'precision',
+            'symbol',
+            'fieldId',
+          ],
         },
       ],
     });
