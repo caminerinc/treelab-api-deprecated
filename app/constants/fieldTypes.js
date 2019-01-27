@@ -31,7 +31,7 @@ const FIELD_TYPES = {
     valueName: 'fmlV',
     typeModel: 'formulaTypes',
     typeName: 'formulaTypes',
-    typeProps: ['count', 'sum', 'average'],
+    typeProps: ['sum', 'average'],
   },
 };
 

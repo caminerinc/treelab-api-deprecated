@@ -8,7 +8,6 @@ const {
   deleteTable,
   findSymmetricFieldId,
 } = require('../controllers/tables');
-const { getBase } = require('../controllers/bases');
 const {
   deleteParentId,
   deletePositions,

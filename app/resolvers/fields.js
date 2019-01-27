@@ -67,7 +67,10 @@ module.exports = {
           params.fieldTypeId,
         );
       }
-      if (field.fieldTypeId == params.fieldTypeId) {
+      if (
+        field.fieldTypeId == params.fieldTypeId &&
+        fieldProps.name != 'foreignKey'
+      ) {
         await updateField(params);
       } else {
         ctx.body = await replaceField(field, params);

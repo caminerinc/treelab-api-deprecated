@@ -90,7 +90,6 @@ async function createFormulaField(fieldParams, options, t) {
 
 const UPDATE_OPTION_MAP = {
   number: updateNumberOptions,
-  foreignKey: updateForeignKey,
   formula: updateFormulaField,
 };
 
@@ -99,34 +98,8 @@ function updateNumberOptions(fieldId, options, t) {
   return numberTypes.update(options, { where: { fieldId }, transaction: t });
 }
 
-async function updateForeignKey(fieldId, options, t) {
-  checkKeyExists(options, 'relationship', 'foreignTableId');
-  await fields.update(options, { where: { fieldId }, transaction: t });
-  await foreignKeyTypes.create(
-    {
-      ...options,
-      symmetricFieldId: newSymmetricField.id,
-      fieldId: newField.id,
-    },
-    { transaction: t },
-  );
-  await foreignKeyTypes.create(
-    {
-      relationship: options.relationship,
-      foreignTableId: fieldParams.tableId,
-      symmetricFieldId: newField.id,
-      fieldId: newSymmetricField.id,
-    },
-    { transaction: t },
-  );
-  return {
-    foreignFieldId: newField.id,
-    symmetricFieldId: newSymmetricField.id,
-  };
-}
-
 function updateFormulaField(fieldId, options, t) {
-  return formulaTypes.update(options, { fieldId }, t);
+  return formulaTypes.update(options, { where: { fieldId }, transaction: t });
 }
 
 const DELETE_MAP = {

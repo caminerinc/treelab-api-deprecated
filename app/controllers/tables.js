@@ -128,7 +128,10 @@ module.exports = {
           ],
         },
       ],
-      order: [[sequelize.col('positions.type'), 'asc'], [sequelize.col('positions.position'), 'asc']],
+      order: [
+        [sequelize.col('positions.type'), 'asc'],
+        [sequelize.col('positions.position'), 'asc'],
+      ],
     });
   },
 
@@ -169,7 +172,9 @@ module.exports = {
       }
       return { table, fields: [field1, field2], records: recordResults };
     }
-    return t1 ? transactionSteps(t1) : await sequelize.transaction(transactionSteps);
+    return t1
+      ? transactionSteps(t1)
+      : await sequelize.transaction(transactionSteps);
   },
 
   getEasyTable(id) {
@@ -212,7 +217,10 @@ module.exports = {
 
   async deleteTable(id, fieldId) {
     return sequelize.transaction(async t => {
-      await fields.destroy({ where: { id: { $in: fieldId } } }, { transaction: t });
+      await fields.destroy(
+        { where: { id: { $in: fieldId } } },
+        { transaction: t },
+      );
       return await tables.destroy({ where: { id } }, { transaction: t });
     });
   },

@@ -16,22 +16,30 @@ module.exports = {
         {},
       )
       .then(async () => {
-        await queryInterface.addConstraint('foreignKeyValues', ['fieldValueId'], {
-          type: 'FOREIGN KEY',
-          references: {
-            table: 'fieldValues',
-            field: 'id',
+        await queryInterface.addConstraint(
+          'foreignKeyValues',
+          ['fieldValueId'],
+          {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'fieldValues',
+              field: 'id',
+            },
+            onDelete: 'cascade',
           },
-          onDelete: 'cascade',
-        });
-        await queryInterface.addConstraint('multipleAttachmentValues', ['fieldValueId'], {
-          type: 'FOREIGN KEY',
-          references: {
-            table: 'fieldValues',
-            field: 'id',
+        );
+        await queryInterface.addConstraint(
+          'multipleAttachmentValues',
+          ['fieldValueId'],
+          {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'fieldValues',
+              field: 'id',
+            },
+            onDelete: 'cascade',
           },
-          onDelete: 'cascade',
-        });
+        );
         await queryInterface.addConstraint('fieldValues', ['fieldId'], {
           type: 'FOREIGN KEY',
           references: {
@@ -40,14 +48,18 @@ module.exports = {
           },
           onDelete: 'cascade',
         });
-        await queryInterface.addConstraint('foreignKeyTypes', ['symmetricFieldId'], {
-          type: 'FOREIGN KEY',
-          references: {
-            table: 'fields',
-            field: 'id',
+        await queryInterface.addConstraint(
+          'foreignKeyTypes',
+          ['symmetricFieldId'],
+          {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'fields',
+              field: 'id',
+            },
+            onDelete: 'cascade',
           },
-          onDelete: 'cascade',
-        });
+        );
         await queryInterface.addConstraint('foreignKeyTypes', ['fieldId'], {
           type: 'FOREIGN KEY',
           references: {
