@@ -257,14 +257,14 @@ module.exports = {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const updateOption = UPDATE_OPTION_MAP[fieldProps.name];
     async function transactionSteps(t) {
-      if (params.name)
+      if (params.name) {
         await fields.update(
           { name: params.name },
           { where: { id: params.fieldId }, transaction: t },
         );
-      if (updateOption) {
-        return await updateOption(params.fieldId, params.typeOptions, t1);
       }
+      if (updateOption)
+        return await updateOption(params.fieldId, params.typeOptions, t1);
     }
     return t1 ? transactionSteps(t1) : sequelize.transaction(transactionSteps);
   },
