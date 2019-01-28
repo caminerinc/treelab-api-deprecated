@@ -1,17 +1,10 @@
 const { pick } = require('lodash');
-const {
-  fields,
-  numberTypes,
-  foreignKeyTypes,
-  sequelize,
-} = require('../models');
+const fields = require('../queries/fields');
+const numberTypes = require('../queries/numberTypes');
+const foreignKeyTypes = require('../queries/foreignKeyTypes');
+const positionsContoller = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
-const {
-  createPosition,
-  deletePositions,
-  getPositionsByIds,
-} = require('../controllers/positions');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -20,155 +13,97 @@ const TYPE_OPTION_MAP = {
   multipleAttachment: createGenericField,
 };
 
-async function createGenericField(fieldParams, options, t) {
-  const field = await fields.create(fieldParams, { transaction: t });
-  return { fieldId: field.id };
-}
-
-async function createNumberOptions(fieldParams, options, t) {
-  checkKeyExists(options, 'format', 'negative');
-  const field = await fields.create(fieldParams, { transaction: t });
-  await numberTypes.create(
-    {
-      ...options,
-      fieldId: field.id,
-    },
-    { transaction: t },
-  );
-  return {
-    fieldId: field.id,
-  };
-}
-
-async function createForeignKey(fieldParams, options, t) {
-  checkKeyExists(options, 'relationship', 'foreignTableId');
-  const newField = await fields.create(fieldParams, { transaction: t });
-  const newSymmetricField = await fields.create(
-    {
-      tableId: options.foreignTableId,
-      name: 'Link',
-      fieldTypeId: 3,
-    },
-    { transaction: t },
-  );
-  await foreignKeyTypes.create(
-    {
-      ...options,
-      symmetricFieldId: newSymmetricField.id,
-      fieldId: newField.id,
-    },
-    { transaction: t },
-  );
-  await foreignKeyTypes.create(
-    {
-      relationship: options.relationship,
-      foreignTableId: fieldParams.tableId,
-      symmetricFieldId: newField.id,
-      fieldId: newSymmetricField.id,
-    },
-    { transaction: t },
-  );
-  return {
-    foreignFieldId: newField.id,
-    symmetricFieldId: newSymmetricField.id,
-  };
-}
-
 const DELETE_MAP = {
   text: deleteGenericField,
   number: deleteGenericField,
   foreignKey: deleteForeignField,
   multipleAttachment: deleteGenericField,
 };
-async function deleteGenericField({ fieldId }, t) {
-  return await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-    transaction: t,
-  });
+
+async function createGenericField(params) {
+  const field = await fields.create(params);
+  return { fieldId: field.id };
 }
-async function deleteForeignField({ fieldId, fieldProps }, t) {
-  const symmetricFieldId = await fields.findOne({
-    where: {
-      id: fieldId,
-    },
-    attributes: [
-      [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
-    ],
-    include: [
-      {
-        model: foreignKeyTypes,
-        attributes: [],
-        as: fieldProps.typeName,
-      },
-    ],
-    raw: true,
-    transaction: t,
+
+async function createNumberOptions(params, options) {
+  checkKeyExists(options, 'format', 'negative');
+  const field = await fields.create(params);
+  await numberTypes.create({ ...options, fieldId: field.id });
+  return { fieldId: field.id };
+}
+
+async function createForeignKey(fieldParams, options) {
+  checkKeyExists(options, 'relationship', 'foreignTableId');
+  const newField = await fields.create(fieldParams);
+  const newSymmetricField = await fields.create({
+    tableId: options.foreignTableId,
+    name: 'Link',
+    fieldTypeId: 3,
   });
-  await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-    transaction: t,
+  await foreignKeyTypes.create({
+    ...options,
+    symmetricFieldId: newSymmetricField.id,
+    fieldId: newField.id,
   });
-  await fields.destroy({
-    where: { id: symmetricFieldId.id },
-    cascade: true,
-    transaction: t,
+  await foreignKeyTypes.create({
+    relationship: options.relationship,
+    foreignTableId: fieldParams.tableId,
+    symmetricFieldId: newField.id,
+    fieldId: newSymmetricField.id,
   });
+  return {
+    foreignFieldId: newField.id,
+    symmetricFieldId: newSymmetricField.id,
+  };
+}
+
+function deleteGenericField(fieldId) {
+  return fields.destroy(fieldId);
+}
+
+async function deleteForeignField(fieldId) {
+  const symmetricFieldId = await fields.getSymmetricFieldId(fieldId);
+  await fields.destroy([fieldId, symmetricFieldId.id]);
   return { fieldId, symmetricFieldId: symmetricFieldId.id };
 }
-async function createFieldStep(params, t) {
+
+async function createFieldStep(params) {
   const fieldProps = FIELD_TYPES[params.fieldTypeId];
   const createOption = TYPE_OPTION_MAP[fieldProps.name];
   const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
-  const result = await createOption(fieldParams, params.typeOptions, t);
-  return {
-    fieldProps,
-    result,
-  };
+  const result = await createOption(fieldParams, params.typeOptions);
+  return { fieldProps, result };
 }
+
 function deleteFieldStep({ id: fieldId, fieldTypeId }, t) {
   const fieldProps = FIELD_TYPES[fieldTypeId];
   const deleteOption = DELETE_MAP[fieldProps.name];
 
   return deleteOption({ fieldId, fieldProps }, t);
 }
+
 module.exports = {
-  async createField(params, t1) {
-    async function transactionSteps(t) {
-      const { fieldProps, result } = await createFieldStep(params, t);
-      if (fieldProps.name === 'foreignKey') {
-        await createPosition(
-          {
-            parentId: params.tableId,
-            id: result.foreignFieldId,
-            type: 'field',
-          },
-          t,
-        );
-        await createPosition(
-          {
-            parentId: params.typeOptions.foreignTableId,
-            id: result.symmetricFieldId,
-            type: 'field',
-          },
-          t,
-        );
-      } else {
-        await createPosition(
-          {
-            parentId: params.tableId,
-            id: result.fieldId || result.id,
-            type: 'field',
-          },
-          t,
-        );
-      }
-      return result;
+  async createField(params) {
+    const { fieldProps, result } = await createFieldStep(params);
+    if (fieldProps.name === 'foreignKey') {
+      await positionsContoller.createPosition({
+        parentId: params.tableId,
+        id: result.foreignFieldId,
+        type: 'field',
+      });
+      await positionsContoller.createPosition({
+        parentId: params.typeOptions.foreignTableId,
+        id: result.symmetricFieldId,
+        type: 'field',
+      });
+    } else {
+      await positionsContoller.createPosition({
+        parentId: params.tableId,
+        id: result.fieldId || result.id,
+        type: 'field',
+      });
     }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+    return result;
   },
 
   async findFieldType({ fieldId: id }) {

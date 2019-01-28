@@ -1,24 +1,17 @@
 const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const {
-  getBases,
-  createBase,
-  deleteBase,
-  findSymmetricFieldId,
-} = require('../controllers/bases');
+const bases = require('../controllers/bases');
 const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
 const { deleteParentId } = require('../controllers/positions');
+const { sequelize } = require('../models/index');
 
 const adaptBases = bases => {
-  return Array.from(bases, base => {
-    base = JSON.parse(JSON.stringify(base));
-    return {
-      id: base.id,
-      name: base.name,
-      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
-    };
-  });
+  bases.map(base => ({
+    id: base.id,
+    name: base.name,
+    primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
+  }));
 };
 
 module.exports = {
@@ -30,7 +23,7 @@ module.exports = {
   async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const result = await createBase(params);
+    const result = await sequelize.transaction(() => bases.createBase(params));
     ctx.body = {
       id: result.base.id,
       name: result.base.name,

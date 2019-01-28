@@ -1,15 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const {
-  createField,
-  deleteField,
-  findFieldType,
-  updateFieldWidth,
-  updateField,
-  replaceField,
-} = require('../controllers/fields');
+const fields = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
 module.exports = {
   async resolveCreateField(ctx) {
@@ -24,7 +18,9 @@ module.exports = {
       );
     if (fieldProps.isTypeOptionsRequired && !params.typeOptions)
       error(null, ECodes.REQUIRED, 'typeOptions');
-    const result = await createField(params);
+    const result = await sequelize.transaction(() =>
+      fields.createField(params),
+    );
     ctx.body = result;
     socketIo.sync({
       op: 'createField',

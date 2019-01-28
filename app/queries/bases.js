@@ -32,6 +32,10 @@ module.exports = {
     });
   },
 
+  // creatOneBase(params) {
+  //   return bases.create(params);
+  // }
+
   creatOneBase(name) {
     async function transactionSteps(t) {
       const transact = { transaction: t };
