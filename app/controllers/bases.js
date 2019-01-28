@@ -1,118 +1,32 @@
 const {
-  bases,
-  tables,
-  fields,
-  foreignKeyTypes,
-  sequelize,
-  positions,
-} = require('../models');
+  getAllBases,
+  creatOneBase,
+  getOneBase,
+  deleteOneBase,
+  findOneSymmetricFieldId,
+} = require('../queries/bases');
 const { createPosition } = require('../controllers/positions');
 const { createTable } = require('../controllers/tables');
 
 module.exports = {
   getBases() {
-    return bases.findAll({
-      attributes: ['id', 'name'],
-      include: [
-        {
-          model: positions,
-          as: 'tablePositions',
-          attributes: ['id', 'position'],
-          where: { type: 'table' },
-          required: false,
-        },
-        {
-          model: positions,
-          as: 'pos',
-          attributes: ['position'],
-          where: { type: 'base' },
-          required: false,
-        },
-      ],
-      order: [[sequelize.col('tablePositions.position'), 'asc']],
-      order: [[sequelize.col('pos.position'), 'asc']],
-    });
+    return getAllBases();
   },
 
-  async createBase(params) {
-    async function transactionSteps(t) {
-      const transact = { transaction: t };
-      const base = await bases.create(
-        {
-          name: params.name,
-        },
-        transact,
-      );
-      await createPosition(
-        {
-          parentId: 'baseParent', //TODO base的父级未确定
-          id: base.id,
-          type: 'base',
-        },
-        t,
-      );
-      const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
-      return { base, table };
-    }
-    return await sequelize.transaction(transactionSteps);
+  createBase(params) {
+    return creatOneBase(params.name);
   },
 
   getBase(id) {
-    return bases.findOne({
-      attributes: ['id', 'name', 'createdAt'],
-      where: { id },
-    });
+    return getOneBase(id);
   },
+
   deleteBase(id, fieldId) {
-    return sequelize.transaction(async t => {
-      await fields.destroy(
-        {
-          where: {
-            id: {
-              $in: fieldId,
-            },
-          },
-        },
-        { transaction: t },
-      );
-      return await bases.destroy(
-        {
-          where: {
-            id,
-          },
-        },
-        { transaction: t },
-      );
-    });
+    return deleteOneBase(id, fieldId);
   },
-  async findSymmetricFieldId({ baseId: id }) {
-    const base = await bases.findOne({
-      where: {
-        id,
-      },
-      include: [
-        {
-          model: tables,
-          as: 'tables',
-          include: [
-            {
-              where: {
-                fieldTypeId: 3,
-              },
-              model: fields,
-              as: 'flds',
-              include: [
-                {
-                  model: foreignKeyTypes,
-                  attributes: ['symmetricFieldId'],
-                  as: 'foreignKeyTypes',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
+
+  async findSymmetricFieldId(id) {
+    const base = await findOneSymmetricFieldId(id);
     if (base && base.tables) {
       const flds = [];
       for (let i = 0; i < base.tables.length; i++) {

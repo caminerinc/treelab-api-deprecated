@@ -43,7 +43,7 @@ module.exports = {
   },
 
   async resolveDeleteBase(ctx) {
-    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
+    const symmetricFieldIds = await findSymmetricFieldId(ctx.params.baseId);
     await deleteBase(ctx.params.baseId, symmetricFieldIds);
     let tableIds = await getTableByBaseId(ctx.params);
     tableIds = map(tableIds, 'id');
