@@ -1,9 +1,7 @@
-const { modules } = require('../models');
+const modules = require('../queries/modules');
 
 module.exports = {
   getModules() {
-    return modules.findAll({
-      attributes: ['id', 'name'],
-    });
+    return modules.getAllModules();
   },
 };

@@ -2,13 +2,13 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const minimist = require('minimist');
-const cls = require('continuation-local-storage');
+const createNamespace = require('cls-hooked').createNamespace;
 
 const basename = path.basename(__filename);
 const args = minimist(process.argv.slice(2));
 const env = args.env || process.env.NODE_ENV;
 const config = require(__dirname + `/../../config/db-config.json`)[env];
-const namespace = cls.createNamespace('elephante-api');
+const namespace = createNamespace('elephante-api');
 
 Sequelize.useCLS(namespace);
 

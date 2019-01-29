@@ -1,18 +1,18 @@
 const { sequelize, positions } = require('../models');
 
 module.exports = {
-  getLastPosition: (parentId, type) => {
+  getLastPosition(parentId, type) {
     return positions.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
       where: { parentId, type },
     });
   },
 
-  create: params => {
+  create(params) {
     return positions.create(params);
   },
 
-  getPositionsByParentIdAndType: (parentId, type) => {
+  getPositionsByParentIdAndType(parentId, type) {
     return positions.findAll({
       attributes: ['id', 'position'],
       where: { parentId, type },
@@ -20,7 +20,7 @@ module.exports = {
     });
   },
 
-  getPositionsByIds: ids => {
+  getPositionsByIds(ids) {
     return positions.findAll({ where: { id: { $in: ids } } });
   },
 
@@ -49,7 +49,7 @@ module.exports = {
     });
   },
 
-  query: (sql, options) => {
+  query(sql, options) {
     return sequelize.query(sql, options);
   },
 };

@@ -1,10 +1,13 @@
 const { pick } = require('lodash');
 const fields = require('../queries/fields');
+const tables = require('../queries/tables');
+const positions = require('../queries/positions');
 const numberTypes = require('../queries/numberTypes');
 const foreignKeyTypes = require('../queries/foreignKeyTypes');
-const positionsContoller = require('../controllers/positions');
+const positionsController = require('../controllers/positions');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
+const { error, Status, ECodes } = require('../util/error');
 
 const TYPE_OPTION_MAP = {
   text: createGenericField,
@@ -32,12 +35,27 @@ async function createNumberOptions(params, options) {
   return { fieldId: field.id };
 }
 
-async function createForeignKey(fieldParams, options) {
+async function createForeignKey(params, options) {
   checkKeyExists(options, 'relationship', 'foreignTableId');
-  const newField = await fields.create(fieldParams);
+  const newField = await fields.create(params);
+  const foreignTable = await tables.getEasyTable(options.foreignTableId);
+  const fieldNameExist = await fields.checkFieldNameExist(
+    options.foreignTableId,
+    foreignTable.name,
+  );
+  let fieldName = foreignTable.name;
+  let index = 1;
+  while (fieldNameExist) {
+    index++;
+    const _fieldNameExist = await fields.checkFieldNameExist(
+      options.foreignTableId,
+      `${fieldName} (${index})`,
+    );
+    if (!_fieldNameExist) break;
+  }
   const newSymmetricField = await fields.create({
     tableId: options.foreignTableId,
-    name: 'Link',
+    name: `${fieldName}` + (index === 1 ? '' : ` (${index})`),
     fieldTypeId: 3,
   });
   await foreignKeyTypes.create({
@@ -47,7 +65,7 @@ async function createForeignKey(fieldParams, options) {
   });
   await foreignKeyTypes.create({
     relationship: options.relationship,
-    foreignTableId: fieldParams.tableId,
+    foreignTableId: params.tableId,
     symmetricFieldId: newField.id,
     fieldId: newSymmetricField.id,
   });
@@ -63,11 +81,19 @@ function deleteGenericField(fieldId) {
 
 async function deleteForeignField(fieldId) {
   const symmetricFieldId = await fields.getSymmetricFieldId(fieldId);
-  await fields.destroy([fieldId, symmetricFieldId.id]);
-  return { fieldId, symmetricFieldId: symmetricFieldId.id };
+  if (symmetricFieldId) await fields.destroy([fieldId, symmetricFieldId.id]);
+  return {
+    fieldId,
+    symmetricFieldId: symmetricFieldId ? symmetricFieldId.id : null,
+  };
 }
 
 async function createFieldStep(params) {
+  const fieldNameExist = await fields.checkFieldNameExist(
+    params.tableId,
+    params.name,
+  );
+  if (fieldNameExist) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
   const fieldProps = FIELD_TYPES[params.fieldTypeId];
   const createOption = TYPE_OPTION_MAP[fieldProps.name];
   const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
@@ -75,11 +101,10 @@ async function createFieldStep(params) {
   return { fieldProps, result };
 }
 
-function deleteFieldStep({ id: fieldId, fieldTypeId }, t) {
+function deleteFieldStep(fieldId, fieldTypeId) {
   const fieldProps = FIELD_TYPES[fieldTypeId];
   const deleteOption = DELETE_MAP[fieldProps.name];
-
-  return deleteOption({ fieldId, fieldProps }, t);
+  return deleteOption(fieldId, fieldProps);
 }
 
 module.exports = {
@@ -106,77 +131,24 @@ module.exports = {
     return result;
   },
 
-  async findFieldType({ fieldId: id }) {
-    return await fields.findOne({
-      where: { id },
-      attributes: ['id', 'name', 'tableId', 'fieldTypeId'],
-      raw: true,
-    });
-  },
-
-  async deleteField({ id, fieldTypeId }, t1) {
-    async function transactionSteps(t) {
-      const ids = await deleteFieldStep({ id, fieldTypeId }, t);
-      const result = await getPositionsByIds(
-        [ids.fieldId, ids.symmetricFieldId],
-        t,
-      );
-      if (result.length) {
-        await deletePositions(
-          {
-            deletePositions: Array.from(result, i => i.position),
-            parentId: result[0].parentId,
-            type: 'field',
-          },
-          t,
-        );
-      }
+  async deleteField(id) {
+    const field = await fields.getField(id);
+    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+    const ids = await deleteFieldStep(id, field.fieldTypeId);
+    const result = await positions.getPositionsByIds([
+      ids.fieldId,
+      ids.symmetricFieldId,
+    ]);
+    if (result.length) {
+      await positionsController.deletePositions({
+        deletePositions: Array.from(result, i => i.position),
+        parentId: result[0].parentId,
+        type: 'field',
+      });
     }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
   },
 
-  replaceField(field, params) {
-    return sequelize.transaction(async t => {
-      await deleteFieldStep(
-        {
-          ...field,
-        },
-        t,
-      );
-      params.name = params.name || field.name;
-      const { result } = await createFieldStep(
-        {
-          id: field.id,
-          tableId: field.tableId,
-          ...params,
-        },
-        t,
-      );
-      return result;
-    });
-  },
-  updateField(field, params) {
-    return fields.update(
-      {
-        name: params.name,
-      },
-      {
-        where: { id: field.id },
-      },
-    );
-  },
   updateFieldWidth({ fieldId: id, width }) {
-    return fields.update(
-      {
-        width,
-      },
-      {
-        where: {
-          id,
-        },
-      },
-    );
+    return fields.updateFieldWidth(id, width);
   },
 };

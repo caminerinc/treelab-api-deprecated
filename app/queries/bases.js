@@ -1,11 +1,4 @@
-const {
-  bases,
-  tables,
-  fields,
-  foreignKeyTypes,
-  sequelize,
-  positions,
-} = require('../models');
+const { bases, sequelize, positions } = require('../models');
 
 module.exports = {
   getAllBases() {
@@ -32,90 +25,18 @@ module.exports = {
     });
   },
 
-  // creatOneBase(params) {
-  //   return bases.create(params);
-  // }
-
-  creatOneBase(name) {
-    async function transactionSteps(t) {
-      const transact = { transaction: t };
-      const base = await bases.create(
-        {
-          name: name,
-        },
-        transact,
-      );
-      await createPosition(
-        {
-          parentId: 'baseParent', //TODO base的父级未确定
-          id: base.id,
-          type: 'base',
-        },
-        t,
-      );
-      const table = await createTable({ baseId: base.id, name: 'Table 1' }, t);
-      return { base, table };
-    }
-    return sequelize.transaction(transactionSteps);
+  create(name) {
+    return bases.create({ name });
   },
 
-  getOneBase(id) {
+  getBase(id) {
     return bases.findOne({
       attributes: ['id', 'name', 'createdAt'],
       where: { id },
     });
   },
 
-  deleteOneBase(id, fieldId) {
-    return sequelize.transaction(async t => {
-      await fields.destroy(
-        {
-          where: {
-            id: {
-              $in: fieldId,
-            },
-          },
-        },
-        { transaction: t },
-      );
-      return bases.destroy(
-        {
-          where: {
-            id,
-          },
-        },
-        { transaction: t },
-      );
-    });
-  },
-
-  findOneSymmetricFieldId(id) {
-    return bases.findOne({
-      where: {
-        id,
-      },
-      include: [
-        {
-          model: tables,
-          as: 'tables',
-          include: [
-            {
-              where: {
-                fieldTypeId: 3,
-              },
-              model: fields,
-              as: 'flds',
-              include: [
-                {
-                  model: foreignKeyTypes,
-                  attributes: ['symmetricFieldId'],
-                  as: 'foreignKeyTypes',
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
+  destroy(id) {
+    bases.destroy({ where: { id } });
   },
 };

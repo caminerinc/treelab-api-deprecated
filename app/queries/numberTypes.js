@@ -1,7 +1,7 @@
 const { sequelize, numberTypes } = require('../models');
 
 module.exports = {
-  create: params => {
+  create(params) {
     return numberTypes.create(params);
   },
 };

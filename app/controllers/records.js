@@ -1,27 +1,15 @@
-const { records, sequelize } = require('../models');
-const {
-  createPosition,
-  deletePositions,
-  getPositionsByIds,
-} = require('../controllers/positions');
+const { createPosition } = require('../controllers/positions');
+const records = require('../queries/records');
 
 module.exports = {
-  async createRecord(params, t1) {
-    async function transactionSteps(t) {
-      const result = await records.create(params, { transaction: t });
-      await createPosition(
-        {
-          parentId: params.tableId,
-          id: result.id,
-          type: 'record',
-        },
-        t,
-      );
-      return result;
-    }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+  async createRecord(tableId) {
+    const result = await records.create({ tableId });
+    await createPosition({
+      parentId: tableId,
+      id: result.id,
+      type: 'record',
+    });
+    return result;
   },
 
   async deleteRecord({ rows }) {

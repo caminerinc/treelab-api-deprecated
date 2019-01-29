@@ -1,18 +1,26 @@
 const { sequelize, fields, foreignKeyTypes } = require('../models');
 
 module.exports = {
-  create: params => {
+  create(params) {
     return fields.create(params);
   },
 
-  destroy: fieldId => {
+  destroy(fieldId) {
     return fields.destroy({
       where: { id: { $in: Array.isArray(fieldId) ? fieldId : [fieldId] } },
       cascade: true,
     });
   },
 
-  getSymmetricFieldId: fieldId => {
+  getField(id) {
+    return fields.findOne({
+      where: { id },
+      attributes: ['id', 'name', 'tableId', 'fieldTypeId'],
+      raw: true,
+    });
+  },
+
+  getSymmetricFieldId(fieldId) {
     return fields.findOne({
       where: {
         id: fieldId,
@@ -27,5 +35,13 @@ module.exports = {
       ],
       raw: true,
     });
+  },
+
+  checkFieldNameExist(tableId, name) {
+    return fields.findOne({ attributes: ['name'], where: { tableId, name } });
+  },
+
+  updateFieldWidth(id, width) {
+    return fields.update({ width }, { where: { id } });
   },
 };

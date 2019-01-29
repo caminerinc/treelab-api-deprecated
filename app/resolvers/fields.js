@@ -31,36 +31,14 @@ module.exports = {
   async resolveDeleteField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId');
-    const field = await findFieldType(params);
-    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-    await deleteField(field);
+    await sequelize.transaction(() => fields.deleteField(params));
     ctx.body = { message: 'success' };
   },
 
   async resolveResizeColumn(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId', 'width');
-    await updateFieldWidth(params);
+    await fields.updateFieldWidth(params);
     ctx.body = { message: 'success' };
-  },
-
-  async resolveUpdateField(ctx) {
-    const params = ctx.request.body;
-    checkKeyExists(params, 'fieldId');
-    const field = await findFieldType(params);
-    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-    if (params.fieldTypeId && field.fieldTypeId != params.fieldTypeId) {
-      const fieldProps = FIELD_TYPES[params.fieldTypeId];
-      if (!fieldProps)
-        error(
-          Status.Forbidden,
-          ECodes.UNSURPPORTED_FIELD_TYPE,
-          params.fieldTypeId,
-        );
-      ctx.body = await replaceField(field, params);
-    } else {
-      await updateField(field, params);
-      ctx.body = { message: 'success' };
-    }
   },
 };

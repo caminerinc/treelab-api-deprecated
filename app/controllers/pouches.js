@@ -1,22 +1,11 @@
-const { pouches, modules } = require('../models');
+const pouches = require('../queries/pouches');
 
 module.exports = {
   getPouches() {
-    return pouches.findAll({
-      attributes: ['id', 'name'],
-    });
+    return pouches.getAllPouches();
   },
+
   getPouch(id) {
-    return pouches.findOne({
-      attributes: ['id', 'name', 'baseId', 'triggerFieldId', 'triggerTableId'],
-      include: [
-        {
-          model: modules,
-          as: 'module',
-          attributes: ['id', 'name'],
-        },
-      ],
-      where: { id },
-    });
+    return pouches.getPouche(id);
   },
 };

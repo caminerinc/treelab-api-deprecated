@@ -1,9 +1,6 @@
-const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const bases = require('../controllers/bases');
-const { getTableByBaseId } = require('../controllers/tables');
 const socketIo = require('../../lib/core/socketIo');
-const { deleteParentId } = require('../controllers/positions');
 const { sequelize } = require('../models/index');
 
 const adaptBases = bases => {
@@ -36,11 +33,7 @@ module.exports = {
   },
 
   async resolveDeleteBase(ctx) {
-    const symmetricFieldIds = await findSymmetricFieldId(ctx.params.baseId);
-    await deleteBase(ctx.params.baseId, symmetricFieldIds);
-    let tableIds = await getTableByBaseId(ctx.params);
-    tableIds = map(tableIds, 'id');
-    await deleteParentId([ctx.params.baseId, ...tableIds]);
+    await sequelize.transaction(() => bases.deleteBase(params.baseId));
     ctx.body = { message: 'success' };
   },
 
