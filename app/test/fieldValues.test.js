@@ -134,79 +134,79 @@ describe('fieldValues模块', function(done) {
       }); */
     });
   });
-  describe('POST /api/array-field', function(done) {
-    describe('ERROR', function(done) {
-      it('Missing parameters', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/array-field')
-          .send({})
-          .end((err, res) => {
-            res.should.have.status(400);
-            done();
-          });
-      });
-      it('error fieldTypeId', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/array-field')
-          .send({
-            recordId: 'rec1db61c8d540400f',
-            fieldId: 'fld1e1ce9eefc0401b',
-            value: 'cai',
-            fieldTypeId: '1',
-          })
-          .end((err, res) => {
-            res.should.have.status(403);
-            done();
-          });
-      });
-    });
-    describe('OK', function(done) {
-      /* it('foreignKey', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/array-field')
-          .send(sends.foreignKey)
-          .end((err, res) => {
-            res.should.have.status(200);
-            checkResult((_err, _res) => {
-              _res.should.have.status(200);
-              _res.body.tableDatas.rowsById[
-                sends.foreignKey.recordId
-              ].cellValuesByColumnId[sends.foreignKey.fieldId][0].should.to.eql(
-                sends.foreignKey.value.foreignRowId,
-              );
-              done();
-            });
-          });
-      }); */
-      it('multipleAttachment', function(done) {
-        chai
-          .request('http://localhost:8000')
-          .post('/api/array-field')
-          .send(sends.multipleAttachment)
-          .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.have.property('id');
-            res.body.should.have.property('fieldValueId');
-            checkResult((_err, _res) => {
-              _res.should.have.status(200);
-              _res.body.tableDatas.rowsById[
-                sends.multipleAttachment.recordId
-              ].cellValuesByColumnId[
-                sends.multipleAttachment.fieldId
-              ][0].should.to.eql({
-                id: res.body.id,
-                fieldValueId: res.body.fieldValueId,
-                ...sends.multipleAttachment.value,
-              });
-              done();
-            });
-          });
-      });
-    });
-  });
+  // describe('POST /api/array-field', function(done) {
+  //   describe('ERROR', function(done) {
+  //     it('Missing parameters', function(done) {
+  //       chai
+  //         .request('http://localhost:8000')
+  //         .post('/api/array-field')
+  //         .send({})
+  //         .end((err, res) => {
+  //           res.should.have.status(400);
+  //           done();
+  //         });
+  //     });
+  //     it('error fieldTypeId', function(done) {
+  //       chai
+  //         .request('http://localhost:8000')
+  //         .post('/api/array-field')
+  //         .send({
+  //           recordId: 'rec1db61c8d540400f',
+  //           fieldId: 'fld1e1ce9eefc0401b',
+  //           value: 'cai',
+  //           fieldTypeId: '1',
+  //         })
+  //         .end((err, res) => {
+  //           res.should.have.status(403);
+  //           done();
+  //         });
+  //     });
+  //   });
+  //   describe('OK', function(done) {
+  //     /* it('foreignKey', function(done) {
+  //       chai
+  //         .request('http://localhost:8000')
+  //         .post('/api/array-field')
+  //         .send(sends.foreignKey)
+  //         .end((err, res) => {
+  //           res.should.have.status(200);
+  //           checkResult((_err, _res) => {
+  //             _res.should.have.status(200);
+  //             _res.body.tableDatas.rowsById[
+  //               sends.foreignKey.recordId
+  //             ].cellValuesByColumnId[sends.foreignKey.fieldId][0].should.to.eql(
+  //               sends.foreignKey.value.foreignRowId,
+  //             );
+  //             done();
+  //           });
+  //         });
+  //     }); */
+  //     it('multipleAttachment', function(done) {
+  //       chai
+  //         .request('http://localhost:8000')
+  //         .post('/api/array-field')
+  //         .send(sends.multipleAttachment)
+  //         .end((err, res) => {
+  //           res.should.have.status(200);
+  //           res.body.should.have.property('id');
+  //           res.body.should.have.property('fieldValueId');
+  //           checkResult((_err, _res) => {
+  //             _res.should.have.status(200);
+  //             _res.body.tableDatas.rowsById[
+  //               sends.multipleAttachment.recordId
+  //             ].cellValuesByColumnId[
+  //               sends.multipleAttachment.fieldId
+  //             ][0].should.to.eql({
+  //               id: res.body.id,
+  //               fieldValueId: res.body.fieldValueId,
+  //               ...sends.multipleAttachment.value,
+  //             });
+  //             done();
+  //           });
+  //         });
+  //     });
+  //   });
+  // });
   describe('DELETE /api/array-field', function(done) {
     let attachmentId;
     describe('ERROR', function(done) {

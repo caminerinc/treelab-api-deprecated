@@ -4,7 +4,7 @@ const socketIo = require('../../lib/core/socketIo');
 const { sequelize } = require('../models/index');
 
 const adaptBases = bases => {
-  bases.map(base => ({
+  return bases.map(base => ({
     id: base.id,
     name: base.name,
     primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
@@ -13,8 +13,8 @@ const adaptBases = bases => {
 
 module.exports = {
   async resolveGetBases(ctx) {
-    const bases = await getBases();
-    ctx.body = { bases: adaptBases(bases) };
+    const result = await bases.getBases();
+    ctx.body = { bases: adaptBases(result) };
   },
 
   async resolveCreateBase(ctx) {

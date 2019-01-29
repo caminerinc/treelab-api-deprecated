@@ -1,5 +1,6 @@
-const { createPosition } = require('../controllers/positions');
+const { createPosition, deletePositions } = require('../controllers/positions');
 const records = require('../queries/records');
+const positions = require('../queries/positions');
 
 module.exports = {
   async createRecord(tableId) {
@@ -12,28 +13,16 @@ module.exports = {
     return result;
   },
 
-  async deleteRecord({ rows }) {
-    async function transactionSteps(t) {
-      await records.destroy({
-        where: {
-          id: {
-            $in: rows,
-          },
-        },
-        transaction: t,
+  async deleteRecord(rows) {
+    await records.destroy(rows);
+    const result = await positions.getPositionsByIds(rows);
+    if (result.length) {
+      await deletePositions({
+        deletePositions: Array.from(result, i => i.position),
+        parentId: result[0].parentId,
+        type: 'record',
       });
-      const result = await getPositionsByIds(rows);
-      if (result.length) {
-        await deletePositions(
-          {
-            deletePositions: Array.from(result, i => i.position),
-            parentId: result[0].parentId,
-            type: 'record',
-          },
-          t,
-        );
-      }
     }
-    return await sequelize.transaction(transactionSteps);
+    return null;
   },
 };

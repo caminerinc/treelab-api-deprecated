@@ -25,7 +25,7 @@ module.exports = {
   },
 
   getBase(id) {
-    return bases.getOneBase(id);
+    return bases.getBase(id);
   },
 
   async deleteBase(baseId) {

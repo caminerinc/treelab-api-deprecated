@@ -39,7 +39,7 @@ module.exports = {
     return positions.destroy({ where: { parentId: { $in: parentId } } });
   },
 
-  deletePositions(deletePositions) {
+  destroy({ deletePositions, parentId, type }) {
     return positions.destroy({
       where: {
         position: { $in: deletePositions },

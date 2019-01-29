@@ -1,7 +1,7 @@
 const { get, pick, forEach, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const tables = require('../controllers/tables');
-const fields = require('../controllers/fields');
+const { getPrimaryFieldId } = require('../controllers/positions');
 const fieldValues = require('../controllers/fieldValues');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
@@ -13,7 +13,7 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
   for (const foreignKeyValues of fieldValue[fieldProps.valueName]) {
     const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
     if (fgn) {
-      const primaryFieldId = await fields.getPrimaryFieldId(fgn.rec.tableId);
+      const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
       const foreignDisplayName = await fieldValues.findFieldValue(
         fgn.rec.dataValues.id,
         primaryFieldId.id,

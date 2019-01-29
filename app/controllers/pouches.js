@@ -6,6 +6,6 @@ module.exports = {
   },
 
   getPouch(id) {
-    return pouches.getPouche(id);
+    return pouches.getPouch(id);
   },
 };

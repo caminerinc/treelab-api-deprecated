@@ -3,6 +3,7 @@ const fieldValues = require('../controllers/fieldValues');
 const socketIo = require('../../lib/core/socketIo');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {

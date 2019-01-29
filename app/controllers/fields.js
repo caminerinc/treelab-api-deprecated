@@ -75,8 +75,9 @@ async function createForeignKey(params, options) {
   };
 }
 
-function deleteGenericField(fieldId) {
-  return fields.destroy(fieldId);
+async function deleteGenericField(fieldId) {
+  await fields.destroy(fieldId);
+  return { fieldId };
 }
 
 async function deleteForeignField(fieldId) {
@@ -111,18 +112,18 @@ module.exports = {
   async createField(params) {
     const { fieldProps, result } = await createFieldStep(params);
     if (fieldProps.name === 'foreignKey') {
-      await positionsContoller.createPosition({
+      await positionsController.createPosition({
         parentId: params.tableId,
         id: result.foreignFieldId,
         type: 'field',
       });
-      await positionsContoller.createPosition({
+      await positionsController.createPosition({
         parentId: params.typeOptions.foreignTableId,
         id: result.symmetricFieldId,
         type: 'field',
       });
     } else {
-      await positionsContoller.createPosition({
+      await positionsController.createPosition({
         parentId: params.tableId,
         id: result.fieldId || result.id,
         type: 'field',
@@ -139,10 +140,10 @@ module.exports = {
       ids.fieldId,
       ids.symmetricFieldId,
     ]);
-    if (result.length) {
+    for (const i of result) {
       await positionsController.deletePositions({
-        deletePositions: Array.from(result, i => i.position),
-        parentId: result[0].parentId,
+        deletePositions: [i.position],
+        parentId: i.parentId,
         type: 'field',
       });
     }

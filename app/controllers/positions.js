@@ -63,7 +63,7 @@ module.exports = {
     sql += ` when position > ${
       deletePositions[len - 1]
     } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
-    await positions.deletePositions(deletePositions);
+    await positions.destroy({ deletePositions, parentId, type });
     await positions.query(sql, { replacements: [parentId, type] });
   },
 

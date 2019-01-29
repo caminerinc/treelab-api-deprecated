@@ -1,4 +1,5 @@
 const models = require('../models');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
   create(params) {

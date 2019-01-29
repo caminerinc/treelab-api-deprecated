@@ -31,7 +31,7 @@ module.exports = {
   async resolveDeleteField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId');
-    await sequelize.transaction(() => fields.deleteField(params));
+    await sequelize.transaction(() => fields.deleteField(params.fieldId));
     ctx.body = { message: 'success' };
   },
 

@@ -81,4 +81,14 @@ module.exports = {
       ],
     });
   },
+
+  getFieldValue(recordId, fieldId) {
+    return models.fieldValues.findOne({ where: { recordId, fieldId } });
+  },
+
+  destroy(recordId, fieldId) {
+    return models.fieldValues.destroy({
+      where: { recordId, fieldId },
+    });
+  },
 };

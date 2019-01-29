@@ -17,7 +17,6 @@ const {
   resolveCreateField,
   resolveDeleteField,
   resolveResizeColumn,
-  resolveUpdateField,
 } = require('../resolvers/fields');
 const {
   resolveCreateOrUpdatePrimitiveField,

@@ -88,13 +88,11 @@ module.exports = {
   },
 
   findFieldValue(recordId, fieldId) {
-    return fieldValues.findOne({ where: { recordId, fieldId } });
+    return fieldValues.getFieldValue(recordId, fieldId);
   },
 
   deleteFieldValue({ recordId, fieldId }) {
-    return fieldValues.destroy({
-      where: { recordId, fieldId },
-    });
+    return fieldValues.destroy(recordId, fieldId);
   },
 
   deleteArrayValue(params) {
@@ -114,7 +112,7 @@ module.exports = {
       const fieldResult = await createField(field);
       for (let j = 0; j < sourceCellValues2dArray.length; j++) {
         const values = sourceCellValues2dArray[j][i];
-        const recordResult = await createRecord({ tableId });
+        const recordResult = await createRecord(tableId);
         if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
           module.exports.upsertFieldValue({
             fieldTypeId: field.fieldTypeId,
