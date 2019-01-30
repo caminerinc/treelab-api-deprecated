@@ -1,11 +1,7 @@
-const { sequelize } = require('../models');
-const { positions } = require('../models');
+const positions = require('../queries/positions');
 
 module.exports = {
-  async changePosition(
-    { originalPositions, targetPosition, parentId, type },
-    t,
-  ) {
+  changePosition({ originalPositions, targetPosition, parentId, type }) {
     targetPosition = parseInt(targetPosition);
     originalPositions = Array.from(originalPositions, i => parseInt(i));
     originalPositions.sort();
@@ -34,42 +30,24 @@ module.exports = {
       }
     }
     sql += ` else position end where "parentId" = ? and "type" = ?`;
-    return await sequelize.query(sql, {
-      replacements: [parentId, type],
-      transaction: t,
-    });
+    return positions.query(sql, { replacements: [parentId, type] });
   },
 
-  async createPosition({ parentId, id, type }, t) {
-    const lastPosition = await positions.findOne({
-      attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
-      where: { parentId, type },
-      transaction: t,
-    });
+  async createPosition({ parentId, id, type }) {
+    const lastPosition = await positions.getLastPosition(parentId, type);
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create(
-      { id, position, parentId, type },
-      { transaction: t },
-    );
+    return await positions.create({ id, position, parentId, type });
   },
 
-  async getPositions(parentId, type, t) {
-    return await positions.findAll({
-      attributes: ['id', 'position'],
-      where: { parentId, type },
-      order: [['position', 'asc']],
-      transaction: t,
-    });
+  getPositions(parentId, type) {
+    return positions.getPositionsByParentIdAndType(parentId, type);
   },
 
-  async getPositionsByIds(ids, t) {
-    return await positions.findAll({
-      where: { id: { $in: ids } },
-      transaction: t,
-    });
+  getPositionsByIds(ids) {
+    return positions.getPositionsByIds(ids);
   },
 
-  async deletePositions({ deletePositions, parentId, type }, t) {
+  async deletePositions({ deletePositions, parentId, type }) {
     deletePositions = Array.from(deletePositions, i => parseInt(i));
     deletePositions.sort();
     const len = deletePositions.length;
@@ -85,34 +63,15 @@ module.exports = {
     sql += ` when position > ${
       deletePositions[len - 1]
     } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
-    await positions.destroy({
-      where: {
-        position: { $in: deletePositions },
-        parentId,
-        type,
-      },
-      transaction: t,
-    });
-    await sequelize.query(sql, {
-      replacements: [parentId, type],
-      transaction: t,
-    });
+    await positions.destroy({ deletePositions, parentId, type });
+    await positions.query(sql, { replacements: [parentId, type] });
   },
 
   deleteParentId(parentId) {
-    return positions.destroy({
-      where: { parentId: { $in: parentId } },
-    });
+    return positions.deleteParentId(parentId);
   },
 
   getPrimaryFieldId(tableId) {
-    return positions.findOne({
-      attributes: ['id'],
-      where: {
-        parentId: tableId,
-        position: 1,
-        type: 'field',
-      },
-    });
+    return positions.getPrimaryFieldId(tableId);
   },
 };

@@ -1,15 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const {
-  createArrayValue,
-  findOrCreateFieldValue,
-  upsertFieldValue,
-  deleteFieldValue,
-  deleteArrayValue,
-  bulkCopyFieldValue,
-} = require('../controllers/fieldValues');
+const fieldValues = require('../controllers/fieldValues');
 const socketIo = require('../../lib/core/socketIo');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
 module.exports = {
   async resolveCreateOrUpdatePrimitiveField(ctx) {
@@ -22,7 +16,7 @@ module.exports = {
         ECodes.UNSURPPORTED_FIELD_TYPE,
         params.fieldTypeId,
       );
-    await upsertFieldValue(params);
+    await sequelize.transaction(() => fieldValues.upsertFieldValue(params));
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'createOrUpdatePrimitiveField',
@@ -33,7 +27,7 @@ module.exports = {
   async resolveClearFieldValue(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId');
-    await deleteFieldValue(params);
+    await fieldValues.deleteFieldValue(params);
     ctx.body = { message: 'success' };
     socketIo.sync({
       op: 'clearFieldValue',
@@ -51,19 +45,10 @@ module.exports = {
         ECodes.UNSURPPORTED_FIELD_TYPE,
         params.fieldTypeId,
       );
-    const fieldValue = await findOrCreateFieldValue(
-      params.recordId,
-      params.fieldId,
+    const result = await sequelize.transaction(() =>
+      fieldValues.createArrayValue(params),
     );
-    const result = await createArrayValue({
-      fieldTypeId: params.fieldTypeId,
-      fieldValueId: fieldValue.id,
-      value: params.value,
-    });
-    ctx.body = {
-      id: result.id,
-      fieldValueId: result.fieldValueId,
-    };
+    ctx.body = { id: result.id };
     socketIo.sync({
       op: 'updateArrayTypeByAdding',
       body: result,
@@ -73,7 +58,7 @@ module.exports = {
   async resolveDeleteArrayValue(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'itemId', 'fieldTypeId');
-    const fieldValue = await deleteArrayValue(params);
+    await sequelize.transaction(() => fieldValues.deleteArrayValue(params));
     ctx.body = { message: 'success' };
   },
 
@@ -92,7 +77,7 @@ module.exports = {
       !Array.isArray(params.sourceCellValues2dArray)
     )
       error(null, ECodes.BULK_COPY_PARAMS_MISSING);
-    await bulkCopyFieldValue(params);
+    await sequelize.transaction(() => fieldValues.bulkCopyFieldValue(params));
     ctx.body = { message: 'sucess' };
     socketIo.sync({
       op: 'bulkCopyFieldValue',

@@ -1,36 +1,26 @@
-const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const {
-  getBases,
-  createBase,
-  deleteBase,
-  findSymmetricFieldId,
-} = require('../controllers/bases');
-const { getTableByBaseId } = require('../controllers/tables');
+const bases = require('../controllers/bases');
 const socketIo = require('../../lib/core/socketIo');
-const { deleteParentId } = require('../controllers/positions');
+const { sequelize } = require('../models/index');
 
 const adaptBases = bases => {
-  return Array.from(bases, base => {
-    base = JSON.parse(JSON.stringify(base));
-    return {
-      id: base.id,
-      name: base.name,
-      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
-    };
-  });
+  return bases.map(base => ({
+    id: base.id,
+    name: base.name,
+    primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
+  }));
 };
 
 module.exports = {
   async resolveGetBases(ctx) {
-    const bases = await getBases();
-    ctx.body = { bases: adaptBases(bases) };
+    const result = await bases.getBases();
+    ctx.body = { bases: adaptBases(result) };
   },
 
   async resolveCreateBase(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const result = await createBase(params);
+    const result = await sequelize.transaction(() => bases.createBase(params));
     ctx.body = {
       id: result.base.id,
       name: result.base.name,
@@ -43,11 +33,7 @@ module.exports = {
   },
 
   async resolveDeleteBase(ctx) {
-    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
-    await deleteBase(ctx.params.baseId, symmetricFieldIds);
-    let tableIds = await getTableByBaseId(ctx.params);
-    tableIds = map(tableIds, 'id');
-    await deleteParentId([ctx.params.baseId, ...tableIds]);
+    await sequelize.transaction(() => bases.deleteBase(ctx.params.baseId));
     ctx.body = { message: 'success' };
   },
 

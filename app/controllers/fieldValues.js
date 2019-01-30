@@ -1,11 +1,6 @@
-const {
-  fieldValues,
-  multipleAttachmentValues,
-  foreignKeyValues,
-  sequelize,
-} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
+const fieldValues = require('../queries/fieldValues');
 const { createField } = require('./fields');
 const { createRecord } = require('./records');
 const { error, Status, ECodes } = require('../util/error');
@@ -19,6 +14,7 @@ const UPSERT_MAP = {
   text: upsertGenericFieldValue,
   number: upsertGenericFieldValue,
 };
+
 const DELETE_ARRAY_MAP = {
   multipleAttachment: deleteMultipleAttachment,
   foreignKey: deleteForeignKeyValue,
@@ -26,86 +22,53 @@ const DELETE_ARRAY_MAP = {
 
 function createMultipleAttachment({ fieldValueId, value }) {
   checkKeyExists(value, 'url', 'fileName', 'fileType');
-  return multipleAttachmentValues.create({
+  return fieldValues.createMultipleAttachmentValue({
     fieldValueId,
     ...value,
   });
 }
 
-function createForeignKeyValue({ fieldValueId, value }) {
+async function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
-  async function transactionSteps(t) {
-    const transact = { transaction: t };
-    const { foreignRowId: recordId, foreignColumnId: fieldId } = value;
-    const symmetricFieldValue = await fieldValues
-      .findCreateFind({ where: { recordId, fieldId } }, transact)
-      .spread(fieldValue => fieldValue);
-    return await foreignKeyValues.create(
-      {
-        fieldValueId,
-        symmetricFieldValueId: symmetricFieldValue.id,
-        name: value.name,
-      },
-      transact,
+  const symmetricFieldValue = await fieldValues.findCreateFindFieldValue(
+    value.foreignRowId,
+    value.foreignColumnId,
+  );
+  try {
+    return await fieldValues.createForeignKeyValue({
+      fieldValueId,
+      symmetricFieldValueId: symmetricFieldValue.id,
+    });
+  } catch (e) {
+    if (e.original.code === '23505') {
+      error(Status.Forbidden, ECodes.UNIQUE_CONSTRAINT);
+    }
+    error(Status.InternalServerError, ECodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+function upsertGenericFieldValue(params, valueName) {
+  return fieldValues.upsertGenericFieldValue(params, valueName);
+}
+
+function deleteMultipleAttachment({ itemId: id }) {
+  return fieldValues.destroyMultipleAttachmentValue(id);
+}
+
+async function deleteForeignKeyValue({ recordId, fieldId, itemId }) {
+  const valueName = FIELD_TYPES['3'].valueName;
+  const forgienFieldValue = await fieldValues.getForeignFieldValue({
+    recordId,
+    fieldId,
+    itemId,
+  });
+  if (forgienFieldValue) {
+    await fieldValues.destroyForeignFieldValue(
+      forgienFieldValue[valueName].fieldValueId,
+      forgienFieldValue[valueName].symmetricFieldValueId,
     );
   }
-
-  return sequelize.transaction(transactionSteps);
-}
-
-async function upsertGenericFieldValue(params, fieldProps) {
-  return await fieldValues.upsert(
-    {
-      recordId: params.recordId,
-      fieldId: params.fieldId,
-      [fieldProps.valueName]: params.value,
-    },
-    {
-      fields: [fieldProps.valueName],
-    },
-  );
-}
-function deleteMultipleAttachment({ itemId: id }) {
-  return multipleAttachmentValues.destroy({
-    where: { id },
-  });
-}
-async function deleteForeignKeyValue(
-  { recordId, fieldId, itemId },
-  fieldProps,
-) {
-  const {
-    [fieldProps.valueName]: [{ fieldValueId, symmetricFieldValueId }],
-  } = await fieldValues.findOne({
-    where: {
-      recordId,
-      fieldId,
-    },
-    attributes: [],
-    include: [
-      {
-        model: foreignKeyValues,
-        attributes: ['fieldValueId', 'symmetricFieldValueId'],
-        as: fieldProps.valueName,
-        include: [
-          {
-            where: {
-              recordId: itemId,
-            },
-            model: fieldValues,
-            attributes: [],
-            as: 'symFldV',
-          },
-        ],
-      },
-    ],
-  });
-  return await foreignKeyValues.destroy({
-    where: {
-      fieldValueId,
-      symmetricFieldValueId,
-    },
-  });
+  return;
 }
 
 module.exports = {
@@ -116,38 +79,32 @@ module.exports = {
   upsertFieldValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const upsertValue = UPSERT_MAP[fieldProps.name];
-    return upsertValue(params, fieldProps);
+    return upsertValue(params, fieldProps.name);
   },
 
-  createArrayValue(params) {
+  async createArrayValue(params) {
+    const fieldValue = await fieldValues.findOrCreateFieldValue(
+      params.recordId,
+      params.fieldId,
+    );
+    params.fieldValueId = fieldValue.id;
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const createValue = CREATE_MAP[fieldProps.name];
-    return createValue(params);
+    return await createValue(params);
   },
 
   findFieldValue(recordId, fieldId) {
-    return fieldValues.findOne({ where: { recordId, fieldId } });
-  },
-
-  findOrCreateFieldValue(recordId, fieldId) {
-    return fieldValues
-      .findOrCreate({
-        where: { recordId, fieldId },
-        defaults: { recordId, fieldId },
-      })
-      .spread(fieldValue => fieldValue);
+    return fieldValues.getFieldValue(recordId, fieldId);
   },
 
   deleteFieldValue({ recordId, fieldId }) {
-    return fieldValues.destroy({
-      where: { recordId, fieldId },
-    });
+    return fieldValues.destroy(recordId, fieldId);
   },
 
   deleteArrayValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
-    return deleteValue(params, fieldProps);
+    return deleteValue(params);
   },
 
   async bulkCopyFieldValue({
@@ -161,7 +118,7 @@ module.exports = {
       const fieldResult = await createField(field);
       for (let j = 0; j < sourceCellValues2dArray.length; j++) {
         const values = sourceCellValues2dArray[j][i];
-        const recordResult = await createRecord({ tableId });
+        const recordResult = await createRecord(tableId);
         if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
           module.exports.upsertFieldValue({
             fieldTypeId: field.fieldTypeId,
@@ -171,15 +128,11 @@ module.exports = {
           });
         } else if (field.fieldTypeId == 3) {
           for (let k = 0; k < values.length; k++) {
-            const fieldValueResult = await module.exports.findOrCreateFieldValue(
-              recordResult.id,
-              fieldResult.foreignFieldId,
-            );
             await module.exports.createArrayValue({
+              recordId: recordResult.id,
+              fieldId: fieldResult.foreignFieldId,
               fieldTypeId: field.fieldTypeId,
-              fieldValueId: fieldValueResult.id,
               value: {
-                name: values[k].foreignRowDisplayName,
                 foreignRowId: values[k].foreignRowId,
                 foreignColumnId: fieldResult.symmetricFieldId,
               },
@@ -187,11 +140,11 @@ module.exports = {
           }
         } else if (field.fieldTypeId == 4) {
           for (let k = 0; k < values.length; k++) {
-            const fieldValueResult = await findOrCreateFieldValue(
+            const fieldValueResult = await fieldValues.findOrCreateFieldValue(
               recordResult.id,
               fieldResult.fieldId,
             );
-            await createArrayValue({
+            await module.exports.createArrayValue({
               fieldTypeId: field.fieldTypeId,
               fieldValueId: fieldValueResult.id,
               value: values[k],

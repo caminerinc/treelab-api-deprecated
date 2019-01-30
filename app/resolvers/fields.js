@@ -1,15 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const {
-  createField,
-  deleteField,
-  findFieldType,
-  updateFieldWidth,
-  updateField,
-  replaceField,
-} = require('../controllers/fields');
+const fields = require('../controllers/fields');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
 module.exports = {
   async resolveCreateField(ctx) {
@@ -24,7 +18,9 @@ module.exports = {
       );
     if (fieldProps.isTypeOptionsRequired && !params.typeOptions)
       error(null, ECodes.REQUIRED, 'typeOptions');
-    const result = await createField(params);
+    const result = await sequelize.transaction(() =>
+      fields.createField(params),
+    );
     ctx.body = result;
     socketIo.sync({
       op: 'createField',
@@ -35,36 +31,14 @@ module.exports = {
   async resolveDeleteField(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId');
-    const field = await findFieldType(params);
-    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-    await deleteField(field);
+    await sequelize.transaction(() => fields.deleteField(params.fieldId));
     ctx.body = { message: 'success' };
   },
 
   async resolveResizeColumn(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'fieldId', 'width');
-    await updateFieldWidth(params);
+    await fields.updateFieldWidth(params);
     ctx.body = { message: 'success' };
-  },
-
-  async resolveUpdateField(ctx) {
-    const params = ctx.request.body;
-    checkKeyExists(params, 'fieldId');
-    const field = await findFieldType(params);
-    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-    if (params.fieldTypeId && field.fieldTypeId != params.fieldTypeId) {
-      const fieldProps = FIELD_TYPES[params.fieldTypeId];
-      if (!fieldProps)
-        error(
-          Status.Forbidden,
-          ECodes.UNSURPPORTED_FIELD_TYPE,
-          params.fieldTypeId,
-        );
-      ctx.body = await replaceField(field, params);
-    } else {
-      await updateField(field, params);
-      ctx.body = { message: 'success' };
-    }
   },
 };

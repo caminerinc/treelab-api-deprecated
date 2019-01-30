@@ -1,51 +1,29 @@
-const { records, sequelize } = require('../models');
-const {
-  createPosition,
-  deletePositions,
-  getPositionsByIds,
-} = require('../controllers/positions');
+const { createPosition, deletePositions } = require('../controllers/positions');
+const records = require('../queries/records');
+const positions = require('../queries/positions');
 
 module.exports = {
-  async createRecord(params, t1) {
-    async function transactionSteps(t) {
-      const result = await records.create(params, { transaction: t });
-      await createPosition(
-        {
-          parentId: params.tableId,
-          id: result.id,
-          type: 'record',
-        },
-        t,
-      );
-      return result;
-    }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+  async createRecord(tableId) {
+    const result = await records.create({ tableId });
+    const position = await createPosition({
+      parentId: tableId,
+      id: result.id,
+      type: 'record',
+    });
+    result.position = position.position;
+    return result;
   },
 
-  async deleteRecord({ rows }) {
-    async function transactionSteps(t) {
-      await records.destroy({
-        where: {
-          id: {
-            $in: rows,
-          },
-        },
-        transaction: t,
+  async deleteRecord(rows) {
+    await records.destroy(rows);
+    const result = await positions.getPositionsByIds(rows);
+    if (result.length) {
+      await deletePositions({
+        deletePositions: Array.from(result, i => i.position),
+        parentId: result[0].parentId,
+        type: 'record',
       });
-      const result = await getPositionsByIds(rows);
-      if (result.length) {
-        await deletePositions(
-          {
-            deletePositions: Array.from(result, i => i.position),
-            parentId: result[0].parentId,
-            type: 'record',
-          },
-          t,
-        );
-      }
     }
-    return await sequelize.transaction(transactionSteps);
+    return null;
   },
 };

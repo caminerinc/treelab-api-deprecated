@@ -1,23 +1,12 @@
 const { get, pick, forEach, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const {
-  getTables,
-  createTable,
-  getTable,
-  deleteTable,
-  findSymmetricFieldId,
-} = require('../controllers/tables');
-const { getBase } = require('../controllers/bases');
-const {
-  deleteParentId,
-  deletePositions,
-  getPositionsByIds,
-  getPrimaryFieldId,
-} = require('../controllers/positions');
-const { findFieldValue } = require('../controllers/fieldValues');
+const tables = require('../controllers/tables');
+const { getPrimaryFieldId } = require('../controllers/positions');
+const fieldValues = require('../controllers/fieldValues');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/core/socketIo');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
 const adaptForeignKey = async (fieldValue, fieldProps) => {
   let foreignRecords = [];
@@ -25,7 +14,7 @@ const adaptForeignKey = async (fieldValue, fieldProps) => {
     const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
     if (fgn) {
       const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
-      const foreignDisplayName = await findFieldValue(
+      const foreignDisplayName = await fieldValues.findFieldValue(
         fgn.rec.dataValues.id,
         primaryFieldId.id,
       );
@@ -131,14 +120,14 @@ module.exports = {
   async resolveGetTables(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
-    const tables = await getTables(params.baseId);
-    ctx.body = adaptTables(tables);
+    const tablesResult = await tables.getTables(params.baseId);
+    ctx.body = adaptTables(tablesResult);
   },
 
   async resolveGetTable(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-    const table = await getTable(params.tableId);
+    const table = await tables.getTable(params.tableId);
     if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
     ctx.body = await adaptTable(table);
   },
@@ -146,53 +135,21 @@ module.exports = {
   async resolveCreateTable(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const result = await createTable(params);
+    const result = await sequelize.transaction(() =>
+      tables.createTable(params),
+    );
     result.fields = result.fields.map(i =>
       Object.assign({}, i, {
         fieldTypeName: FIELD_TYPES[i.fieldTypeId].name,
       }),
     );
     ctx.body = result;
-    socketIo.sync({
-      op: 'createTable',
-      body: result,
-    });
+    socketIo.sync({ op: 'createTable', body: result });
   },
 
   async resolveDeleteTable(ctx) {
-    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
-    const fieldId = [];
-    const symmetricField = {};
-    forEach(symmetricFieldIds.flds, field => {
-      if (!field.foreignKeyTypes) {
-        return;
-      }
-      let symmetricFieldId = get(field, 'foreignKeyTypes.symmetricFieldId');
-      fieldId.push(symmetricFieldId);
-      let symmetricTableId = get(
-        field,
-        'foreignKeyTypes.symmetricField.tableId',
-      );
-      symmetricField[symmetricTableId]
-        ? symmetricField[symmetricTableId].push(symmetricFieldId)
-        : (symmetricField[symmetricTableId] = [symmetricFieldId]);
-    });
-    forEach(symmetricField, async (v, k) => {
-      const symmetricFieldPositions = await getPositionsByIds(v);
-      await deletePositions({
-        deletePositions: map(symmetricFieldPositions, 'position'),
-        parentId: k,
-        type: 'field',
-      });
-    });
-    await deleteTable(ctx.params.tableId, fieldId);
-    await deleteParentId([ctx.params.tableId]);
-    const positions = await getPositionsByIds([ctx.params.tableId]);
-    await deletePositions({
-      deletePositions: [positions[0].position],
-      parentId: symmetricFieldIds.baseId,
-      type: 'table',
-    });
+    const params = ctx.params;
+    await sequelize.transaction(() => tables.deleteTable(params.tableId));
     ctx.body = { message: 'success' };
   },
 };
