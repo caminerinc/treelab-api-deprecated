@@ -1,7 +1,7 @@
 const positions = require('../queries/positions');
 
 module.exports = {
-  changePosition({ originalPositions, targetPosition, parentId, type }, t) {
+  changePosition({ originalPositions, targetPosition, parentId, type }) {
     targetPosition = parseInt(targetPosition);
     originalPositions = Array.from(originalPositions, i => parseInt(i));
     originalPositions.sort();
