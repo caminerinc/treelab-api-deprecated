@@ -40,7 +40,7 @@ async function createForeignKeyValue({ fieldValueId, value }) {
       symmetricFieldValueId: symmetricFieldValue.id,
     });
   } catch (e) {
-    if (e.original.code == '23505') {
+    if (e.original.code === '23505') {
       error(Status.Forbidden, ECodes.UNIQUE_CONSTRAINT);
     }
     error(Status.InternalServerError, ECodes.INTERNAL_SERVER_ERROR);
