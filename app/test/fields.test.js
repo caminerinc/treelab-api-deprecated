@@ -241,6 +241,7 @@ describe('fields模块', function(done) {
       });
     });
   });
+  // @Lim 接口有问题，暂时注释
   // describe('PUT /api/field', function(done) {
   //   describe('ERROR', function(done) {
   //     it('Missing parameters', function(done) {
