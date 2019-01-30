@@ -1,8 +1,7 @@
 const { get, pick, forEach, map } = require('lodash');
 const tables = require('../queries/tables');
 const positions = require('../queries/positions');
-const fields = require('../queries/fields');
-const { createPosition } = require('../controllers/positions');
+const { createPosition, deletePositions } = require('../controllers/positions');
 const { createField, deleteField } = require('../controllers/fields');
 const { createRecord } = require('../controllers/records');
 
@@ -53,17 +52,19 @@ module.exports = {
 
   async deleteTable(id) {
     const symmetricFieldIds = await tables.getSymmetricFieldIdsByTableId(id);
-    forEach(symmetricFieldIds.flds, field => {
-      if (!field.foreignKeyTypes) return;
-      deleteField({ id: get(field, 'foreignKeyTypes.symmetricFieldId') });
-    });
+    if (symmetricFieldIds) {
+      forEach(symmetricFieldIds.flds, field => {
+        if (!field.foreignKeyTypes) return;
+        deleteField({ id: get(field, 'foreignKeyTypes.symmetricFieldId') });
+      });
+    }
     await tables.destroy(id);
     await positions.deleteParentId([id]);
     const positionsResult = await positions.getPositionsByIds([id]);
-    await positions.deletePositions({
+    await deletePositions({
       deletePositions: [positionsResult[0].position],
-      parentId: symmetricFieldIds.baseId,
-      type: 'table',
+      parentId: positionsResult[0].parentId,
+      type: positionsResult[0].type,
     });
   },
 };

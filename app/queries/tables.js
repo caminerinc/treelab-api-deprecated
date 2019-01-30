@@ -142,7 +142,6 @@ module.exports = {
       where: {
         id,
       },
-      attributes: ['baseId', models.sequelize.col('flds->foreignKeyTypes')],
       include: [
         {
           where: {

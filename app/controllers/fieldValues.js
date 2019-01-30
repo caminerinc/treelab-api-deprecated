@@ -28,18 +28,23 @@ function createMultipleAttachment({ fieldValueId, value }) {
   });
 }
 
-async function createForeignKeyValue(fieldValueId, value) {
+async function createForeignKeyValue({ fieldValueId, value }) {
   checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
-  const { foreignRowId: recordId, foreignColumnId: fieldId } = value;
   const symmetricFieldValue = await fieldValues.findCreateFindFieldValue(
-    recordId,
-    fieldId,
+    value.foreignRowId,
+    value.foreignColumnId,
   );
-  return await foreignKeyValues.createForeignKeyValue({
-    fieldValueId,
-    symmetricFieldValueId: symmetricFieldValue.id,
-    name: value.name,
-  });
+  try {
+    return await fieldValues.createForeignKeyValue({
+      fieldValueId,
+      symmetricFieldValueId: symmetricFieldValue.id,
+    });
+  } catch (e) {
+    if (e.original.code == '23505') {
+      error(Status.Forbidden, ECodes.UNIQUE_CONSTRAINT);
+    }
+    error(Status.InternalServerError, ECodes.INTERNAL_SERVER_ERROR);
+  }
 }
 
 function upsertGenericFieldValue(params, valueName) {
@@ -50,7 +55,8 @@ function deleteMultipleAttachment({ itemId: id }) {
   return fieldValues.destroyMultipleAttachmentValue(id);
 }
 
-async function deleteForeignKeyValue({ recordId, fieldId, itemId }, valueName) {
+async function deleteForeignKeyValue({ recordId, fieldId, itemId }) {
+  const valueName = FIELD_TYPES['3'].valueName;
   const forgienFieldValue = await fieldValues.getForeignFieldValue({
     recordId,
     fieldId,
@@ -98,7 +104,7 @@ module.exports = {
   deleteArrayValue(params) {
     const fieldProps = FIELD_TYPES[params.fieldTypeId];
     const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
-    return deleteValue(params, fieldProps);
+    return deleteValue(params);
   },
 
   async bulkCopyFieldValue({
@@ -122,15 +128,11 @@ module.exports = {
           });
         } else if (field.fieldTypeId == 3) {
           for (let k = 0; k < values.length; k++) {
-            const fieldValueResult = await fieldValues.findOrCreateFieldValue(
-              recordResult.id,
-              fieldResult.foreignFieldId,
-            );
             await module.exports.createArrayValue({
+              recordId: recordResult.id,
+              fieldId: fieldResult.foreignFieldId,
               fieldTypeId: field.fieldTypeId,
-              fieldValueId: fieldValueResult.id,
               value: {
-                name: values[k].foreignRowDisplayName,
                 foreignRowId: values[k].foreignRowId,
                 foreignColumnId: fieldResult.symmetricFieldId,
               },

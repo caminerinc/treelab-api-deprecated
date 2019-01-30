@@ -9,7 +9,7 @@ module.exports = {
     const result = await sequelize.transaction(() =>
       createRecord(params.tableId),
     );
-    ctx.body = { recordId: result.id };
+    ctx.body = { recordId: result.id, position: result.position };
     socketIo.sync({
       op: 'createRecord',
       body: result,

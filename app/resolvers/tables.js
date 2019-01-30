@@ -148,7 +148,7 @@ module.exports = {
   },
 
   async resolveDeleteTable(ctx) {
-    const params = ctx.request.body;
+    const params = ctx.params;
     await sequelize.transaction(() => tables.deleteTable(params.tableId));
     ctx.body = { message: 'success' };
   },

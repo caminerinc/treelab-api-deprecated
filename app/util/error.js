@@ -9,7 +9,7 @@ const error = (status, ecode, params) => {
   let err = new Error(ecode.message);
   err.status = status || Status.BadRequest;
   err.code = ecode.code;
-  err.details = !Array.isArray(params) ? [params] : params;
+  if (params) err.details = !Array.isArray(params) ? [params] : params;
   throw err;
 };
 

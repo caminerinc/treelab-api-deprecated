@@ -39,6 +39,7 @@ async function createForeignKey(params, options) {
   checkKeyExists(options, 'relationship', 'foreignTableId');
   const newField = await fields.create(params);
   const foreignTable = await tables.getEasyTable(options.foreignTableId);
+  if (!foreignTable) error(Status.Forbidden, ECodes.FOREIGN_TABLE_NOT_FOUND);
   const fieldNameExist = await fields.checkFieldNameExist(
     options.foreignTableId,
     foreignTable.name,
@@ -134,7 +135,7 @@ module.exports = {
 
   async deleteField(id) {
     const field = await fields.getField(id);
-    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+    if (!field) return null;
     const ids = await deleteFieldStep(id, field.fieldTypeId);
     const result = await positions.getPositionsByIds([
       ids.fieldId,
@@ -147,6 +148,7 @@ module.exports = {
         type: 'field',
       });
     }
+    return null;
   },
 
   updateFieldWidth({ fieldId: id, width }) {

@@ -105,10 +105,10 @@ describe('tables模块', function(done) {
             done();
           });
       });
-      it('check: tblNGUPdSs9Va4X5u', function(done) {
+      it('check: t', function(done) {
         chai
           .request('http://localhost:8000')
-          .get('/api/table/tblNGUPdSs9Va4X5u')
+          .get('/api/table/t')
           .end((err, res) => {
             res.should.have.status(403);
             done();

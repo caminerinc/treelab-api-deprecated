@@ -33,7 +33,7 @@ module.exports = {
   },
 
   async resolveDeleteBase(ctx) {
-    await sequelize.transaction(() => bases.deleteBase(params.baseId));
+    await sequelize.transaction(() => bases.deleteBase(ctx.params.baseId));
     ctx.body = { message: 'success' };
   },
 

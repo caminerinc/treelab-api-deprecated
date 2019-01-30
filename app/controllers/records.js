@@ -5,11 +5,12 @@ const positions = require('../queries/positions');
 module.exports = {
   async createRecord(tableId) {
     const result = await records.create({ tableId });
-    await createPosition({
+    const position = await createPosition({
       parentId: tableId,
       id: result.id,
       type: 'record',
     });
+    result.position = position.position;
     return result;
   },
 

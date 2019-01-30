@@ -9,9 +9,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.INTEGER,
     },
-    name: {
-      type: DataTypes.STRING,
-    },
   });
   foreignKeyValues.associate = function(models) {
     foreignKeyValues.belongsTo(models.fieldValues, {

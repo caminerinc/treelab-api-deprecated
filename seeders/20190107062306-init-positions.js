@@ -163,6 +163,14 @@ module.exports = {
           createdAt: '2018-05-05T04:09:06.024Z',
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
+        {
+          id: 'tbl1e6d1c73b404017',
+          parentId: 'bse1jT7ZIDLmjH5',
+          position: 1,
+          type: 'table',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
       ],
       {},
     );

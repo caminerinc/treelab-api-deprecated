@@ -1,4 +1,12 @@
 const ECodes = {
+  UNIQUE_CONSTRAINT: {
+    code: 'UNIQUE_CONSTRAINT',
+    message: 'Duplicate key value violates unique constraint.',
+  },
+  FOREIGN_TABLE_NOT_FOUND: {
+    code: 'FOREIGN_TABLE_NOT_FOUND',
+    message: 'Foreign table not be found.',
+  },
   FIELD_NAME_EXIST: {
     code: 'FIELD_NAME_EXIST',
     message: 'Field name already exists.',
@@ -51,6 +59,10 @@ const ECodes = {
   UNAUTHORIZED: {
     code: 'UNAUTHORIZED',
     message: 'Unauthorized.',
+  },
+  INTERNAL_SERVER_ERROR: {
+    code: 'INTERNAL_SERVER_ERROR',
+    message: 'InternalServerError.',
   },
 };
 
