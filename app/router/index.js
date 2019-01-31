@@ -12,6 +12,7 @@ const {
   resolveGetTable,
   resolveCreateTable,
   resolveDeleteTable,
+  resolveGetRowsMatchingName,
 } = require('../resolvers/tables');
 const {
   resolveCreateField,
@@ -62,6 +63,11 @@ router.get('/api/tables/:baseId', resolveGetTables);
 router.get('/api/table/:tableId', resolveGetTable);
 router.post('/api/table', checkBaseExist, resolveCreateTable);
 router.delete('/api/table/:tableId', checkTableExist, resolveDeleteTable);
+router.get(
+  '/api/table/:tableId/getRowsMatchingName',
+  checkTableExist,
+  resolveGetRowsMatchingName,
+);
 
 //Field
 router.post('/api/field', checkTableExist, resolveCreateField);

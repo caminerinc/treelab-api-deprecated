@@ -165,4 +165,31 @@ module.exports = {
       ],
     });
   },
+
+  getTableSchema(tableId) {
+    return models.fields.findAll({
+      attributes: ['id', 'name', 'fieldTypeId'],
+      where: { tableId },
+      include: [
+        {
+          model: models.numberTypes,
+          as: FIELD_TYPES[2].typeName,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+        },
+        {
+          model: models.foreignKeyTypes,
+          as: FIELD_TYPES[3].typeName,
+          attributes: { exclude: ['createdAt', 'updatedAt'] },
+        },
+        {
+          model: models.positions,
+          as: 'pos',
+          attributes: ['position'],
+          where: { type: 'field' },
+          required: false,
+        },
+      ],
+      order: [[models.sequelize.col('pos.position'), 'asc']],
+    });
+  },
 };

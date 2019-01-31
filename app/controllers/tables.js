@@ -67,4 +67,10 @@ module.exports = {
       type: positionsResult[0].type,
     });
   },
+
+  async getRowsMatchingName(id) {
+    const table = await tables.getTable(id);
+    const tableSchema = await tables.getTableSchema(id);
+    return { table, tableSchema };
+  },
 };

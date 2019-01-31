@@ -43,6 +43,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldId',
       as: FIELD_TYPES[3].typeName,
     });
+    fields.hasOne(models.positions, {
+      foreignKey: 'id',
+      as: 'pos',
+    });
   };
   return fields;
 };
