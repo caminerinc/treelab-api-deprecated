@@ -9,7 +9,7 @@ const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
 
-const TYPE_OPTION_MAP = {
+const CREATE_OPTION_MAP = {
   text: createGenericField,
   number: createNumberOptions,
   foreignKey: createForeignKey,
@@ -21,6 +21,10 @@ const DELETE_MAP = {
   number: deleteGenericField,
   foreignKey: deleteForeignField,
   multipleAttachment: deleteGenericField,
+};
+
+const UPDATE_OPTION_MAP = {
+  number: updateNumberOptions,
 };
 
 async function createGenericField(params) {
@@ -90,28 +94,26 @@ async function deleteForeignField(fieldId) {
   };
 }
 
-async function createFieldStep(params) {
-  const fieldNameExist = await fields.checkFieldNameExist(
-    params.tableId,
-    params.name,
-  );
-  if (fieldNameExist) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
-  const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  const createOption = TYPE_OPTION_MAP[fieldProps.name];
-  const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
-  const result = await createOption(fieldParams, params.typeOptions);
-  return { fieldProps, result };
+function updateFieldName(fieldId, fieldName) {
+  return fields.updateFieldName(fieldId, fieldName);
 }
 
-function deleteFieldStep(fieldId, fieldTypeId) {
-  const fieldProps = FIELD_TYPES[fieldTypeId];
-  const deleteOption = DELETE_MAP[fieldProps.name];
-  return deleteOption(fieldId, fieldProps);
+function updateNumberOptions(fieldId, options) {
+  checkKeyExists(options, 'format', 'negative');
+  return numberTypes.update(options, { where: { fieldId } });
 }
 
 module.exports = {
   async createField(params) {
-    const { fieldProps, result } = await createFieldStep(params);
+    const fieldNameExist = await fields.checkFieldNameExist(
+      params.tableId,
+      params.name,
+    );
+    if (fieldNameExist) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+    const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    const createOption = CREATE_OPTION_MAP[fieldProps.name];
+    const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
+    const result = await createOption(fieldParams, params.typeOptions);
     if (fieldProps.name === 'foreignKey') {
       await positionsController.createPosition({
         parentId: params.tableId,
@@ -136,7 +138,9 @@ module.exports = {
   async deleteField(id) {
     const field = await fields.getField(id);
     if (!field) return null;
-    const ids = await deleteFieldStep(id, field.fieldTypeId);
+    const fieldProps = FIELD_TYPES[field.fieldTypeId];
+    const deleteOption = DELETE_MAP[fieldProps.name];
+    const ids = await deleteOption(id);
     const result = await positions.getPositionsByIds([
       ids.fieldId,
       ids.symmetricFieldId,
@@ -156,22 +160,37 @@ module.exports = {
   },
 
   async updateField(params) {
+    //当fieldTypeId不同时暂时将原field及fieldValue直接删除重新创建，未对fieldValue做类型转换
     const field = await fields.getField(params.fieldId);
     if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+    if (params.name && params.name !== field.name) {
+      const fieldNameExist = await fields.checkFieldNameExist(
+        field.tableId,
+        params.name,
+      );
+      if (fieldNameExist) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+      await updateFieldName(params.fieldId, params.name);
+    }
     if (params.fieldTypeId) {
       const fieldProps = FIELD_TYPES[params.fieldTypeId];
       if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
       if (
         field.fieldTypeId == params.fieldTypeId &&
-        fieldProps.name != 'foreignKey'
+        fieldProps.name !== 'foreignKey'
       ) {
-        await updateField(params);
+        const updateOption = UPDATE_OPTION_MAP[fieldProps.name];
+        if (updateOption)
+          await updateOption(params.fieldId, params.typeOptions);
       } else {
-        ctx.body = await replaceField(field, params);
+        await module.exports.deleteField(params.fieldId);
+        await module.exports.createField({
+          id: field.id,
+          tableId: field.tableId,
+          name: params.name || field.name,
+          ...params,
+        });
       }
-    } else {
-      await updateField(params);
-      ctx.body = { message: 'success' };
     }
+    return;
   },
 };
