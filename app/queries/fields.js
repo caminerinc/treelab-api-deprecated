@@ -44,4 +44,6 @@ module.exports = {
   updateFieldWidth(id, width) {
     return fields.update({ width }, { where: { id } });
   },
+
+  updateField(params) {},
 };
