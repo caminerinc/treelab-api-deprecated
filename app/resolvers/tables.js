@@ -116,6 +116,28 @@ const getCellValuesByColumnId = async fieldValues => {
   return cellAccum;
 };
 
+const adaptGetRowsMatchingName = async (table, tableSchema) => {
+  table = await adaptTable(table);
+  let result = {
+    rowResults: [],
+    columnsById: {},
+    columnOrder: table.viewDatas[0].columnOrder,
+  };
+  for (const i in table.viewDatas[0].rowOrder) {
+    const rowId = table.viewDatas[0].rowOrder[i].id;
+    result.rowResults.push(table.tableDatas.rowsById[rowId]);
+  }
+  tableSchema.forEach(i => {
+    result.columnsById[i.id] = {
+      id: i.id,
+      name: i.name,
+      type: FIELD_TYPES[i.fieldTypeId].name,
+      typeOptions: i.numberTypes || i.foreignKeyTypes,
+    };
+  });
+  return result;
+};
+
 module.exports = {
   async resolveGetTables(ctx) {
     const params = ctx.params;
@@ -151,5 +173,14 @@ module.exports = {
     const params = ctx.params;
     await sequelize.transaction(() => tables.deleteTable(params.tableId));
     ctx.body = { message: 'success' };
+  },
+
+  async resolveGetRowsMatchingName(ctx) {
+    const params = ctx.params;
+    checkKeyExists(params, 'tableId');
+    const { table, tableSchema } = await tables.getRowsMatchingName(
+      params.tableId,
+    );
+    ctx.body = await adaptGetRowsMatchingName(table, tableSchema);
   },
 };

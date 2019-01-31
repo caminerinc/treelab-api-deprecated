@@ -108,6 +108,14 @@ module.exports = {
           updatedAt: '2018-05-05T04:09:06.024Z',
         },
         {
+          id: 'fld1e1cf1f8f80404b',
+          parentId: 'tblNGUPdSs9Va4X5u',
+          position: 6,
+          type: 'field',
+          createdAt: '2018-05-05T04:09:06.024Z',
+          updatedAt: '2018-05-05T04:09:06.024Z',
+        },
+        {
           id: 'fld1e1ce9eefc0401b',
           parentId: 'tblsnmRLfttLmAYQ8',
           position: 1,
