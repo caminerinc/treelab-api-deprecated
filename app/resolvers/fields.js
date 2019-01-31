@@ -41,4 +41,11 @@ module.exports = {
     await fields.updateFieldWidth(params);
     ctx.body = { message: 'success' };
   },
+
+  async resolveUpdateField(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'fieldId');
+    await sequelize.transaction(() => fields.updateField(params));
+    ctx.body = { message: 'success' };
+  },
 };
