@@ -154,4 +154,24 @@ module.exports = {
   updateFieldWidth({ fieldId: id, width }) {
     return fields.updateFieldWidth(id, width);
   },
+
+  async updateField(params) {
+    const field = await fields.getField(params.fieldId);
+    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+    if (params.fieldTypeId) {
+      const fieldProps = FIELD_TYPES[params.fieldTypeId];
+      if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+      if (
+        field.fieldTypeId == params.fieldTypeId &&
+        fieldProps.name != 'foreignKey'
+      ) {
+        await updateField(params);
+      } else {
+        ctx.body = await replaceField(field, params);
+      }
+    } else {
+      await updateField(params);
+      ctx.body = { message: 'success' };
+    }
+  },
 };
