@@ -9,7 +9,7 @@ const args = minimist(process.argv.slice(2));
 const envConfig = require(__dirname + `/../../config/config.js`);
 const env = args.env || envConfig.nodeEnv;
 const config = require(__dirname + `/../../config/db-config.json`)[env];
-const namespace = createNamespace('elephante-api');
+const namespace = createNamespace('treelab-api');
 
 Sequelize.useCLS(namespace);
 
