@@ -10,4 +10,7 @@ module.exports = {
   url: {
     attachmentExtraction: 'http://52.80.52.148:5000',
   },
+  sharedSecret: 'shared-secret',
+  nodeEnv: 'develop',
+  passThrough: true,
 };

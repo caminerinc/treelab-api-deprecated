@@ -7,7 +7,7 @@ tests/
 package-lock.json
 .vscode/
 config/db-config.json
-.env
+
 *.DS_Store
 config/config.js
 postgresql

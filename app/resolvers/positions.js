@@ -1,6 +1,6 @@
 const { checkKeyExists } = require('../util/helper');
 const { changePosition } = require('../controllers/positions');
-const socketIo = require('../../lib/core/socketIo');
+const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 
 const resolveChangePosition = async ctx => {

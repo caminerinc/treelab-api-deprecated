@@ -1,6 +1,6 @@
 const { checkKeyExists } = require('../util/helper');
 const { getPouches, getPouch } = require('../controllers/pouches');
-const socketIo = require('../../lib/core/socketIo');
+const socketIo = require('../../lib/socketIo');
 
 module.exports = {
   async resolveGetPouches(ctx) {

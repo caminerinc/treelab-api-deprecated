@@ -1,6 +1,6 @@
 const { checkKeyExists } = require('../util/helper');
 const bases = require('../controllers/bases');
-const socketIo = require('../../lib/core/socketIo');
+const socketIo = require('../../lib/socketIo');
 const { sequelize } = require('../models/index');
 
 const adaptBases = bases => {

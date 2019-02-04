@@ -1,5 +1,5 @@
 {
-  "name": "koa-api",
+  "name": "treelab-api",
   "version": "1.0.0",
   "description": "",
   "main": "bin/www",
@@ -8,7 +8,6 @@
   "dependencies": {
     "cls-hooked": "^4.2.2",
     "crypto-js": "^3.1.9-1",
-    "dotenv": "^6.2.0",
     "extend2": "^1.0.0",
     "fs": "0.0.1-security",
     "kcors": "^2.2.2",

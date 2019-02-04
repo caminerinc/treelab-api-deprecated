@@ -1,6 +1,6 @@
 const { createRecord, deleteRecord } = require('../controllers/records');
 const { checkKeyExists } = require('../util/helper');
-const socketIo = require('../../lib/core/socketIo');
+const socketIo = require('../../lib/socketIo');
 const { sequelize } = require('../models/index');
 
 module.exports = {

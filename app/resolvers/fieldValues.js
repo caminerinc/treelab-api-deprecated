@@ -1,6 +1,6 @@
 const { checkKeyExists } = require('../util/helper');
 const fieldValues = require('../controllers/fieldValues');
-const socketIo = require('../../lib/core/socketIo');
+const socketIo = require('../../lib/socketIo');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
