@@ -3,8 +3,8 @@ const { createUid } = require('../util/helper');
 const { PREFIX_TYPE } = require('../constants/app');
 
 module.exports = (sequelize, DataTypes) => {
-  const records = sequelize.define(
-    'records',
+  const Records = sequelize.define(
+    'Records',
     {
       id: {
         allowNull: false,
@@ -19,11 +19,6 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  records.associate = function(models) {
-    records.hasMany(models.fieldValues, {
-      foreignKey: 'recordId',
-      as: 'fldVs',
-    });
-  };
-  return records;
+  // Records.associate = function(models) {};
+  return Records;
 };

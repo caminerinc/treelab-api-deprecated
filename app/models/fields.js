@@ -3,14 +3,14 @@ const { PREFIX_TYPE } = require('../constants/app');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = (sequelize, DataTypes) => {
-  const fields = sequelize.define(
-    'fields',
+  const Fields = sequelize.define(
+    'Fields',
     {
       id: {
         allowNull: false,
-        defaultValue: () => createUid(PREFIX_TYPE.FIELD),
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
       },
       name: {
         allowNull: false,
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       tableId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
       },
       fieldTypeId: {
         allowNull: false,
@@ -27,26 +27,21 @@ module.exports = (sequelize, DataTypes) => {
       width: {
         type: DataTypes.INTEGER,
       },
+      typeOptions: {
+        type: DataTypes.JSONB,
+      },
     },
     {},
   );
-  fields.associate = function(models) {
-    fields.hasMany(models.fieldValues, {
-      foreignKey: 'fieldId',
-      as: 'fldVs',
-    });
-    fields.hasOne(models[FIELD_TYPES[2].typeModel], {
-      foreignKey: 'fieldId',
-      as: FIELD_TYPES[2].typeName,
-    });
-    fields.hasOne(models[FIELD_TYPES[3].typeModel], {
-      foreignKey: 'fieldId',
-      as: FIELD_TYPES[3].typeName,
-    });
-    fields.hasOne(models.positions, {
+  Fields.associate = function(models) {
+    // Fields.hasMany(models.fieldValues, {
+    //   foreignKey: 'fieldId',
+    //   as: 'fldVs',
+    // });
+    Fields.hasOne(models.Positions, {
       foreignKey: 'id',
       as: 'pos',
     });
   };
-  return fields;
+  return Fields;
 };

@@ -1,6 +1,6 @@
 const { get, pick, forEach, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const tables = require('../controllers/tables');
+const tblController = require('../controllers/tables');
 const { getPrimaryFieldId } = require('../controllers/positions');
 const fieldValues = require('../controllers/fieldValues');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
@@ -139,48 +139,49 @@ const adaptGetRowsMatchingName = async (table, tableSchema) => {
 };
 
 module.exports = {
-  async resolveGetTables(ctx) {
+  async getAll(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
-    const tablesResult = await tables.getTables(params.baseId);
-    ctx.body = adaptTables(tablesResult);
+    const tables = await tblController.getAll(params.baseId);
+    // ctx.body = adaptTables(tablesResult);
+    ctx.body = tables;
   },
 
-  async resolveGetTable(ctx) {
-    const params = ctx.params;
-    checkKeyExists(params, 'tableId');
-    const table = await tables.getTable(params.tableId);
-    if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
-    ctx.body = await adaptTable(table);
-  },
+  // async resolveGetTable(ctx) {
+  //   const params = ctx.params;
+  //   checkKeyExists(params, 'tableId');
+  //   const table = await tables.getTable(params.tableId);
+  //   if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
+  //   ctx.body = await adaptTable(table);
+  // },
 
-  async resolveCreateTable(ctx) {
-    const params = ctx.request.body;
-    checkKeyExists(params, 'name');
-    const result = await sequelize.transaction(() =>
-      tables.createTable(params),
-    );
-    result.fields = result.fields.map(i =>
-      Object.assign({}, i, {
-        fieldTypeName: FIELD_TYPES[i.fieldTypeId].name,
-      }),
-    );
-    ctx.body = result;
-    socketIo.sync({ op: 'createTable', body: result });
-  },
+  // async resolveCreateTable(ctx) {
+  //   const params = ctx.request.body;
+  //   checkKeyExists(params, 'name');
+  //   const result = await sequelize.transaction(() =>
+  //     tables.createTable(params),
+  //   );
+  //   result.fields = result.fields.map(i =>
+  //     Object.assign({}, i, {
+  //       fieldTypeName: FIELD_TYPES[i.fieldTypeId].name,
+  //     }),
+  //   );
+  //   ctx.body = result;
+  //   socketIo.sync({ op: 'createTable', body: result });
+  // },
 
-  async resolveDeleteTable(ctx) {
-    const params = ctx.params;
-    await sequelize.transaction(() => tables.deleteTable(params.tableId));
-    ctx.body = { message: 'success' };
-  },
+  // async resolveDeleteTable(ctx) {
+  //   const params = ctx.params;
+  //   await sequelize.transaction(() => tables.deleteTable(params.tableId));
+  //   ctx.body = { message: 'success' };
+  // },
 
-  async resolveGetRowsMatchingName(ctx) {
-    const params = ctx.params;
-    checkKeyExists(params, 'tableId');
-    const { table, tableSchema } = await tables.getRowsMatchingName(
-      params.tableId,
-    );
-    ctx.body = await adaptGetRowsMatchingName(table, tableSchema);
-  },
+  // async resolveGetRowsMatchingName(ctx) {
+  //   const params = ctx.params;
+  //   checkKeyExists(params, 'tableId');
+  //   const { table, tableSchema } = await tables.getRowsMatchingName(
+  //     params.tableId,
+  //   );
+  //   ctx.body = await adaptGetRowsMatchingName(table, tableSchema);
+  // },
 };

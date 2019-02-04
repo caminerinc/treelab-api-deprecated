@@ -1,16 +1,12 @@
-const { createUid } = require('../util/helper');
-
-const { PREFIX_TYPE } = require('../constants/app');
-
 module.exports = (sequelize, DataTypes) => {
-  const tables = sequelize.define(
-    'tables',
+  const Tables = sequelize.define(
+    'Tables',
     {
       id: {
         allowNull: false,
-        defaultValue: () => createUid(PREFIX_TYPE.TABLE),
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
       },
       name: {
         allowNull: false,
@@ -18,28 +14,28 @@ module.exports = (sequelize, DataTypes) => {
       },
       baseId: {
         allowNull: false,
-        type: DataTypes.INTEGER,
+        type: DataTypes.UUID,
       },
     },
     {},
   );
-  tables.associate = function(models) {
-    tables.hasMany(models.fields, {
+  Tables.associate = function(models) {
+    Tables.hasMany(models.Fields, {
       foreignKey: 'tableId',
       as: 'flds',
     });
-    tables.hasMany(models.records, {
-      foreignKey: 'tableId',
-      as: 'recs',
-    });
-    tables.hasMany(models.positions, {
+    //   Tables.hasMany(models.records, {
+    //     foreignKey: 'tableId',
+    //     as: 'recs',
+    //   });
+    Tables.hasMany(models.Positions, {
       foreignKey: 'parentId',
       as: 'positions',
     });
-    tables.hasOne(models.positions, {
+    Tables.hasOne(models.Positions, {
       foreignKey: 'id',
       as: 'pos',
     });
   };
-  return tables;
+  return Tables;
 };

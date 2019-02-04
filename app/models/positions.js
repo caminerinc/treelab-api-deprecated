@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const positions = sequelize.define(
-    'positions',
+  const Positions = sequelize.define(
+    'Positions',
     {
       id: {
         allowNull: false,
@@ -22,11 +22,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  positions.associate = function(models) {
-    positions.belongsTo(models.fields, {
-      foreignKey: 'id',
-      as: 'field',
-    });
-  };
-  return positions;
+  // Positions.associate = function(models) {
+  //   Positions.belongsTo(models.fields, {
+  //     foreignKey: 'id',
+  //     as: 'field',
+  //   });
+  // };
+  return Positions;
 };

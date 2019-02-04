@@ -1,8 +1,5 @@
-const { createUid } = require('../util/helper');
-const { PREFIX_TYPE } = require('../constants/app');
-
 module.exports = (sequelize, DataTypes) => {
-  const users = sequelize.define('users', {
+  const Users = sequelize.define('Users', {
     id: {
       allowNull: false,
       defaultValue: DataTypes.UUIDV4,
@@ -26,5 +23,5 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
   });
-  return users;
+  return Users;
 };

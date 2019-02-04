@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const fieldValues = sequelize.define(
-    'fieldValues',
+  const FieldValues = sequelize.define(
+    'FieldValues',
     {
       id: {
         allowNull: false,
@@ -24,27 +24,27 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  fieldValues.associate = function(models) {
-    fieldValues.belongsTo(models.fields, {
-      foreignKey: 'fieldId',
-      as: 'fld',
-    });
-    fieldValues.belongsTo(models.records, {
-      foreignKey: 'recordId',
-      as: 'rec',
-    });
-    fieldValues.hasMany(models.multipleAttachmentValues, {
-      foreignKey: 'fieldValueId',
-      as: 'multiAttV',
-    });
-    fieldValues.hasMany(models.foreignKeyValues, {
-      foreignKey: 'symmetricFieldValueId',
-      as: 'symKV',
-    });
-    fieldValues.hasMany(models.foreignKeyValues, {
-      foreignKey: 'fieldValueId',
-      as: 'fgnKV',
-    });
-  };
-  return fieldValues;
+  // FieldValues.associate = function(models) {
+  //   FieldValues.belongsTo(models.fields, {
+  //     foreignKey: 'fieldId',
+  //     as: 'fld',
+  //   });
+  //   FieldValues.belongsTo(models.records, {
+  //     foreignKey: 'recordId',
+  //     as: 'rec',
+  //   });
+  //   FieldValues.hasMany(models.multipleAttachmentValues, {
+  //     foreignKey: 'fieldValueId',
+  //     as: 'multiAttV',
+  //   });
+  //   FieldValues.hasMany(models.foreignKeyValues, {
+  //     foreignKey: 'symmetricFieldValueId',
+  //     as: 'symKV',
+  //   });
+  //   FieldValues.hasMany(models.foreignKeyValues, {
+  //     foreignKey: 'fieldValueId',
+  //     as: 'fgnKV',
+  //   });
+  // };
+  return FieldValues;
 };

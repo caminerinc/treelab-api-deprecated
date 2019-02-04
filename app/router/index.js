@@ -7,6 +7,7 @@ const router = new Router();
 //   resolveDeleteBase,
 //   resolveGetBase,
 // } = require('../resolvers/bases');
+const bseResolver = require('../resolvers/bases');
 // const {
 //   resolveGetTables,
 //   resolveGetTable,
@@ -14,6 +15,7 @@ const router = new Router();
 //   resolveDeleteTable,
 //   resolveGetRowsMatchingName,
 // } = require('../resolvers/tables');
+const tblResolver = require('../resolvers/tables');
 // const {
 //   resolveCreateField,
 //   resolveDeleteField,
@@ -53,14 +55,14 @@ const usrResolver = require('../resolvers/users');
 //   ctx.body = 'Connection established';
 // });
 
-// // Base
-// router.get('/api/bases', resolveGetBases);
-// router.post('/api/base', resolveCreateBase);
+// Base
+router.get('/api/bases', bseResolver.getAll);
+router.post('/api/base', bseResolver.create);
 // router.delete('/api/base/:baseId', checkBaseExist, resolveDeleteBase);
-// router.get('/api/base/:baseId', checkBaseExist, resolveGetBase);
+router.get('/api/base/:baseId', bseResolver.getOne);
 
-// //Table
-// router.get('/api/tables/:baseId', resolveGetTables);
+// Table
+router.get('/api/tables/:baseId', tblResolver.getAll);
 // router.get('/api/table/:tableId', resolveGetTable);
 // router.post('/api/table', checkBaseExist, resolveCreateTable);
 // router.delete('/api/table/:tableId', checkTableExist, resolveDeleteTable);

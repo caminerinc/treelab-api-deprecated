@@ -1,15 +1,15 @@
-const { sequelize, users } = require('../models');
+const { sequelize, Users } = require('../models');
 const { sha1 } = require('../util/helper');
 
 module.exports = {
   getAll() {
-    return users.findAll({
+    return Users.findAll({
       attributes: ['id', 'firstName', 'lastName', 'email'],
     });
   },
 
   create({ firstName, lastName, password, email }) {
-    return users.create({
+    return Users.create({
       firstName,
       lastName,
       passwordDigest: sha1(password),
@@ -18,7 +18,7 @@ module.exports = {
   },
 
   getOne({ email }) {
-    return users.findOne({
+    return Users.findOne({
       where: {
         email,
       },

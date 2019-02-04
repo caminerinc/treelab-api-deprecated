@@ -1,77 +1,77 @@
-const positions = require('../queries/positions');
+const posQueries = require('../queries/positions');
 
 module.exports = {
-  changePosition({ originalPositions, targetPosition, parentId, type }) {
-    targetPosition = parseInt(targetPosition);
-    originalPositions = Array.from(originalPositions, i => parseInt(i));
-    originalPositions.sort();
-    const originLen = originalPositions.length;
-    const minPosition = Math.min(originalPositions[0], targetPosition);
-    const maxPosition = Math.max(
-      originalPositions[originLen - 1],
-      targetPosition,
-    );
-    const temp = originalPositions.reduce((sum, originalPosition) => {
-      if (originalPosition < targetPosition) sum++;
-      return sum;
-    }, 0);
-    let movedNum = 0;
-    let sql = `update positions set position = case`;
-    for (let i = minPosition; i <= maxPosition; i++) {
-      if (originalPositions.indexOf(i) === -1) {
-        if (i >= targetPosition) {
-          sql += ` when position = ${i} then ${i + originLen - movedNum}`;
-        } else {
-          sql += ` when position = ${i} then ${i - movedNum}`;
-        }
-      } else {
-        sql += ` when position = ${i} then ${targetPosition - temp + movedNum}`;
-        movedNum++;
-      }
-    }
-    sql += ` else position end where "parentId" = ? and "type" = ?`;
-    return positions.query(sql, { replacements: [parentId, type] });
-  },
+  // changePosition({ originalPositions, targetPosition, parentId, type }) {
+  //   targetPosition = parseInt(targetPosition);
+  //   originalPositions = Array.from(originalPositions, i => parseInt(i));
+  //   originalPositions.sort();
+  //   const originLen = originalPositions.length;
+  //   const minPosition = Math.min(originalPositions[0], targetPosition);
+  //   const maxPosition = Math.max(
+  //     originalPositions[originLen - 1],
+  //     targetPosition,
+  //   );
+  //   const temp = originalPositions.reduce((sum, originalPosition) => {
+  //     if (originalPosition < targetPosition) sum++;
+  //     return sum;
+  //   }, 0);
+  //   let movedNum = 0;
+  //   let sql = `update positions set position = case`;
+  //   for (let i = minPosition; i <= maxPosition; i++) {
+  //     if (originalPositions.indexOf(i) === -1) {
+  //       if (i >= targetPosition) {
+  //         sql += ` when position = ${i} then ${i + originLen - movedNum}`;
+  //       } else {
+  //         sql += ` when position = ${i} then ${i - movedNum}`;
+  //       }
+  //     } else {
+  //       sql += ` when position = ${i} then ${targetPosition - temp + movedNum}`;
+  //       movedNum++;
+  //     }
+  //   }
+  //   sql += ` else position end where "parentId" = ? and "type" = ?`;
+  //   return positions.query(sql, { replacements: [parentId, type] });
+  // },
 
-  async createPosition({ parentId, id, type }) {
-    const lastPosition = await positions.getLastPosition(parentId, type);
+  async create({ parentId, id, type }) {
+    const lastPosition = await posQueries.getLast(parentId, type);
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await positions.create({ id, position, parentId, type });
+    return await posQueries.create({ id, position, parentId, type });
   },
 
-  getPositions(parentId, type) {
-    return positions.getPositionsByParentIdAndType(parentId, type);
-  },
+  // getPositions(parentId, type) {
+  //   return positions.getPositionsByParentIdAndType(parentId, type);
+  // },
 
-  getPositionsByIds(ids) {
-    return positions.getPositionsByIds(ids);
-  },
+  // getPositionsByIds(ids) {
+  //   return positions.getPositionsByIds(ids);
+  // },
 
-  async deletePositions({ deletePositions, parentId, type }) {
-    deletePositions = Array.from(deletePositions, i => parseInt(i));
-    deletePositions.sort();
-    const len = deletePositions.length;
-    let movedNum = 0;
-    let sql = `update positions set position = case`;
-    for (let i = deletePositions[0]; i < deletePositions[len - 1]; i++) {
-      if (deletePositions.indexOf(i) === -1) {
-        sql += ` when position = ${i} then ${i - movedNum}`;
-      } else {
-        movedNum++;
-      }
-    }
-    sql += ` when position > ${
-      deletePositions[len - 1]
-    } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
-    await positions.destroy({ deletePositions, parentId, type });
-    await positions.query(sql, { replacements: [parentId, type] });
-  },
+  // async deletePositions({ deletePositions, parentId, type }) {
+  //   deletePositions = Array.from(deletePositions, i => parseInt(i));
+  //   deletePositions.sort();
+  //   const len = deletePositions.length;
+  //   let movedNum = 0;
+  //   let sql = `update positions set position = case`;
+  //   for (let i = deletePositions[0]; i < deletePositions[len - 1]; i++) {
+  //     if (deletePositions.indexOf(i) === -1) {
+  //       sql += ` when position = ${i} then ${i - movedNum}`;
+  //     } else {
+  //       movedNum++;
+  //     }
+  //   }
+  //   sql += ` when position > ${
+  //     deletePositions[len - 1]
+  //   } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
+  //   await positions.destroy({ deletePositions, parentId, type });
+  //   await positions.query(sql, { replacements: [parentId, type] });
+  // },
 
-  deleteParentId(parentId) {
-    return positions.deleteParentId(parentId);
-  },
+  // deleteParentId(parentId) {
+  //   return positions.deleteParentId(parentId);
+  // },
 
-  getPrimaryFieldId(tableId) {
-    return positions.getPrimaryFieldId(tableId);
-  },
+  // getPrimaryFieldId(tableId) {
+  //   return positions.getPrimaryFieldId(tableId);
+  // },
 };
