@@ -2,10 +2,9 @@ const { sequelize, users } = require('../models');
 const { sha1 } = require('../util/helper');
 
 module.exports = {
-  getAllUsers() {
+  getAll() {
     return users.findAll({
       attributes: ['id', 'firstName', 'lastName', 'email'],
-      raw: true,
     });
   },
 
@@ -18,12 +17,11 @@ module.exports = {
     });
   },
 
-  getUser({ email }) {
+  getOne({ email }) {
     return users.findOne({
       where: {
         email,
       },
-      raw: true,
     });
   },
 };

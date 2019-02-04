@@ -5,9 +5,9 @@ module.exports = (sequelize, DataTypes) => {
   const users = sequelize.define('users', {
     id: {
       allowNull: false,
-      defaultValue: () => createUid(PREFIX_TYPE.USR),
+      defaultValue: DataTypes.UUIDV4,
       primaryKey: true,
-      type: DataTypes.CHAR(18),
+      type: DataTypes.UUID,
     },
     firstName: {
       allowNull: false,
