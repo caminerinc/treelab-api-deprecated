@@ -1,6 +1,6 @@
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const { checkKeyExists } = require('../util/helper');
-const fieldValues = require('../queries/fieldValues');
+const fldValQueries = require('../queries/fieldValues');
 const { createField } = require('./fields');
 const { createRecord } = require('./records');
 const { error, Status, ECodes } = require('../util/error');
@@ -77,83 +77,84 @@ module.exports = {
   },
 
   upsertFieldValue(params) {
-    const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    const upsertValue = UPSERT_MAP[fieldProps.name];
-    return upsertValue(params, fieldProps.name);
+    // const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    // const upsertValue = UPSERT_MAP[fieldProps.name];
+    return fldValQueries.upsertGeneric(params);
+    // return upsertValue(params, fieldProps.name);
   },
 
-  async createArrayValue(params) {
-    const fieldValue = await fieldValues.findOrCreateFieldValue(
-      params.recordId,
-      params.fieldId,
-    );
-    params.fieldValueId = fieldValue.id;
-    const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    const createValue = CREATE_MAP[fieldProps.name];
-    return await createValue(params);
+  // async createArrayValue(params) {
+  //   const fieldValue = await fieldValues.findOrCreateFieldValue(
+  //     params.recordId,
+  //     params.fieldId,
+  //   );
+  //   params.fieldValueId = fieldValue.id;
+  //   const fieldProps = FIELD_TYPES[params.fieldTypeId];
+  //   const createValue = CREATE_MAP[fieldProps.name];
+  //   return await createValue(params);
+  // },
+
+  // findFieldValue(recordId, fieldId) {
+  //   return fieldValues.getFieldValue(recordId, fieldId);
+  // },
+
+  delete({ recordId, fieldId }) {
+    return fldValQueries.destroy(recordId, fieldId);
   },
 
-  findFieldValue(recordId, fieldId) {
-    return fieldValues.getFieldValue(recordId, fieldId);
-  },
+  // deleteArrayValue(params) {
+  //   const fieldProps = FIELD_TYPES[params.fieldTypeId];
+  //   const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
+  //   return deleteValue(params);
+  // },
 
-  deleteFieldValue({ recordId, fieldId }) {
-    return fieldValues.destroy(recordId, fieldId);
-  },
-
-  deleteArrayValue(params) {
-    const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
-    return deleteValue(params);
-  },
-
-  async bulkCopyFieldValue({
-    sourceColumnConfigs,
-    sourceCellValues2dArray,
-    tableId,
-  }) {
-    for (let i = 0; i < sourceColumnConfigs.length; i++) {
-      const field = sourceColumnConfigs[i];
-      field.tableId = tableId;
-      const fieldResult = await createField(field);
-      for (let j = 0; j < sourceCellValues2dArray.length; j++) {
-        const values = sourceCellValues2dArray[j][i];
-        const recordResult = await createRecord(tableId);
-        if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
-          module.exports.upsertFieldValue({
-            fieldTypeId: field.fieldTypeId,
-            recordId: recordResult.id,
-            fieldId: fieldResult.fieldId,
-            value: values,
-          });
-        } else if (field.fieldTypeId == 3) {
-          for (let k = 0; k < values.length; k++) {
-            await module.exports.createArrayValue({
-              recordId: recordResult.id,
-              fieldId: fieldResult.foreignFieldId,
-              fieldTypeId: field.fieldTypeId,
-              value: {
-                foreignRowId: values[k].foreignRowId,
-                foreignColumnId: fieldResult.symmetricFieldId,
-              },
-            });
-          }
-        } else if (field.fieldTypeId == 4) {
-          for (let k = 0; k < values.length; k++) {
-            const fieldValueResult = await fieldValues.findOrCreateFieldValue(
-              recordResult.id,
-              fieldResult.fieldId,
-            );
-            await module.exports.createArrayValue({
-              fieldTypeId: field.fieldTypeId,
-              fieldValueId: fieldValueResult.id,
-              value: values[k],
-            });
-          }
-        } else {
-          error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
-        }
-      }
-    }
-  },
+  // async bulkCopyFieldValue({
+  //   sourceColumnConfigs,
+  //   sourceCellValues2dArray,
+  //   tableId,
+  // }) {
+  //   for (let i = 0; i < sourceColumnConfigs.length; i++) {
+  //     const field = sourceColumnConfigs[i];
+  //     field.tableId = tableId;
+  //     const fieldResult = await createField(field);
+  //     for (let j = 0; j < sourceCellValues2dArray.length; j++) {
+  //       const values = sourceCellValues2dArray[j][i];
+  //       const recordResult = await createRecord(tableId);
+  //       if (field.fieldTypeId == 1 || field.fieldTypeId == 2) {
+  //         module.exports.upsertFieldValue({
+  //           fieldTypeId: field.fieldTypeId,
+  //           recordId: recordResult.id,
+  //           fieldId: fieldResult.fieldId,
+  //           value: values,
+  //         });
+  //       } else if (field.fieldTypeId == 3) {
+  //         for (let k = 0; k < values.length; k++) {
+  //           await module.exports.createArrayValue({
+  //             recordId: recordResult.id,
+  //             fieldId: fieldResult.foreignFieldId,
+  //             fieldTypeId: field.fieldTypeId,
+  //             value: {
+  //               foreignRowId: values[k].foreignRowId,
+  //               foreignColumnId: fieldResult.symmetricFieldId,
+  //             },
+  //           });
+  //         }
+  //       } else if (field.fieldTypeId == 4) {
+  //         for (let k = 0; k < values.length; k++) {
+  //           const fieldValueResult = await fieldValues.findOrCreateFieldValue(
+  //             recordResult.id,
+  //             fieldResult.fieldId,
+  //           );
+  //           await module.exports.createArrayValue({
+  //             fieldTypeId: field.fieldTypeId,
+  //             fieldValueId: fieldValueResult.id,
+  //             value: values[k],
+  //           });
+  //         }
+  //       } else {
+  //         error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+  //       }
+  //     }
+  //   }
+  // },
 };

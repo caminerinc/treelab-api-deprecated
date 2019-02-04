@@ -29,6 +29,7 @@ const tblResolver = require('../resolvers/tables');
 //   resolveDeleteArrayValue,
 //   resolveBulkCopyFieldValue,
 // } = require('../resolvers/fieldValues');
+const fldValResolver = require('../resolvers/fieldValues');
 // const {
 //   resolveCreateRecord,
 //   resolveDeleteRecord,
@@ -41,11 +42,6 @@ const tblResolver = require('../resolvers/tables');
 // } = require('../resolvers/users');
 const usrResolver = require('../resolvers/users');
 // const { resolveChangePosition } = require('../resolvers/positions');
-// const { resolveGetPouches, resolveGetPouch } = require('../resolvers/pouches');
-// const {
-//   resolveGetModules,
-//   resolveExtraction,
-// } = require('../resolvers/modules');
 
 // const { checkTableExist } = require('../middlewares/tables');
 // const { checkBaseExist } = require('../middlewares/bases');
@@ -63,9 +59,9 @@ router.get('/api/base/:baseId', bseResolver.getOne);
 
 // Table
 router.get('/api/tables/:baseId', tblResolver.getAll);
-// router.get('/api/table/:tableId', resolveGetTable);
-// router.post('/api/table', checkBaseExist, resolveCreateTable);
-// router.delete('/api/table/:tableId', checkTableExist, resolveDeleteTable);
+router.get('/api/table/:tableId', tblResolver.getOne);
+router.post('/api/table', tblResolver.create);
+router.delete('/api/table/:tableId', tblResolver.delete);
 // router.get(
 //   '/api/table/:tableId/getRowsMatchingName',
 //   checkTableExist,
@@ -83,9 +79,9 @@ router.get('/api/tables/:baseId', tblResolver.getAll);
 // router.delete('/api/delete-rows', resolveDeleteRecord);
 
 // //FieldValue
-// router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
+router.put('/api/primitive-field', fldValResolver.createOrUpdatePrimitive);
 // router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
-// router.delete('/api/clear-field-value', resolveClearFieldValue);
+router.delete('/api/clear-field-value', fldValResolver.clearValue);
 // router.delete('/api/array-field', resolveDeleteArrayValue);
 // router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 

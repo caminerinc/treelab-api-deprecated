@@ -1,4 +1,11 @@
-const { Fields, Positions, Tables, sequelize } = require('../models');
+const {
+  Fields,
+  FieldValues,
+  Positions,
+  Records,
+  Tables,
+  sequelize,
+} = require('../models');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
@@ -6,9 +13,9 @@ module.exports = {
     return Tables.create(params);
   },
 
-  // destroy(id) {
-  //   return Tables.destroy({ where: { id } });
-  // },
+  destroy(id) {
+    return Tables.destroy({ where: { id } });
+  },
 
   // getEasyTable(id) {
   //   return Tables.findOne({ where: { id } });
@@ -40,92 +47,42 @@ module.exports = {
     });
   },
 
-  // getTable(id) {
-  //   return Tables.findOne({
-  //     attributes: ['id'],
-  //     where: { id },
-  //     include: [
-  //       {
-  //         attributes: ['id', 'createdAt'],
-  //         model: models.records,
-  //         as: 'recs',
-  //         include: [
-  //           {
-  //             model: models.fieldValues,
-  //             attributes: ['fieldId', 'textValue', 'numberValue'],
-  //             as: 'fldVs',
-  //             include: [
-  //               {
-  //                 model: models.fields,
-  //                 attributes: ['fieldTypeId', 'width'],
-  //                 as: 'fld',
-  //               },
-  //               {
-  //                 model: models.multipleAttachmentValues,
-  //                 attributes: { exclude: ['createdAt', 'updatedAt'] },
-  //                 as: 'multiAttV',
-  //               },
-  //               {
-  //                 model: models.foreignKeyValues,
-  //                 attributes: { exclude: ['createdAt', 'updatedAt'] },
-  //                 as: 'fgnKV',
-  //                 include: [
-  //                   {
-  //                     model: models.fieldValues,
-  //                     as: 'symFldV',
-  //                     attributes: ['id', 'fieldId'],
-  //                     include: [
-  //                       {
-  //                         model: models.records,
-  //                         as: 'rec',
-  //                         attributes: ['id', 'tableId'],
-  //                       },
-  //                     ],
-  //                   },
-  //                 ],
-  //               },
-  //               {
-  //                 model: models.foreignKeyValues,
-  //                 attributes: { exclude: ['createdAt', 'updatedAt'] },
-  //                 as: 'symKV',
-  //                 include: [
-  //                   {
-  //                     model: models.fieldValues,
-  //                     as: 'fldV',
-  //                     attributes: ['id'],
-  //                     include: [
-  //                       {
-  //                         model: models.records,
-  //                         as: 'rec',
-  //                         attributes: ['id', 'tableId'],
-  //                       },
-  //                     ],
-  //                   },
-  //                 ],
-  //               },
-  //             ],
-  //           },
-  //         ],
-  //       },
-  //       {
-  //         model: models.positions,
-  //         as: 'positions',
-  //         attributes: ['id', 'position', 'type'],
-  //         include: [
-  //           {
-  //             model: models.fields,
-  //             as: 'field',
-  //             attributes: ['width'],
-  //           },
-  //         ],
-  //       },
-  //     ],
-  //     order: [
-  //       [models.sequelize.col('positions.type'), 'asc'],
-  //       [models.sequelize.col('positions.position'), 'asc'],
-  //     ],
-  //   });
-  // },
+  getOneById(id) {
+    return Tables.findOne({
+      attributes: ['id'],
+      where: { id },
+      include: [
+        {
+          attributes: ['id', 'createdAt'],
+          model: Records,
+          as: 'recs',
+          include: [
+            {
+              model: FieldValues,
+              attributes: ['fieldId', 'value'],
+              as: 'fldVs',
+            },
+          ],
+        },
+        {
+          model: Positions,
+          as: 'positions',
+          attributes: ['id', 'position', 'type'],
+          include: [
+            {
+              model: Fields,
+              as: 'field',
+              attributes: ['width'],
+            },
+          ],
+        },
+      ],
+      order: [
+        [sequelize.col('positions.type'), 'asc'],
+        [sequelize.col('positions.position'), 'asc'],
+      ],
+    });
+  },
 
   // getSymmetricFieldIdsByTableId(id) {
   //   return Tables.findOne({

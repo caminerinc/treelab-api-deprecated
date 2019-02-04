@@ -34,10 +34,10 @@ module.exports = (sequelize, DataTypes) => {
     {},
   );
   Fields.associate = function(models) {
-    // Fields.hasMany(models.fieldValues, {
-    //   foreignKey: 'fieldId',
-    //   as: 'fldVs',
-    // });
+    Fields.hasMany(models.FieldValues, {
+      foreignKey: 'fieldId',
+      as: 'fldVs',
+    });
     Fields.hasOne(models.Positions, {
       foreignKey: 'id',
       as: 'pos',

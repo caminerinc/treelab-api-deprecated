@@ -25,11 +25,10 @@ module.exports = {
         id: {
           allowNull: false,
           primaryKey: true,
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
         },
         parentId: {
-          allowNull: false,
-          type: Sequelize.STRING,
+          type: Sequelize.UUID,
         },
         position: {
           allowNull: false,
@@ -87,7 +86,7 @@ module.exports = {
         });
       });
 
-    return queryInterface
+    queryInterface
       .createTable('Fields', {
         id: {
           allowNull: false,
@@ -131,8 +130,82 @@ module.exports = {
           onDelete: 'cascade',
         });
       });
+
+    queryInterface
+      .createTable('Records', {
+        id: {
+          allowNull: false,
+          primaryKey: true,
+          type: Sequelize.UUID,
+        },
+        tableId: {
+          allowNull: false,
+          type: Sequelize.UUID,
+        },
+        createdAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
+        updatedAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
+      })
+      .then(() => {
+        return queryInterface.addConstraint('Records', ['tableId'], {
+          type: 'FOREIGN KEY',
+          references: {
+            table: 'Tables',
+            field: 'id',
+          },
+          onDelete: 'cascade',
+        });
+      });
+
+    return queryInterface
+      .createTable('FieldValues', {
+        id: {
+          allowNull: false,
+          autoIncrement: true,
+          primaryKey: true,
+          type: Sequelize.INTEGER,
+        },
+        recordId: {
+          allowNull: false,
+          type: Sequelize.UUID,
+        },
+        fieldId: {
+          allowNull: false,
+          type: Sequelize.UUID,
+        },
+        value: {
+          type: Sequelize.JSONB,
+        },
+        createdAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
+        updatedAt: {
+          allowNull: false,
+          type: Sequelize.DATE,
+        },
+      })
+      .then(() => {
+        return queryInterface.addConstraint(
+          'FieldValues',
+          ['recordId', 'fieldId'],
+          {
+            type: 'unique',
+          },
+        );
+      });
   },
   down: (queryInterface, Sequelize) => {
+    queryInterface.dropTable('FieldValues');
+    queryInterface.dropTable('Fields');
+    queryInterface.dropTable('Records');
+    queryInterface.dropTable('Tables');
+    queryInterface.dropTable('Positions');
     return queryInterface.dropTable('Bases');
   },
 };

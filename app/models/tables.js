@@ -24,10 +24,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'tableId',
       as: 'flds',
     });
-    //   Tables.hasMany(models.records, {
-    //     foreignKey: 'tableId',
-    //     as: 'recs',
-    //   });
+    Tables.hasMany(models.Records, {
+      foreignKey: 'tableId',
+      as: 'recs',
+    });
     Tables.hasMany(models.Positions, {
       foreignKey: 'parentId',
       as: 'positions',

@@ -5,6 +5,7 @@ const positions = require('../queries/positions');
 const fieldsController = require('../controllers/fields');
 const tblController = require('../controllers/tables');
 const posController = require('../controllers/positions');
+const { error, Status, ECodes } = require('../util/error');
 
 const findSymmetricFieldId = async id => {
   const base = await bases.getBaseForSymmetricFieldId(id);
@@ -39,8 +40,9 @@ module.exports = {
   //   });
   //   return { base, table };
   // },
-  getOne(id) {
-    return bseQueries.getOne(id);
+  async getOne(id) {
+    const base = await bseQueries.getOne(id);
+    if (!base) error(Status.Unauthorized, ECodes.BASE_NOT_FOUND);
   },
   // async deleteBase(baseId) {
   //   const result = await positions.getPositionsByIds([baseId]);
@@ -62,11 +64,11 @@ module.exports = {
   async create(params) {
     const base = await bseQueries.create(params.name);
     await posController.create({
-      parentId: 'baseParent', //TODO base的父级未确定
+      //TODO base的父级未确定
       id: base.id,
       type: 'base',
     });
-    const table = await tblController.createNewBaseTables({
+    const table = await tblController.createNewTableSet({
       baseId: base.id,
       name: 'Table 1',
     });

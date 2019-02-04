@@ -20,9 +20,9 @@ module.exports = {
   //   });
   // },
 
-  // getPositionsByIds(ids) {
-  //   return positions.findAll({ where: { id: { $in: ids } } });
-  // },
+  getByIds(ids) {
+    return Positions.findAll({ where: { id: { $in: ids } } });
+  },
 
   // getPrimaryFieldId(tableId) {
   //   return positions.findOne({
@@ -35,21 +35,21 @@ module.exports = {
   //   });
   // },
 
-  // deleteParentId(parentId) {
-  //   return positions.destroy({ where: { parentId: { $in: parentId } } });
-  // },
+  deleteParentId(parentId) {
+    return Positions.destroy({ where: { parentId: { $in: parentId } } });
+  },
 
-  // destroy({ deletePositions, parentId, type }) {
-  //   return positions.destroy({
-  //     where: {
-  //       position: { $in: deletePositions },
-  //       parentId,
-  //       type,
-  //     },
-  //   });
-  // },
+  destroy({ deletePositions, parentId, type }) {
+    return Positions.destroy({
+      where: {
+        position: { $in: deletePositions },
+        parentId,
+        type,
+      },
+    });
+  },
 
-  // query(sql, options) {
-  //   return sequelize.query(sql, options);
-  // },
+  query(sql, options) {
+    return sequelize.query(sql, options);
+  },
 };

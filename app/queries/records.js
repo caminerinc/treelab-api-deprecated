@@ -1,11 +1,11 @@
-const { sequelize, records } = require('../models');
+const { sequelize, Records } = require('../models');
 
 module.exports = {
   create(params) {
-    return records.create(params);
+    return Records.create(params);
   },
 
   destroy(rows) {
-    return records.destroy({ where: { id: { $in: rows } } });
+    return Records.destroy({ where: { id: { $in: rows } } });
   },
 };

@@ -11,40 +11,27 @@ module.exports = (sequelize, DataTypes) => {
       },
       recordId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         unique: 'fieldValues_recordId_fieldId_uk',
       },
       fieldId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         unique: 'fieldValues_recordId_fieldId_uk',
       },
-      textValue: DataTypes.STRING,
-      numberValue: DataTypes.INTEGER,
+      value: DataTypes.JSONB,
     },
     {},
   );
-  // FieldValues.associate = function(models) {
-  //   FieldValues.belongsTo(models.fields, {
-  //     foreignKey: 'fieldId',
-  //     as: 'fld',
-  //   });
-  //   FieldValues.belongsTo(models.records, {
-  //     foreignKey: 'recordId',
-  //     as: 'rec',
-  //   });
-  //   FieldValues.hasMany(models.multipleAttachmentValues, {
-  //     foreignKey: 'fieldValueId',
-  //     as: 'multiAttV',
-  //   });
-  //   FieldValues.hasMany(models.foreignKeyValues, {
-  //     foreignKey: 'symmetricFieldValueId',
-  //     as: 'symKV',
-  //   });
-  //   FieldValues.hasMany(models.foreignKeyValues, {
-  //     foreignKey: 'fieldValueId',
-  //     as: 'fgnKV',
-  //   });
-  // };
+  FieldValues.associate = function(models) {
+    FieldValues.belongsTo(models.Fields, {
+      foreignKey: 'fieldId',
+      as: 'fld',
+    });
+    FieldValues.belongsTo(models.Records, {
+      foreignKey: 'recordId',
+      as: 'rec',
+    });
+  };
   return FieldValues;
 };

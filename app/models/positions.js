@@ -5,11 +5,10 @@ module.exports = (sequelize, DataTypes) => {
       id: {
         allowNull: false,
         primaryKey: true,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
       },
       parentId: {
-        allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
       },
       position: {
         allowNull: false,
@@ -22,11 +21,11 @@ module.exports = (sequelize, DataTypes) => {
     },
     {},
   );
-  // Positions.associate = function(models) {
-  //   Positions.belongsTo(models.fields, {
-  //     foreignKey: 'id',
-  //     as: 'field',
-  //   });
-  // };
+  Positions.associate = function(models) {
+    Positions.belongsTo(models.Fields, {
+      foreignKey: 'id',
+      as: 'field',
+    });
+  };
   return Positions;
 };
