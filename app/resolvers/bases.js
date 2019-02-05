@@ -29,10 +29,13 @@ module.exports = {
   //     body: ctx.body,
   //   });
   // },
-  // async resolveDeleteBase(ctx) {
-  //   await sequelize.transaction(() => bases.deleteBase(ctx.params.baseId));
-  //   ctx.body = { message: 'success' };
-  // },
+  async delete(ctx) {
+    const params = ctx.params;
+    checkKeyExists(params, 'baseId');
+    await sequelize.transaction(() => bseController.delete(params.baseId));
+    ctx.body = { message: 'success' };
+  },
+
   async getOne(ctx) {
     const baseId = ctx.request.body.baseId || ctx.params.baseId;
     if (!baseId) error(null, ECodes.REQUIRED, 'baseId');
@@ -40,6 +43,7 @@ module.exports = {
     const base = await bseController.getOne(baseId);
     ctx.body = base;
   },
+
   async create(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');

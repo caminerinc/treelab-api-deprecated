@@ -1,9 +1,9 @@
 const { checkKeyExists } = require('../util/helper');
-const { changePosition } = require('../controllers/positions');
+const posController = require('../controllers/positions');
 const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 
-const resolveChangePosition = async ctx => {
+const changePosition = async ctx => {
   const params = ctx.request.body;
   checkKeyExists(
     params,
@@ -17,7 +17,7 @@ const resolveChangePosition = async ctx => {
   if (!(params.targetPosition > 1)) error(null, ECodes.ILLEGAL_TARGET_POSITION);
   if (!Array.isArray(params.originalPositions))
     params.originalPositions = [params.originalPositions];
-  await changePosition(params);
+  await posController.changePosition(params);
   ctx.body = { message: 'success' };
   socketIo.sync({
     op: 'changePosition',
@@ -26,5 +26,5 @@ const resolveChangePosition = async ctx => {
 };
 
 module.exports = {
-  resolveChangePosition,
+  changePosition,
 };

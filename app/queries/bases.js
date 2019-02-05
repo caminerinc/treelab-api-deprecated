@@ -66,7 +66,7 @@ module.exports = {
   //   });
   // },
 
-  // destroy(id) {
-  //   return models.bases.destroy({ where: { id } });
-  // },
+  destroy(id) {
+    return Bases.destroy({ where: { id } });
+  },
 };

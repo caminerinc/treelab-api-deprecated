@@ -44,22 +44,23 @@ module.exports = {
     const base = await bseQueries.getOne(id);
     if (!base) error(Status.Unauthorized, ECodes.BASE_NOT_FOUND);
   },
-  // async deleteBase(baseId) {
-  //   const result = await positions.getPositionsByIds([baseId]);
-  //   await positionsController.deletePositions({
-  //     deletePositions: [result[0].position],
-  //     parentId: result[0].parentId,
-  //     type: result[0].type,
-  //   });
-  //   const symmetricFieldIds = await findSymmetricFieldId(baseId);
-  //   for (const i of symmetricFieldIds) {
-  //     await fieldsController.deleteField(i);
-  //   }
-  //   const easyTables = await tables.getEasyTables(baseId);
-  //   await positions.deleteParentId([baseId, ...easyTables.map(i => i.id)]);
-  //   await bases.destroy(baseId);
-  //   return null;
-  // },
+
+  async delete(baseId) {
+    const result = await posController.getByIds([baseId]);
+    await posController.deletePositions({
+      deletePositions: [result[0].position],
+      parentId: result[0].parentId,
+      type: result[0].type,
+    });
+    // const symmetricFieldIds = await findSymmetricFieldId(baseId);
+    // for (const i of symmetricFieldIds) {
+    //   await fieldsController.deleteField(i);
+    // }
+    // const easyTables = await tables.getEasyTables(baseId);
+    // await positions.deleteParentId([baseId, ...easyTables.map(i => i.id)]);
+    await bseQueries.destroy(baseId);
+    return;
+  },
 
   async create(params) {
     const base = await bseQueries.create(params.name);

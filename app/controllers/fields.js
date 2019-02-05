@@ -1,5 +1,5 @@
 const { pick } = require('lodash');
-const fields = require('../queries/fields');
+const fldQueries = require('../queries/fields');
 const tables = require('../queries/tables');
 const positions = require('../queries/positions');
 // const numberTypes = require('../queries/numberTypes');
@@ -104,8 +104,15 @@ const { error, Status, ECodes } = require('../util/error');
 // }
 
 const checkNameWithinTable = async ({ tableId, name }) => {
-  const field = await fields.getFieldByTableAndName(tableId, name);
+  const field = await fldQueries.getFieldByTableAndName(tableId, name);
   if (field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+};
+
+const checkFieldExists = async id => {
+  const field = await fldQueries.getById(id);
+  if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+
+  return field;
 };
 
 module.exports = {
@@ -114,8 +121,14 @@ module.exports = {
 
     // const fieldProps = FIELD_TYPES[params.fieldTypeId];
     // const createOption = CREATE_OPTION_MAP[fieldProps.name];
-    const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
-    const field = await fields.create(fieldParams);
+    const fieldParams = pick(params, [
+      'id',
+      'tableId',
+      'name',
+      'fieldTypeId',
+      'typeOptions',
+    ]);
+    const field = await fldQueries.create(fieldParams);
     // return { fieldId: field.id };
     // const result = await createOption(fieldParams, params.typeOptions);
     // if (fieldProps.name === 'foreignKey') {
@@ -138,60 +151,65 @@ module.exports = {
     // }
     return field;
   },
-  // async deleteField(id) {
-  //   const field = await fields.getField(id);
-  //   if (!field) return null;
-  //   const fieldProps = FIELD_TYPES[field.fieldTypeId];
-  //   const deleteOption = DELETE_MAP[fieldProps.name];
-  //   const ids = await deleteOption(id);
-  //   const result = await positions.getPositionsByIds([
-  //     ids.fieldId,
-  //     ids.symmetricFieldId,
-  //   ]);
-  //   for (const i of result) {
-  //     await positionsController.deletePositions({
-  //       deletePositions: [i.position],
-  //       parentId: i.parentId,
-  //       type: 'field',
-  //     });
-  //   }
-  //   return null;
-  // },
-  // updateFieldWidth({ fieldId: id, width }) {
-  //   return fields.updateFieldWidth(id, width);
-  // },
-  // async updateField(params) {
-  //   //当fieldTypeId不同时暂时将原field及fieldValue直接删除重新创建，未对fieldValue做类型转换
-  //   const field = await fields.getField(params.fieldId);
-  //   if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-  //   if (params.name && params.name !== field.name) {
-  //     const fieldNameExist = await fields.checkFieldNameExist(
-  //       field.tableId,
-  //       params.name,
-  //     );
-  //     if (fieldNameExist) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
-  //     await updateFieldName(params.fieldId, params.name);
-  //   }
-  //   if (params.fieldTypeId) {
-  //     const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  //     if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
-  //     if (
-  //       field.fieldTypeId == params.fieldTypeId &&
-  //       fieldProps.name !== 'foreignKey'
-  //     ) {
-  //       const updateOption = UPDATE_OPTION_MAP[fieldProps.name];
-  //       if (updateOption)
-  //         await updateOption(params.fieldId, params.typeOptions);
-  //     } else {
-  //       await module.exports.deleteField(params.fieldId);
-  //       await module.exports.createField({
-  //         id: field.id,
-  //         tableId: field.tableId,
-  //         name: params.name || field.name,
-  //         ...params,
-  //       });
-  //     }
-  //   }
-  //   return;
-  // },
+
+  async delete(id) {
+    await checkFieldExists(id);
+    // const fieldProps = FIELD_TYPES[field.fieldTypeId];
+    // const deleteOption = DELETE_MAP[fieldProps.name];
+    await fldQueries.destroy(id);
+    // const ids = await deleteOption(id);
+    // const result = await posController.getByIds([
+    //   ids.fieldId,
+    //   ids.symmetricFieldId,
+    // ]);
+    // for (const i of result) {
+    // await posController.deletePositions({
+    //   deletePositions: [i.position],
+    //   parentId: i.parentId,
+    //   type: 'field',
+    // });
+    await posController.deleteByParentId(id);
+    // }
+  },
+
+  async updateWidth({ fieldId: id, width }) {
+    await checkFieldExists(id);
+    return fldQueries.updateWidth(id, width);
+  },
+
+  async update(params) {
+    await checkFieldExists(params.fieldId);
+    //当fieldTypeId不同时暂时将原field及fieldValue直接删除重新创建，未对fieldValue做类型转换
+
+    // if (params.name && params.name !== field.name) {
+    //   const fieldNameExist = await fields.checkFieldNameExist(
+    //     field.tableId,
+    //     params.name,
+    //   );
+    //   if (fieldNameExist) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+    //   await updateFieldName(params.fieldId, params.name);
+    // }
+    // if (params.fieldTypeId) {
+    //   const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    //   if (!fieldProps) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+    //   if (
+    //     field.fieldTypeId == params.fieldTypeId &&
+    //     fieldProps.name !== 'foreignKey'
+    //   ) {
+    //     const updateOption = UPDATE_OPTION_MAP[fieldProps.name];
+    //     if (updateOption)
+    //       await updateOption(params.fieldId, params.typeOptions);
+    //   } else {
+    //     await module.exports.deleteField(params.fieldId);
+    //     await module.exports.createField({
+    //       id: field.id,
+    //       tableId: field.tableId,
+    //       name: params.name || field.name,
+    //       ...params,
+    //     });
+    //   }
+    // }
+    const updatedFields = pick(params, ['typeOptions', 'name']);
+    return await fldQueries.update(updatedFields, params.fieldId);
+  },
 };

@@ -17,9 +17,9 @@ module.exports = {
     return Tables.destroy({ where: { id } });
   },
 
-  // getEasyTable(id) {
-  //   return Tables.findOne({ where: { id } });
-  // },
+  getEasyTable(id) {
+    return Tables.findOne({ where: { id } });
+  },
 
   // getEasyTables(baseId) {
   //   return Tables.findAll({ where: { baseId }, attributes: ['id'] });

@@ -21,37 +21,39 @@ const deletePositions = async ({ deletePositions, parentId, type }) => {
 };
 
 module.exports = {
-  // changePosition({ originalPositions, targetPosition, parentId, type }) {
-  //   targetPosition = parseInt(targetPosition);
-  //   originalPositions = Array.from(originalPositions, i => parseInt(i));
-  //   originalPositions.sort();
-  //   const originLen = originalPositions.length;
-  //   const minPosition = Math.min(originalPositions[0], targetPosition);
-  //   const maxPosition = Math.max(
-  //     originalPositions[originLen - 1],
-  //     targetPosition,
-  //   );
-  //   const temp = originalPositions.reduce((sum, originalPosition) => {
-  //     if (originalPosition < targetPosition) sum++;
-  //     return sum;
-  //   }, 0);
-  //   let movedNum = 0;
-  //   let sql = `update positions set position = case`;
-  //   for (let i = minPosition; i <= maxPosition; i++) {
-  //     if (originalPositions.indexOf(i) === -1) {
-  //       if (i >= targetPosition) {
-  //         sql += ` when position = ${i} then ${i + originLen - movedNum}`;
-  //       } else {
-  //         sql += ` when position = ${i} then ${i - movedNum}`;
-  //       }
-  //     } else {
-  //       sql += ` when position = ${i} then ${targetPosition - temp + movedNum}`;
-  //       movedNum++;
-  //     }
-  //   }
-  //   sql += ` else position end where "parentId" = ? and "type" = ?`;
-  //   return positions.query(sql, { replacements: [parentId, type] });
-  // },
+  deletePositions,
+
+  changePosition({ originalPositions, targetPosition, parentId, type }) {
+    targetPosition = parseInt(targetPosition);
+    originalPositions = Array.from(originalPositions, i => parseInt(i));
+    originalPositions.sort();
+    const originLen = originalPositions.length;
+    const minPosition = Math.min(originalPositions[0], targetPosition);
+    const maxPosition = Math.max(
+      originalPositions[originLen - 1],
+      targetPosition,
+    );
+    const temp = originalPositions.reduce((sum, originalPosition) => {
+      if (originalPosition < targetPosition) sum++;
+      return sum;
+    }, 0);
+    let movedNum = 0;
+    let sql = `update positions set position = case`;
+    for (let i = minPosition; i <= maxPosition; i++) {
+      if (originalPositions.indexOf(i) === -1) {
+        if (i >= targetPosition) {
+          sql += ` when position = ${i} then ${i + originLen - movedNum}`;
+        } else {
+          sql += ` when position = ${i} then ${i - movedNum}`;
+        }
+      } else {
+        sql += ` when position = ${i} then ${targetPosition - temp + movedNum}`;
+        movedNum++;
+      }
+    }
+    sql += ` else position end where "parentId" = ? and "type" = ?`;
+    return posQueries.query(sql, { replacements: [parentId, type] });
+  },
 
   async create({ parentId, id, type }) {
     const lastPosition = await posQueries.getLast(parentId, type);
@@ -73,9 +75,9 @@ module.exports = {
   //   return positions.getPositionsByParentIdAndType(parentId, type);
   // },
 
-  // getPositionsByIds(ids) {
-  //   return positions.getPositionsByIds(ids);
-  // },
+  getByIds(ids) {
+    return posQueries.getByIds(ids);
+  },
 
   // deleteParentId(parentId) {
   //   return positions.deleteParentId(parentId);

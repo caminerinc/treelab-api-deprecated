@@ -171,6 +171,7 @@ module.exports = {
 
   async delete(ctx) {
     const params = ctx.params;
+    checkKeyExists(params, 'tableId');
     await sequelize.transaction(() => tblController.delete(params.tableId));
     ctx.body = { message: 'success' };
   },

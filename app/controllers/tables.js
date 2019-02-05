@@ -8,7 +8,15 @@ const recController = require('../controllers/records');
 // const { createField, deleteField } = require('../controllers/fields');
 const fldController = require('../controllers/fields');
 
+const checkIfExists = async id => {
+  const field = await tblQueries.getEasyTable(id);
+  if (!field) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
+
+  return field;
+};
+
 module.exports = {
+  checkIfExists,
   async getAll(baseId) {
     // Really not sure why the important at the top doens't work.
     const bseCtrl = require('../controllers/bases');
