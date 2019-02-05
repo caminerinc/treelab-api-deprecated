@@ -42,6 +42,7 @@ module.exports = {
     return fldValQueries.upsert(params);
   },
 
+  // @Moya some manual stuff going on for each one for reference field types
   async updateArrayFieldTypesByAdding(params) {
     const { recordId, fieldId, item, referenceColumnId } = params;
     await updateArrayByAdding(recordId, fieldId, item);
@@ -67,6 +68,7 @@ module.exports = {
   },
 
   delete({ recordId, fieldId }) {
+    // TODO Handle destroying reference keys
     return fldValQueries.destroy(recordId, fieldId);
   },
 

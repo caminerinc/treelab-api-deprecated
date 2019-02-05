@@ -9,7 +9,7 @@ const recResolver = require('../resolvers/records');
 const usrResolver = require('../resolvers/users');
 const posResolver = require('../resolvers/positions');
 
-// // App
+// App
 router.get('/api/public/health-check', ctx => {
   ctx.body = 'Connection established';
 });
@@ -38,8 +38,8 @@ router.post('/api/record', recResolver.create);
 router.delete('/api/delete-rows', recResolver.deleteMultiple);
 
 // //FieldValue
-router.put('/api/primitive-field', fldValResolver.createOrUpdatePrimitive);
 router.post('/api/array-field', fldValResolver.updateArrayByAdding);
+router.put('/api/primitive-field', fldValResolver.createOrUpdatePrimitive);
 router.delete('/api/clear-field-value', fldValResolver.clearValue);
 router.delete('/api/array-field', fldValResolver.deleteArrayValue);
 // router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
@@ -49,8 +49,8 @@ router.put('/api/change-position', posResolver.changePosition);
 
 //Users
 router.get('/api/users', usrResolver.getAll);
+router.get('/api/public/test-auth', usrResolver.testAuth);
 router.post('/api/public/user', usrResolver.create);
 router.post('/api/public/login', usrResolver.login);
-router.get('/api/public/test-auth', usrResolver.testAuth);
 
 module.exports = router;

@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
     },
   });
+
   Records.associate = function(models) {
     Records.hasMany(models.FieldValues, {
       foreignKey: 'recordId',

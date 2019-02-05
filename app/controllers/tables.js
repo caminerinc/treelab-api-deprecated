@@ -14,6 +14,7 @@ module.exports = {
   checkIfExists,
   async createNewTableSet(params) {
     const table = await tblQueries.create(params);
+    // @Moya Here I am manually creating two fields, and 3 rows. Any better approach?
     await posController.create({
       parentId: params.baseId,
       id: table.id,
@@ -69,6 +70,10 @@ module.exports = {
 
   async delete(id) {
     await tblQueries.destroy(id);
+
+    // @Moya again, I think its weird that we have to delete the children
+    // manually. If a table is deleted, the rows and fields should be cascaded, and
+    // also deleting its position right?
     await posController.deleteByParentId(id);
   },
 };

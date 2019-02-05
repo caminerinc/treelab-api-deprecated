@@ -1,7 +1,7 @@
-const { checkKeyExists } = require('../util/helper');
 const fldController = require('../controllers/fields');
-const socketIo = require('../../lib/socketIo');
 const { sequelize } = require('../models/index');
+const { checkKeyExists } = require('../util/helper');
+const socketIo = require('../../lib/socketIo');
 
 module.exports = {
   async create(ctx) {

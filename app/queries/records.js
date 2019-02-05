@@ -1,4 +1,4 @@
-const { sequelize, Records } = require('../models');
+const { Records } = require('../models');
 
 module.exports = {
   create(params) {

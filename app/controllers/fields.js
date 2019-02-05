@@ -30,7 +30,8 @@ const createWithPosition = async params => {
 
 const createReferenceField = async (params, createdField) => {
   checkKeyExists(params.typeOptions, 'referenceTableId', 'relationship');
-  const currentTable = await tblController.getEasyTable(params.tableId);
+  const tblCtrl = require('../controllers/tables');
+  const currentTable = await tblCtrl.getEasyTable(params.tableId);
 
   // Create Reference field using the newly created field
   const referenceField = await createWithPosition({
@@ -70,7 +71,8 @@ module.exports = {
     ]);
     const field = await createWithPosition(fieldParams);
 
-    // Handle reference field types
+    // @Moya Here I am manually handling reference field types.
+    // It is the only one where, if it is created, the reference field also needs to be created
     if (params.fieldTypeId === 3) {
       await createReferenceField(params, field);
     }
@@ -94,6 +96,7 @@ module.exports = {
     // TODO handle reference fieldTypes
     await checkFieldExists(id);
     await fldQueries.destroy(id);
+    // @Moya another weird spot where position has to be manually deleted
     await posController.deleteByParentId(id);
   },
 };

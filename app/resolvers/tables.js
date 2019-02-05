@@ -9,19 +9,7 @@ const adaptTables = tables => ({
   tableSchemas: tables.map(table => ({
     ...pick(table, ['id', 'name']),
     columns: table.flds.map(field => {
-      // const fieldProps = FIELD_TYPES[field.fieldTypeId];
-      // const otherProps = {};
-      // if (fieldProps.isTypeOptionsRequired) {
-      //   otherProps.typeOptions = pick(
-      //     get(field, fieldProps.typeName),
-      //     fieldProps.typeProps,
-      //   );
-      // }
-      return {
-        ...pick(field, ['id', 'name', 'fieldTypeId', 'typeOptions']),
-        // ...otherProps,
-        // type: fieldProps.name,
-      };
+      return pick(field, ['id', 'name', 'fieldTypeId', 'typeOptions']);
     }),
   })),
 });
@@ -75,33 +63,10 @@ const getCellValuesByColumnId = fieldValues => {
   return cellAccum;
 };
 
-// const adaptGetRowsMatchingName = async (table, tableSchema) => {
-//   table = await adaptTable(table);
-//   let result = {
-//     rowResults: [],
-//     columnsById: {},
-//     columnOrder: table.viewDatas[0].columnOrder,
-//   };
-//   for (const i in table.viewDatas[0].rowOrder) {
-//     const rowId = table.viewDatas[0].rowOrder[i].id;
-//     result.rowResults.push(table.tableDatas.rowsById[rowId]);
-//   }
-//   tableSchema.forEach(i => {
-//     result.columnsById[i.id] = {
-//       id: i.id,
-//       name: i.name,
-//       type: FIELD_TYPES[i.fieldTypeId].name,
-//       typeOptions: i.numberTypes || i.foreignKeyTypes,
-//     };
-//   });
-//   return result;
-// };
-
 module.exports = {
   async create(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name', 'baseId');
-
     const result = await sequelize.transaction(() =>
       tblController.createNewTableSet(params),
     );
@@ -112,7 +77,6 @@ module.exports = {
   async getAll(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
-
     const tables = await tblController.getAll(params.baseId);
     ctx.body = adaptTables(tables);
   },
@@ -120,7 +84,6 @@ module.exports = {
   async getOne(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-
     const table = await tblController.getOne(params.tableId);
     if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
     ctx.body = adaptTable(table);
@@ -130,7 +93,6 @@ module.exports = {
     // TODO: INCOMPLETE
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-
     const { table, tableSchema } = await tblController.getShallowRows(
       params.tableId,
     );
@@ -140,7 +102,6 @@ module.exports = {
   async delete(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-
     await sequelize.transaction(() => tblController.delete(params.tableId));
     ctx.body = { message: 'success' };
   },

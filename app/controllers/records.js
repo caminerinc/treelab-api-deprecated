@@ -1,7 +1,5 @@
 const posController = require('../controllers/positions');
-const tblController = require('../controllers/tables');
 const records = require('../queries/records');
-const positions = require('../queries/positions');
 
 const create = async tableId => {
   const result = await records.create({ tableId });
@@ -17,7 +15,7 @@ const create = async tableId => {
 module.exports = {
   create,
   async checkTableAndCreate(tableId) {
-    // TODO: @Derek Really not sure why this isn't working
+    // TODO: @Moya Really not sure why this isn't working, I have to import it here
     const tblCtrl = require('../controllers/tables');
     await tblCtrl.checkIfExists(tableId);
     return create(tableId);
