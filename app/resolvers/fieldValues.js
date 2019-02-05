@@ -1,14 +1,13 @@
 const { checkKeyExists } = require('../util/helper');
 const fldValController = require('../controllers/fieldValues');
 const socketIo = require('../../lib/socketIo');
-const { FIELD_TYPES } = require('../constants/fieldTypes');
-const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
 
 module.exports = {
   async createOrUpdatePrimitive(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
+    // TODO Check field type is valid
     // const fieldProps = FIELD_TYPES[params.fieldTypeId];
     // if (fieldProps.isArrayValue)
     //   error(
@@ -16,14 +15,12 @@ module.exports = {
     //     ECodes.UNSURPPORTED_FIELD_TYPE,
     //     params.fieldTypeId,
     //   );
-    await sequelize.transaction(() =>
-      fldValController.upsertFieldValue(params),
-    );
+    await sequelize.transaction(() => fldValController.upsertPrimitive(params));
     ctx.body = { message: 'success' };
-    // socketIo.sync({
-    //   op: 'createOrUpdatePrimitiveField',
-    //   body: params,
-    // });
+    socketIo.sync({
+      op: 'createOrUpdatePrimitiveField',
+      body: params,
+    });
   },
 
   async clearValue(ctx) {
@@ -31,38 +28,41 @@ module.exports = {
     checkKeyExists(params, 'recordId', 'fieldId');
     await fldValController.delete(params);
     ctx.body = { message: 'success' };
-    // socketIo.sync({
-    //   op: 'clearFieldValue',
-    //   body: params,
-    // });
+    socketIo.sync({
+      op: 'clearFieldValue',
+      body: params,
+    });
   },
 
-  // async resolveUpdateArrayTypeByAdding(ctx) {
-  //   const params = ctx.request.body;
-  //   checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
-  //   const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  //   if (!fieldProps.isArrayValue)
-  //     error(
-  //       Status.Forbidden,
-  //       ECodes.UNSURPPORTED_FIELD_TYPE,
-  //       params.fieldTypeId,
-  //     );
-  //   const result = await sequelize.transaction(() =>
-  //     fieldValues.createArrayValue(params),
-  //   );
-  //   ctx.body = { id: result.id };
-  //   socketIo.sync({
-  //     op: 'updateArrayTypeByAdding',
-  //     body: result,
-  //   });
-  // },
+  async updateArrayByAdding(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId', 'item', 'fieldTypeId');
+    // TODO Check field types and values, prop is put into "item"
+    // const fieldProps = FIELD_TYPES[params.fieldTypeId];
+    // if (!fieldProps.isArrayValue)
+    //   error(
+    //     Status.Forbidden,
+    //     ECodes.UNSURPPORTED_FIELD_TYPE,
+    //     params.fieldTypeId,
+    //   );
+    const result = await sequelize.transaction(() =>
+      fldValController.updateArrayFieldTypesByAdding(params),
+    );
+    ctx.body = { message: 'success' };
+    socketIo.sync({
+      op: 'updateArrayTypeByAdding',
+      body: result,
+    });
+  },
 
-  // async resolveDeleteArrayValue(ctx) {
-  //   const params = ctx.request.body;
-  //   checkKeyExists(params, 'recordId', 'fieldId', 'itemId', 'fieldTypeId');
-  //   await sequelize.transaction(() => fieldValues.deleteArrayValue(params));
-  //   ctx.body = { message: 'success' };
-  // },
+  async deleteArrayValue(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'recordId', 'fieldId', 'item', 'fieldTypeId');
+    await sequelize.transaction(() =>
+      fldValController.deleteArrayFieldTypesByRemoving(params),
+    );
+    ctx.body = { message: 'success' };
+  },
 
   // async resolveBulkCopyFieldValue(ctx) {
   //   const params = ctx.request.body;

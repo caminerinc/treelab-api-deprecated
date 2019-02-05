@@ -27,6 +27,18 @@ const ECodes = {
     code: 'FIELD_NOT_FOUND',
     message: 'Field id could not be found.',
   },
+  FIELD_VALUE_NOT_FOUND: {
+    code: 'FIELD_VALUE_NOT_FOUND',
+    message: 'Field value could not be found.',
+  },
+  FIELD_VALUE_NOT_ARRAY: {
+    code: 'FIELD_VALUE_NOT_ARRAY',
+    message: 'Field value is not an array.',
+  },
+  ITEM_NOT_FOUND: {
+    code: 'ITEM_NOT_FOUND',
+    message: 'Field value item is not found.',
+  },
   INVALID_EMAIL: { code: 'INVALID_EMAIL', message: 'Incorrect email format.' },
   USER_ALREADY_EXISTS: {
     code: 'USER_ALREADY_EXISTS',

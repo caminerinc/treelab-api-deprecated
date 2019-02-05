@@ -11,6 +11,28 @@ const adaptBases = bases =>
   }));
 
 module.exports = {
+  async create(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'name');
+
+    const result = await sequelize.transaction(() =>
+      bseController.create(params),
+    );
+    ctx.body = {
+      id: result.base.id,
+      name: result.base.name,
+      // primaryTableId: result.table.table.id,
+    };
+  },
+
+  async getOne(ctx) {
+    const baseId = ctx.request.body.baseId || ctx.params.baseId;
+    if (!baseId) error(null, ECodes.REQUIRED, 'baseId');
+
+    const base = await bseController.getOne(baseId);
+    ctx.body = base;
+  },
+
   async getAll(ctx) {
     const result = await bseController.getAll();
     ctx.body = { bases: adaptBases(result) };
@@ -34,27 +56,5 @@ module.exports = {
     checkKeyExists(params, 'baseId');
     await sequelize.transaction(() => bseController.delete(params.baseId));
     ctx.body = { message: 'success' };
-  },
-
-  async getOne(ctx) {
-    const baseId = ctx.request.body.baseId || ctx.params.baseId;
-    if (!baseId) error(null, ECodes.REQUIRED, 'baseId');
-
-    const base = await bseController.getOne(baseId);
-    ctx.body = base;
-  },
-
-  async create(ctx) {
-    const params = ctx.request.body;
-    checkKeyExists(params, 'name');
-
-    const result = await sequelize.transaction(() =>
-      bseController.create(params),
-    );
-    ctx.body = {
-      id: result.base.id,
-      name: result.base.name,
-      // primaryTableId: result.table.table.id,
-    };
   },
 };

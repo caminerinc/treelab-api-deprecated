@@ -1,112 +1,74 @@
-const { FIELD_TYPES } = require('../constants/fieldTypes');
-const { checkKeyExists } = require('../util/helper');
+const { get, findIndex } = require('lodash');
 const fldValQueries = require('../queries/fieldValues');
-const { createField } = require('./fields');
-const { createRecord } = require('./records');
 const { error, Status, ECodes } = require('../util/error');
 
-const CREATE_MAP = {
-  multipleAttachment: createMultipleAttachment,
-  foreignKey: createForeignKeyValue,
+const updateArrayByAdding = async (recordId, fieldId, item) => {
+  const fieldValue = await fldValQueries.findOrCreate(recordId, fieldId);
+  // Retrieve the current array value, and make sure its an array.
+  const values = get(fieldValue, 'value.value', []);
+  const updatedValues = {
+    value: Array.isArray(values) ? values.concat([item]) : [item],
+  };
+
+  return await fldValQueries.updateValue(recordId, fieldId, updatedValues);
 };
 
-const UPSERT_MAP = {
-  text: upsertGenericFieldValue,
-  number: upsertGenericFieldValue,
+const updateArrayByRemoving = async (recordId, fieldId, item) => {
+  const fieldValue = await fldValQueries.find(recordId, fieldId);
+  if (!fieldValue) error(Status.Forbidden, ECodes.FIELD_VALUE_NOT_FOUND);
+
+  // Check if it is an array
+  const values = get(fieldValue, 'value.value', []);
+  if (!Array.isArray(values))
+    error(Status.Forbidden, ECodes.FIELD_VALUE_NOT_ARRAY);
+
+  // Check if item exists
+  const index = findIndex(values, item);
+  if (index === -1) error(Status.Forbidden, ECodes.ITEM_NOT_FOUND);
+
+  const updatedValues = values
+    .slice(0, index)
+    .concat(values.slice(index + 1, values.length));
+
+  return await fldValQueries.updateValue(recordId, fieldId, updatedValues);
 };
-
-const DELETE_ARRAY_MAP = {
-  multipleAttachment: deleteMultipleAttachment,
-  foreignKey: deleteForeignKeyValue,
-};
-
-function createMultipleAttachment({ fieldValueId, value }) {
-  checkKeyExists(value, 'url', 'fileName', 'fileType');
-  return fieldValues.createMultipleAttachmentValue({
-    fieldValueId,
-    ...value,
-  });
-}
-
-async function createForeignKeyValue({ fieldValueId, value }) {
-  checkKeyExists(value, 'foreignRowId', 'foreignColumnId');
-  const symmetricFieldValue = await fieldValues.findCreateFindFieldValue(
-    value.foreignRowId,
-    value.foreignColumnId,
-  );
-  try {
-    return await fieldValues.createForeignKeyValue({
-      fieldValueId,
-      symmetricFieldValueId: symmetricFieldValue.id,
-    });
-  } catch (e) {
-    if (e.original.code === '23505') {
-      error(Status.Forbidden, ECodes.UNIQUE_CONSTRAINT);
-    }
-    error(Status.InternalServerError, ECodes.INTERNAL_SERVER_ERROR);
-  }
-}
-
-function upsertGenericFieldValue(params, valueName) {
-  return fieldValues.upsertGenericFieldValue(params, valueName);
-}
-
-function deleteMultipleAttachment({ itemId: id }) {
-  return fieldValues.destroyMultipleAttachmentValue(id);
-}
-
-async function deleteForeignKeyValue({ recordId, fieldId, itemId }) {
-  const valueName = FIELD_TYPES['3'].valueName;
-  const forgienFieldValue = await fieldValues.getForeignFieldValue({
-    recordId,
-    fieldId,
-    itemId,
-  });
-  if (forgienFieldValue) {
-    await fieldValues.destroyForeignFieldValue(
-      forgienFieldValue[valueName].fieldValueId,
-      forgienFieldValue[valueName].symmetricFieldValueId,
-    );
-  }
-  return;
-}
 
 module.exports = {
   createFieldValue(params) {
     return fieldValues.create(params);
   },
 
-  upsertFieldValue(params) {
-    // const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    // const upsertValue = UPSERT_MAP[fieldProps.name];
-    return fldValQueries.upsertGeneric(params);
-    // return upsertValue(params, fieldProps.name);
+  upsertPrimitive(params) {
+    return fldValQueries.upsert(params);
   },
 
-  // async createArrayValue(params) {
-  //   const fieldValue = await fieldValues.findOrCreateFieldValue(
-  //     params.recordId,
-  //     params.fieldId,
-  //   );
-  //   params.fieldValueId = fieldValue.id;
-  //   const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  //   const createValue = CREATE_MAP[fieldProps.name];
-  //   return await createValue(params);
-  // },
+  async updateArrayFieldTypesByAdding(params) {
+    const { recordId, fieldId, item, referenceColumnId } = params;
+    await updateArrayByAdding(recordId, fieldId, item);
 
-  // findFieldValue(recordId, fieldId) {
-  //   return fieldValues.getFieldValue(recordId, fieldId);
-  // },
+    // Hardcoded for now, item here needs referenceRowId, and params need referenceColumnId
+    if (params.fieldTypeId === 3) {
+      await updateArrayByAdding(item.referenceRowId, referenceColumnId, {
+        referenceRowId: recordId,
+      });
+    }
+  },
+
+  async deleteArrayFieldTypesByRemoving(params) {
+    const { recordId, fieldId, item, referenceColumnId } = params;
+    await updateArrayByRemoving(recordId, fieldId, item);
+
+    // Hardcoded for now, item here needs referenceRowId, and params need referenceColumnId
+    if (params.fieldTypeId === 3) {
+      await updateArrayByRemoving(item.referenceRowId, referenceColumnId, {
+        referenceRowId: recordId,
+      });
+    }
+  },
 
   delete({ recordId, fieldId }) {
     return fldValQueries.destroy(recordId, fieldId);
   },
-
-  // deleteArrayValue(params) {
-  //   const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  //   const deleteValue = DELETE_ARRAY_MAP[fieldProps.name];
-  //   return deleteValue(params);
-  // },
 
   // async bulkCopyFieldValue({
   //   sourceColumnConfigs,

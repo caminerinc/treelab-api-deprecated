@@ -1,11 +1,6 @@
-const { get, pick, forEach, map } = require('lodash');
 const tblQueries = require('../queries/tables');
-// const positions = require('../queries/positions');
-// const { createPosition, deletePositions } = require('../controllers/positions');
-const bseController = require('../controllers/bases');
 const posController = require('../controllers/positions');
 const recController = require('../controllers/records');
-// const { createField, deleteField } = require('../controllers/fields');
 const fldController = require('../controllers/fields');
 
 const checkIfExists = async id => {
@@ -17,17 +12,6 @@ const checkIfExists = async id => {
 
 module.exports = {
   checkIfExists,
-  async getAll(baseId) {
-    // Really not sure why the important at the top doens't work.
-    const bseCtrl = require('../controllers/bases');
-    await bseCtrl.getOne(baseId);
-    return tblQueries.getAllByBaseId(baseId);
-  },
-
-  getOne(id) {
-    return tblQueries.getOneById(id);
-  },
-
   async createNewTableSet(params) {
     const table = await tblQueries.create(params);
     await posController.create({
@@ -59,29 +43,32 @@ module.exports = {
     };
   },
 
-  // getEasyTable(id) {
-  //   return tables.getEasyTable(id);
-  // },
+  async getAll(baseId) {
+    // @Moya Really not sure why the important at the top doens't work.
+    const bseCtrl = require('../controllers/bases');
+    await bseCtrl.getOne(baseId);
+    return tblQueries.getAllByBaseId(baseId);
+  },
 
-  // getTableByBaseId({ baseId }) {
-  //   return tables.getTableByBaseId(baseId);
-  // },
+  getOne(id) {
+    return tblQueries.getOneById(id);
+  },
+
+  async getShallowRows(id) {
+    // INCOMPLETE
+    await checkIfExists(id);
+    const table = await tblQueries.getAllByBaseId(id);
+    // const tableSchema = await tblQueries.getTableSchema(id);
+
+    return { table, tableSchema };
+  },
+
+  getEasyTable(id) {
+    return tblQueries.getEasyTable(id);
+  },
 
   async delete(id) {
-    // const symmetricFieldIds = await tables.getSymmetricFieldIdsByTableId(id);
-    // if (symmetricFieldIds) {
-    //   forEach(symmetricFieldIds.flds, field => {
-    //     if (!field.foreignKeyTypes) return;
-    //     deleteField({ id: get(field, 'foreignKeyTypes.symmetricFieldId') });
-    //   });
-    // }
     await tblQueries.destroy(id);
     await posController.deleteByParentId(id);
   },
-
-  // async getRowsMatchingName(id) {
-  //   const table = await tables.getTable(id);
-  //   const tableSchema = await tables.getTableSchema(id);
-  //   return { table, tableSchema };
-  // },
 };

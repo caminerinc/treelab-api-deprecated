@@ -1,38 +1,9 @@
-const { get, pick, forEach, map } = require('lodash');
+const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const tblController = require('../controllers/tables');
-const { getPrimaryFieldId } = require('../controllers/positions');
-const fieldValues = require('../controllers/fieldValues');
-const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
-
-// const adaptForeignKey = async (fieldValue, fieldProps) => {
-//   let foreignRecords = [];
-//   for (const foreignKeyValues of fieldValue[fieldProps.valueName]) {
-//     const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
-//     if (fgn) {
-//       const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
-//       const foreignDisplayName = await fieldValues.findFieldValue(
-//         fgn.rec.dataValues.id,
-//         primaryFieldId.id,
-//       );
-//       foreignRecords.push({
-//         foreignRowId: fgn.dataValues.rec.id,
-//         foreignDisplayName: foreignDisplayName
-//           ? foreignDisplayName.dataValues.textValue ||
-//             foreignDisplayName.dataValues.numberValue
-//           : null,
-//       });
-//     }
-//   }
-//   return foreignRecords;
-// };
-
-// const ADAPT_MAP = {
-//   foreignKey: adaptForeignKey,
-// };
 
 const adaptTables = tables => ({
   tableSchemas: tables.map(table => ({
@@ -60,7 +31,7 @@ const adaptTable = table => ({
     ...pick(table, ['id']),
     rowsById: getRowsById(table.recs),
   },
-  // Needs refactor
+  // TODO: Needs refactor
   viewDatas: [
     {
       columnOrder: table.positions
@@ -99,16 +70,6 @@ const getRowsById = records => {
 const getCellValuesByColumnId = fieldValues => {
   let cellAccum = {};
   for (const fieldValue of fieldValues) {
-    // const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
-    // const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    // if (!fieldProps)
-    //   error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, fieldTypeId);
-    // const adaptData = ADAPT_MAP[fieldProps.name];
-    // if (adaptData) {
-    //   cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
-    // } else {
-    // cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
-    // }
     cellAccum[fieldValue.fieldId] = fieldValue.value;
   }
   return cellAccum;
@@ -137,6 +98,17 @@ const getCellValuesByColumnId = fieldValues => {
 // };
 
 module.exports = {
+  async create(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'name', 'baseId');
+
+    const result = await sequelize.transaction(() =>
+      tblController.createNewTableSet(params),
+    );
+    ctx.body = result;
+    socketIo.sync({ op: 'createTable', body: result });
+  },
+
   async getAll(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
@@ -154,34 +126,22 @@ module.exports = {
     ctx.body = adaptTable(table);
   },
 
-  async create(ctx) {
-    const params = ctx.request.body;
-    checkKeyExists(params, 'name', 'baseId');
-    const result = await sequelize.transaction(() =>
-      tblController.createNewTableSet(params),
+  async getShallowRows(ctx) {
+    // TODO: INCOMPLETE
+    const params = ctx.params;
+    checkKeyExists(params, 'tableId');
+
+    const { table, tableSchema } = await tblController.getShallowRows(
+      params.tableId,
     );
-    // result.fields = result.fields.map(i =>
-    //   Object.assign({}, i, {
-    //     fieldTypeName: FIELD_TYPES[i.fieldTypeId].name,
-    //   }),
-    // );
-    ctx.body = result;
-    // socketIo.sync({ op: 'createTable', body: result });
+    ctx.body = await adaptGetRowsMatchingName(table, tableSchema);
   },
 
   async delete(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
+
     await sequelize.transaction(() => tblController.delete(params.tableId));
     ctx.body = { message: 'success' };
   },
-
-  // async resolveGetRowsMatchingName(ctx) {
-  //   const params = ctx.params;
-  //   checkKeyExists(params, 'tableId');
-  //   const { table, tableSchema } = await tables.getRowsMatchingName(
-  //     params.tableId,
-  //   );
-  //   ctx.body = await adaptGetRowsMatchingName(table, tableSchema);
-  // },
 };
