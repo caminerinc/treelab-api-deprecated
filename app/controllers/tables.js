@@ -2,6 +2,8 @@ const tblQueries = require('../queries/tables');
 const posController = require('../controllers/positions');
 const recController = require('../controllers/records');
 const fldController = require('../controllers/fields');
+const { POSITION_TYPE } = require('../constants/app');
+const { error, Status, ECodes } = require('../util/error');
 
 const checkIfExists = async id => {
   const table = await tblQueries.getEasyTable(id);
@@ -17,8 +19,8 @@ module.exports = {
 
     await posController.create({
       parentId: params.baseId,
-      id: table.id,
-      type: 'table',
+      siblingId: table.id,
+      type: POSITION_TYPE.TABLE,
     });
     // TODO: try bulk creating
     const nameField = await fldController.create({
@@ -52,7 +54,8 @@ module.exports = {
     return tblQueries.getAllByBaseId(baseId);
   },
 
-  getOne(id) {
+  async getOne(id) {
+    await checkIfExists(id);
     return tblQueries.getOneById(id);
   },
 
@@ -70,9 +73,7 @@ module.exports = {
   },
 
   async delete(id) {
+    await checkIfExists(id);
     await tblQueries.destroy(id);
-
-    // TODO: Remove pos controller deletion
-    await posController.deleteByParentId(id);
   },
 };

@@ -1,6 +1,7 @@
 const { pick } = require('lodash');
 const fldQueries = require('../queries/fields');
 const posController = require('../controllers/positions');
+const { POSITION_TYPE } = require('../constants/app');
 const { checkKeyExists } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
 
@@ -20,8 +21,8 @@ const createWithPosition = async params => {
   const field = await fldQueries.create(params);
   await posController.create({
     parentId: params.tableId,
-    id: field.id,
-    type: 'field',
+    siblingId: field.id,
+    type: POSITION_TYPE.FIELD,
   });
 
   return field;
@@ -60,7 +61,6 @@ const createReferenceField = async (params, createdField) => {
 module.exports = {
   async create(params) {
     await checkNameWithinTable(params);
-
     const fieldParams = pick(params, [
       'id',
       'tableId',
@@ -94,7 +94,5 @@ module.exports = {
     // TODO handle reference fieldTypes
     await checkFieldExists(id);
     await fldQueries.destroy(id);
-    // TODO: cascade delete
-    await posController.deleteByParentId(id);
   },
 };

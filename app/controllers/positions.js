@@ -1,28 +1,6 @@
 const posQueries = require('../queries/positions');
 
-const deletePositions = async ({ deletePositions, parentId, type }) => {
-  deletePositions = Array.from(deletePositions, i => parseInt(i));
-  deletePositions.sort();
-  const len = deletePositions.length;
-  let movedNum = 0;
-  let sql = `update "Positions" set position = case`;
-  for (let i = deletePositions[0]; i < deletePositions[len - 1]; i++) {
-    if (deletePositions.indexOf(i) === -1) {
-      sql += ` when position = ${i} then ${i - movedNum}`;
-    } else {
-      movedNum++;
-    }
-  }
-  sql += ` when position > ${
-    deletePositions[len - 1]
-  } then position - ${len} else position end where "parentId" = ? and "type" = ?`;
-  await posQueries.destroy({ deletePositions, parentId, type });
-  await posQueries.query(sql, { replacements: [parentId, type] });
-};
-
 module.exports = {
-  deletePositions,
-
   changePosition({ originalPositions, targetPosition, parentId, type }) {
     targetPosition = parseInt(targetPosition);
     originalPositions = Array.from(originalPositions, i => parseInt(i));
@@ -55,35 +33,13 @@ module.exports = {
     return posQueries.query(sql, { replacements: [parentId, type] });
   },
 
-  async create({ parentId, id, type }) {
+  async create({ siblingId, parentId, type }) {
     const lastPosition = await posQueries.getLast(parentId, type);
     const position = (lastPosition.dataValues.max || 0) + 1;
-    return await posQueries.create({ id, position, parentId, type });
+    return await posQueries.create({ siblingId, position, parentId }, type);
   },
-
-  async deleteByParentId(id) {
-    await posQueries.deleteParentId([id]);
-    const positionsResult = await posQueries.getByIds([id]);
-    await deletePositions({
-      deletePositions: [positionsResult[0].position],
-      parentId: positionsResult[0].parentId,
-      type: positionsResult[0].type,
-    });
-  },
-
-  // getPositions(parentId, type) {
-  //   return positions.getPositionsByParentIdAndType(parentId, type);
-  // },
 
   getByIds(ids) {
     return posQueries.getByIds(ids);
   },
-
-  // deleteParentId(parentId) {
-  //   return positions.deleteParentId(parentId);
-  // },
-
-  // getPrimaryFieldId(tableId) {
-  //   return positions.getPrimaryFieldId(tableId);
-  // },
 };

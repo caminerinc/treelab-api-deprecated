@@ -7,7 +7,7 @@ const adaptBases = bases =>
   bases.map(base => ({
     id: base.id,
     name: base.name,
-    primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
+    // primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
   }));
 
 module.exports = {
@@ -20,7 +20,7 @@ module.exports = {
     ctx.body = {
       id: result.base.id,
       name: result.base.name,
-      primaryTableId: result.table.table.id,
+      // primaryTableId: result.table.table.id,
     };
     socketIo.sync({
       op: 'createBase',
@@ -43,7 +43,7 @@ module.exports = {
   async delete(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
-    await sequelize.transaction(() => bseController.delete(params.baseId));
+    bseController.delete(params.baseId);
     ctx.body = { message: 'success' };
   },
 };

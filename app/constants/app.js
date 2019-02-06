@@ -9,6 +9,14 @@ const PREFIX_TYPE = {
   MODULE: 'mdl',
 };
 
+const POSITION_TYPE = {
+  BASE: 'base',
+  TABLE: 'table',
+  FIELD: 'field',
+  RECORD: 'record',
+};
+
 module.exports = {
   PREFIX_TYPE,
+  POSITION_TYPE,
 };

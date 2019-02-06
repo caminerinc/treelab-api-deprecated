@@ -1,4 +1,9 @@
-const { Bases, Positions, sequelize } = require('../models');
+const {
+  Bases,
+  BasePositions,
+  TablePositions,
+  sequelize,
+} = require('../models');
 
 module.exports = {
   create(name) {
@@ -10,21 +15,18 @@ module.exports = {
       attributes: ['id', 'name'],
       include: [
         {
-          model: Positions,
+          model: TablePositions,
           as: 'tablePositions',
           attributes: ['id', 'position'],
-          where: { type: 'table' },
           required: false,
         },
         {
-          model: Positions,
+          model: BasePositions,
           as: 'pos',
           attributes: ['position'],
-          where: { type: 'base' },
-          required: false,
         },
       ],
-      order: [[sequelize.col('tablePositions.position'), 'asc']],
+      // order: [[sequelize.col('tablePositions.position'), 'asc']],
       order: [[sequelize.col('pos.position'), 'asc']],
     });
   },

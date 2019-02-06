@@ -1,4 +1,3 @@
-'use strict';
 module.exports = (sequelize, DataTypes) => {
   const Bases = sequelize.define('Bases', {
     id: {
@@ -17,13 +16,13 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'baseId',
       as: 'tables',
     });
-    Bases.hasMany(models.Positions, {
+    Bases.hasOne(models.BasePositions, {
+      foreignKey: 'siblingId',
+      as: 'pos',
+    });
+    Bases.hasMany(models.TablePositions, {
       foreignKey: 'parentId',
       as: 'tablePositions',
-    });
-    Bases.hasOne(models.Positions, {
-      foreignKey: 'id',
-      as: 'pos',
     });
   };
   return Bases;

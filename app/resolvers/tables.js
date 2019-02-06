@@ -22,24 +22,11 @@ const adaptTable = table => ({
   // TODO: Needs refactor
   viewDatas: [
     {
-      columnOrder: table.positions
-        .filter(i => {
-          if (i.type === 'field') return i;
-        })
-        .map(i => {
-          return {
-            id: i.id,
-            position: i.position,
-            width: i.field ? i.field.width : null,
-          };
-        }),
-      rowOrder: table.positions
-        .filter(i => {
-          if (i.type === 'record') return i;
-        })
-        .map(i => {
-          return { id: i.id, position: i.position };
-        }),
+      columnOrder: table.fieldPositions.map(fieldPos => ({
+        id: fieldPos.siblingId,
+        width: fieldPos.field ? fieldPos.field.width : null,
+      })),
+      rowOrder: table.recordPositions.map(recPos => ({ id: recPos.siblingId })),
     },
   ],
 });

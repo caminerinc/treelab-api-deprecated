@@ -1,9 +1,11 @@
 const {
   Fields,
+  FieldPositions,
   FieldValues,
-  Positions,
   Records,
+  RecordPositions,
   Tables,
+  TablePositions,
   sequelize,
 } = require('../models');
 
@@ -34,9 +36,9 @@ module.exports = {
           ],
         },
         {
-          model: Positions,
-          as: 'positions',
-          attributes: ['id', 'position', 'type'],
+          model: FieldPositions,
+          as: 'fieldPositions',
+          attributes: ['siblingId'],
           include: [
             {
               model: Fields,
@@ -45,10 +47,15 @@ module.exports = {
             },
           ],
         },
+        {
+          model: RecordPositions,
+          as: 'recordPositions',
+          attributes: ['siblingId'],
+        },
       ],
       order: [
-        [sequelize.col('positions.type'), 'asc'],
-        [sequelize.col('positions.position'), 'asc'],
+        [sequelize.col('fieldPositions.position'), 'asc'],
+        [sequelize.col('recordPositions.position'), 'asc'],
       ],
     });
   },
@@ -64,10 +71,9 @@ module.exports = {
           attributes: ['id', 'name', 'fieldTypeId', 'typeOptions'],
         },
         {
-          model: Positions,
+          model: TablePositions,
           as: 'pos',
           attributes: ['position'],
-          where: { type: 'table' },
           required: false,
         },
       ],

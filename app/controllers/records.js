@@ -1,13 +1,15 @@
 const posController = require('../controllers/positions');
-const records = require('../queries/records');
+const { POSITION_TYPE } = require('../constants/app');
+const recQueries = require('../queries/records');
 
 const create = async tableId => {
-  const result = await records.create({ tableId });
+  const result = await recQueries.create({ tableId });
   const position = await posController.create({
     parentId: tableId,
-    id: result.id,
-    type: 'record',
+    siblingId: result.id,
+    type: POSITION_TYPE.RECORD,
   });
+
   result.position = position.position;
   return result;
 };
@@ -21,16 +23,7 @@ module.exports = {
     return create(tableId);
   },
 
-  async deleteMultiple(rows) {
-    await records.destroy(rows);
-    const result = await posController.getByIds(rows);
-    if (result.length) {
-      await posController.deletePositions({
-        deletePositions: Array.from(result, i => i.position),
-        parentId: result[0].parentId,
-        type: 'record',
-      });
-    }
-    return null;
+  deleteMultiple(rows) {
+    return recQueries.destroy(rows);
   },
 };

@@ -1,6 +1,7 @@
 const bseQueries = require('../queries/bases');
 const posController = require('../controllers/positions');
 const tblController = require('../controllers/tables');
+const { POSITION_TYPE } = require('../constants/app');
 const { error, Status, ECodes } = require('../util/error');
 
 module.exports = {
@@ -11,8 +12,10 @@ module.exports = {
       name: 'Table 1',
     });
     await posController.create({
-      id: base.id,
-      type: 'base',
+      siblingId: base.id,
+      // TODO: Temporary fix
+      parentId: '11111111-1111-1111-1111-111111111111',
+      type: POSITION_TYPE.BASE,
     });
     return { base, table };
   },
@@ -27,15 +30,7 @@ module.exports = {
     return base;
   },
 
-  async delete(baseId) {
-    const result = await posController.getByIds([baseId]);
-    // TODO This is not working properly. Something to do with the base not having
-    // a correct parentId in position (look in the create function)
-    await posController.deletePositions({
-      deletePositions: [result[0].position],
-      parentId: result[0].parentId,
-      type: result[0].type,
-    });
-    await bseQueries.destroy(baseId);
+  delete(baseId) {
+    return bseQueries.destroy(baseId);
   },
 };

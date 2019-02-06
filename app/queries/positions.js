@@ -1,52 +1,37 @@
-const { sequelize, Positions } = require('../models');
+const {
+  BasePositions,
+  FieldPositions,
+  RecordPositions,
+  TablePositions,
+  sequelize,
+} = require('../models');
+const { POSITION_TYPE } = require('../constants/app');
+
+const POSITION_MODELS = {
+  [POSITION_TYPE.BASE]: BasePositions,
+  [POSITION_TYPE.TABLE]: TablePositions,
+  [POSITION_TYPE.FIELD]: FieldPositions,
+  [POSITION_TYPE.RECORD]: RecordPositions,
+};
 
 module.exports = {
   getLast(parentId, type) {
-    return Positions.findOne({
+    const PosModel = POSITION_MODELS[type];
+
+    return PosModel.findOne({
       attributes: [[sequelize.fn('max', sequelize.col('position')), 'max']],
-      where: { parentId, type },
+      where: { parentId },
     });
   },
 
-  create(params) {
-    return Positions.create(params);
-  },
+  create(params, type) {
+    const PosModel = POSITION_MODELS[type];
 
-  // getPositionsByParentIdAndType(parentId, type) {
-  //   return positions.findAll({
-  //     attributes: ['id', 'position'],
-  //     where: { parentId, type },
-  //     order: [['position', 'asc']],
-  //   });
-  // },
+    return PosModel.create(params);
+  },
 
   getByIds(ids) {
     return Positions.findAll({ where: { id: { $in: ids } } });
-  },
-
-  // getPrimaryFieldId(tableId) {
-  //   return positions.findOne({
-  //     attributes: ['id'],
-  //     where: {
-  //       parentId: tableId,
-  //       position: 1,
-  //       type: 'field',
-  //     },
-  //   });
-  // },
-
-  deleteParentId(parentId) {
-    return Positions.destroy({ where: { parentId: { $in: parentId } } });
-  },
-
-  destroy({ deletePositions, parentId, type }) {
-    return Positions.destroy({
-      where: {
-        position: { $in: deletePositions },
-        parentId,
-        type,
-      },
-    });
   },
 
   query(sql, options) {

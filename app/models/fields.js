@@ -1,7 +1,3 @@
-const { createUid } = require('../util/helper');
-const { PREFIX_TYPE } = require('../constants/app');
-const { FIELD_TYPES } = require('../constants/fieldTypes');
-
 module.exports = (sequelize, DataTypes) => {
   const Fields = sequelize.define(
     'Fields',
@@ -38,8 +34,8 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldId',
       as: 'fldVs',
     });
-    Fields.hasOne(models.Positions, {
-      foreignKey: 'id',
+    Fields.hasOne(models.FieldPositions, {
+      foreignKey: 'parentId',
       as: 'pos',
     });
   };
