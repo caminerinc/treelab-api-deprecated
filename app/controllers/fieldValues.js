@@ -4,6 +4,8 @@ const { error, Status, ECodes } = require('../util/error');
 
 const updateArrayByAdding = async (recordId, fieldId, item) => {
   const fieldValue = await fldValQueries.findOrCreate(recordId, fieldId);
+  if (!fieldValue) error(Status.Forbidden, ECodes.FIELD_VALUE_NOT_FOUND);
+
   // Retrieve the current array value, and make sure its an array.
   const values = get(fieldValue, 'value.value', []);
   const updatedValues = {

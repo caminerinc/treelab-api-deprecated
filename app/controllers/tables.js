@@ -4,23 +4,23 @@ const recController = require('../controllers/records');
 const fldController = require('../controllers/fields');
 
 const checkIfExists = async id => {
-  const field = await tblQueries.getEasyTable(id);
-  if (!field) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
+  const table = await tblQueries.getEasyTable(id);
+  if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
 
-  return field;
+  return table;
 };
 
 module.exports = {
   checkIfExists,
   async createNewTableSet(params) {
     const table = await tblQueries.create(params);
-    // @Moya Here I am manually creating two fields, and 3 rows. Any better approach?
+
     await posController.create({
       parentId: params.baseId,
       id: table.id,
       type: 'table',
     });
-
+    // TODO: try bulk creating
     const nameField = await fldController.create({
       tableId: table.id,
       name: 'Name',
@@ -29,11 +29,12 @@ module.exports = {
     const descField = await fldController.create({
       tableId: table.id,
       name: 'Description',
-      fieldTypeId: 1,
+      fieldTypeId: 'wrong',
     });
 
     let recordResults = [];
     for (let i = 0; i < 3; i++) {
+      // TODO: Put this inside a bulk create
       recordResults.push(await recController.create(table.id));
     }
 
@@ -45,7 +46,7 @@ module.exports = {
   },
 
   async getAll(baseId) {
-    // @Moya Really not sure why the important at the top doens't work.
+    // @TODO Putting this require at the top doesn't work
     const bseCtrl = require('../controllers/bases');
     await bseCtrl.getOne(baseId);
     return tblQueries.getAllByBaseId(baseId);
@@ -71,9 +72,7 @@ module.exports = {
   async delete(id) {
     await tblQueries.destroy(id);
 
-    // @Moya again, I think its weird that we have to delete the children
-    // manually. If a table is deleted, the rows and fields should be cascaded, and
-    // also deleting its position right?
+    // TODO: Remove pos controller deletion
     await posController.deleteByParentId(id);
   },
 };

@@ -15,7 +15,7 @@ const create = async tableId => {
 module.exports = {
   create,
   async checkTableAndCreate(tableId) {
-    // TODO: @Moya Really not sure why this isn't working, I have to import it here
+    // TODO: Require is not working properly
     const tblCtrl = require('../controllers/tables');
     await tblCtrl.checkIfExists(tableId);
     return create(tableId);

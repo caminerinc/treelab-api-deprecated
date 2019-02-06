@@ -1,7 +1,6 @@
 const { pick } = require('lodash');
 const fldQueries = require('../queries/fields');
 const posController = require('../controllers/positions');
-const tblController = require('../controllers/tables');
 const { checkKeyExists } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
 
@@ -71,8 +70,7 @@ module.exports = {
     ]);
     const field = await createWithPosition(fieldParams);
 
-    // @Moya Here I am manually handling reference field types.
-    // It is the only one where, if it is created, the reference field also needs to be created
+    // TODO: Check field type id from db table
     if (params.fieldTypeId === 3) {
       await createReferenceField(params, field);
     }
@@ -96,7 +94,7 @@ module.exports = {
     // TODO handle reference fieldTypes
     await checkFieldExists(id);
     await fldQueries.destroy(id);
-    // @Moya another weird spot where position has to be manually deleted
+    // TODO: cascade delete
     await posController.deleteByParentId(id);
   },
 };

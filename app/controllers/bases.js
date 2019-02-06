@@ -24,14 +24,11 @@ module.exports = {
   async getOne(id) {
     const base = await bseQueries.getOne(id);
     if (!base) error(Status.Unauthorized, ECodes.BASE_NOT_FOUND);
+    return base;
   },
 
   async delete(baseId) {
     const result = await posController.getByIds([baseId]);
-    // @Moya I find it weird that we have to delete positions manually
-    // each time we delete something. It should be able to cascade down
-    // correctly right?
-
     // TODO This is not working properly. Something to do with the base not having
     // a correct parentId in position (look in the create function)
     await posController.deletePositions({
