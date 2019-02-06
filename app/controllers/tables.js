@@ -29,7 +29,7 @@ module.exports = {
     const descField = await fldController.create({
       tableId: table.id,
       name: 'Description',
-      fieldTypeId: 'wrong',
+      fieldTypeId: 1,
     });
 
     let recordResults = [];
