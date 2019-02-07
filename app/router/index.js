@@ -25,7 +25,7 @@ router.get('/api/tables/:baseId', tblResolver.getAll);
 router.get('/api/table/:tableId', tblResolver.getOne);
 router.post('/api/table', tblResolver.create);
 router.delete('/api/table/:tableId', tblResolver.delete);
-// router.get('/api/table/:tableId/shallow-rows', tblResolver.getShallowRows);
+router.get('/api/table/:tableId/shallow-rows', tblResolver.getShallowRows);
 
 // //Field
 router.post('/api/field', fldResolver.create);
@@ -42,6 +42,7 @@ router.post('/api/array-field', fldValResolver.updateArrayByAdding);
 router.put('/api/primitive-field', fldValResolver.createOrUpdatePrimitive);
 router.delete('/api/clear-field-value', fldValResolver.clearValue);
 router.delete('/api/array-field', fldValResolver.deleteArrayValue);
+// TODO fix bulk copy
 // router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
 // //Position

@@ -1,6 +1,7 @@
 const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const tblController = require('../controllers/tables');
+const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
@@ -8,9 +9,10 @@ const { sequelize } = require('../models/index');
 const adaptTables = tables => ({
   tableSchemas: tables.map(table => ({
     ...pick(table, ['id', 'name']),
-    columns: table.flds.map(field => {
-      return pick(field, ['id', 'name', 'fieldTypeId', 'typeOptions']);
-    }),
+    columns: table.flds.map(field => ({
+      ...pick(field, ['id', 'name', 'typeOptions']),
+      type: FIELD_TYPES[field.fieldTypeId].name,
+    })),
   })),
 });
 
@@ -30,6 +32,30 @@ const adaptTable = table => ({
     },
   ],
 });
+
+const adaptShallowRows = (table, tableSchema) => {
+  const adaptedTable = adaptTable(table);
+  let rowResults = [];
+  let columnsById = {};
+
+  for (const i in adaptedTable.viewDatas[0].rowOrder) {
+    const rowId = adaptedTable.viewDatas[0].rowOrder[i].id;
+    rowResults.push(adaptedTable.tableDatas.rowsById[rowId]);
+  }
+
+  for (const col of tableSchema) {
+    columnsById[col.id] = {
+      ...pick(col, ['id', 'name', 'typeOptions']),
+      type: FIELD_TYPES[col.fieldTypeId].name,
+    };
+  }
+
+  return {
+    rowResults,
+    columnsById,
+    columnOrder: adaptedTable.viewDatas[0].columnOrder,
+  };
+};
 
 const getRowsById = records => {
   let rowAccum = {};
@@ -77,13 +103,14 @@ module.exports = {
   },
 
   async getShallowRows(ctx) {
-    // TODO: INCOMPLETE
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
     const { table, tableSchema } = await tblController.getShallowRows(
       params.tableId,
     );
-    ctx.body = await adaptGetRowsMatchingName(table, tableSchema);
+    const adaptedData = adaptShallowRows(table, tableSchema);
+    console.log('CMON WHY IS ADAPTEDD DATA', adaptedData);
+    ctx.body = adaptedData;
   },
 
   async delete(ctx) {

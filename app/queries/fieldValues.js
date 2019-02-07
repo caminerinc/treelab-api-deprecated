@@ -1,12 +1,11 @@
 const { FieldValues } = require('../models');
-const { FIELD_TYPES } = require('../constants/fieldTypes');
 
 module.exports = {
   upsert({ recordId, fieldId, value }) {
     return FieldValues.upsert({
-      recordId: recordId,
-      fieldId: fieldId,
-      value: value,
+      recordId,
+      fieldId,
+      value,
     });
   },
 

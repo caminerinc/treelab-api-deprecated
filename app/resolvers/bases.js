@@ -7,7 +7,9 @@ const adaptBases = bases =>
   bases.map(base => ({
     id: base.id,
     name: base.name,
-    // primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
+    primaryTableId: base.tablePositions[0]
+      ? base.tablePositions[0].siblingId
+      : null,
   }));
 
 module.exports = {
@@ -20,7 +22,7 @@ module.exports = {
     ctx.body = {
       id: result.base.id,
       name: result.base.name,
-      // primaryTableId: result.table.table.id,
+      primaryTableId: result.table.table.id,
     };
     socketIo.sync({
       op: 'createBase',

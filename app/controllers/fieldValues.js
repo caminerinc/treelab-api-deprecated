@@ -2,15 +2,15 @@ const { get, findIndex } = require('lodash');
 const fldValQueries = require('../queries/fieldValues');
 const { error, Status, ECodes } = require('../util/error');
 
-const updateArrayByAdding = async (recordId, fieldId, item) => {
+const updateArrayByAdding = async (recordId, fieldId, value) => {
   const fieldValue = await fldValQueries.findOrCreate(recordId, fieldId);
   if (!fieldValue) error(Status.Forbidden, ECodes.FIELD_VALUE_NOT_FOUND);
 
   // Retrieve the current array value, and make sure its an array.
-  const values = get(fieldValue, 'value.value', []);
-  const updatedValues = {
-    value: Array.isArray(values) ? values.concat([item]) : [item],
-  };
+  const values = get(fieldValue, 'value', []);
+  const updatedValues = Array.isArray(values)
+    ? values.concat([value])
+    : [value];
 
   return await fldValQueries.updateValue(recordId, fieldId, updatedValues);
 };
@@ -44,14 +44,13 @@ module.exports = {
     return fldValQueries.upsert(params);
   },
 
-  // @Moya some manual stuff going on for each one for reference field types
   async updateArrayFieldTypesByAdding(params) {
-    const { recordId, fieldId, item, referenceColumnId } = params;
-    await updateArrayByAdding(recordId, fieldId, item);
+    const { recordId, fieldId, value, referenceColumnId } = params;
+    await updateArrayByAdding(recordId, fieldId, value);
 
-    // Hardcoded for now, item here needs referenceRowId, and params need referenceColumnId
+    // Hardcoded for now, value here needs referenceRowId, and params need referenceColumnId
     if (params.fieldTypeId === 3) {
-      await updateArrayByAdding(item.referenceRowId, referenceColumnId, {
+      await updateArrayByAdding(value.referenceRowId, referenceColumnId, {
         referenceRowId: recordId,
       });
     }

@@ -81,6 +81,22 @@ module.exports = {
     });
   },
 
+  getTableSchema(tableId) {
+    return Fields.findAll({
+      attributes: ['id', 'name', 'fieldTypeId', 'typeOptions'],
+      where: { tableId },
+      include: [
+        {
+          model: FieldPositions,
+          as: 'pos',
+          attributes: ['position'],
+          required: false,
+        },
+      ],
+      order: [[sequelize.col('pos.position'), 'asc']],
+    });
+  },
+
   destroy(id) {
     return Tables.destroy({ where: { id } });
   },

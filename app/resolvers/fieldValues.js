@@ -36,7 +36,7 @@ module.exports = {
 
   async updateArrayByAdding(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'item', 'fieldTypeId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
     // TODO Check field types and values, prop is put into "item"
     // const fieldProps = FIELD_TYPES[params.fieldTypeId];
     // if (!fieldProps.isArrayValue)

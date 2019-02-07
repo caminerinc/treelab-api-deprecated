@@ -32,6 +32,7 @@ const createReferenceField = async (params, createdField) => {
   checkKeyExists(params.typeOptions, 'referenceTableId', 'relationship');
   const tblCtrl = require('../controllers/tables');
   const currentTable = await tblCtrl.getEasyTable(params.tableId);
+  // TODO: Check the field type, see what is inside typeOptions
 
   // Create Reference field using the newly created field
   const referenceField = await createWithPosition({
@@ -92,6 +93,7 @@ module.exports = {
 
   async delete(id) {
     // TODO handle reference fieldTypes
+    // TODO can not delete first column
     await checkFieldExists(id);
     await fldQueries.destroy(id);
   },

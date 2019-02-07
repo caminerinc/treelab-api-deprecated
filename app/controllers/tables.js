@@ -23,12 +23,13 @@ module.exports = {
       type: POSITION_TYPE.TABLE,
     });
     // TODO: try bulk creating
-    const nameField = await fldController.create({
+    let nameField = await fldController.create({
       tableId: table.id,
       name: 'Name',
       fieldTypeId: 1,
     });
-    const descField = await fldController.create({
+
+    let descField = await fldController.create({
       tableId: table.id,
       name: 'Description',
       fieldTypeId: 1,
@@ -60,10 +61,9 @@ module.exports = {
   },
 
   async getShallowRows(id) {
-    // INCOMPLETE
     await checkIfExists(id);
-    const table = await tblQueries.getAllByBaseId(id);
-    // const tableSchema = await tblQueries.getTableSchema(id);
+    const table = await tblQueries.getOneById(id);
+    const tableSchema = await tblQueries.getTableSchema(id);
 
     return { table, tableSchema };
   },

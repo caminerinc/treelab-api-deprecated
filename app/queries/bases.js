@@ -17,7 +17,7 @@ module.exports = {
         {
           model: TablePositions,
           as: 'tablePositions',
-          attributes: ['id', 'position'],
+          attributes: ['siblingId', 'position'],
           required: false,
         },
         {
@@ -26,7 +26,7 @@ module.exports = {
           attributes: ['position'],
         },
       ],
-      // order: [[sequelize.col('tablePositions.position'), 'asc']],
+      order: [[sequelize.col('tablePositions.position'), 'asc']],
       order: [[sequelize.col('pos.position'), 'asc']],
     });
   },

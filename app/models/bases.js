@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Bases.hasOne(models.BasePositions, {
       foreignKey: 'siblingId',
+      // TODO: Fix names so it doesn't use pos - use positions
       as: 'pos',
     });
     Bases.hasMany(models.TablePositions, {
