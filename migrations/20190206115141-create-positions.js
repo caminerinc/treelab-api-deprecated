@@ -66,6 +66,14 @@ module.exports = {
             },
             onDelete: 'cascade',
           }),
+          queryInterface.addConstraint('TablePositions', ['parentId'], {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'Bases',
+              field: 'id',
+            },
+            onDelete: 'cascade',
+          }),
         ]),
 
       queryInterface
@@ -99,6 +107,14 @@ module.exports = {
             },
             onDelete: 'cascade',
           }),
+          queryInterface.addConstraint('RecordPositions', ['parentId'], {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'Tables',
+              field: 'id',
+            },
+            onDelete: 'cascade',
+          }),
         ]),
 
       queryInterface
@@ -128,6 +144,14 @@ module.exports = {
             type: 'FOREIGN KEY',
             references: {
               table: 'Fields',
+              field: 'id',
+            },
+            onDelete: 'cascade',
+          }),
+          queryInterface.addConstraint('FieldPositions', ['parentId'], {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'Tables',
               field: 'id',
             },
             onDelete: 'cascade',

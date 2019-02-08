@@ -160,11 +160,27 @@ module.exports = {
             type: Sequelize.DATE,
           },
         })
-        .then(() =>
+        .then(() => [
           queryInterface.addConstraint('FieldValues', ['recordId', 'fieldId'], {
             type: 'unique',
           }),
-        ),
+          queryInterface.addConstraint('FieldValues', ['recordId'], {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'Records',
+              field: 'id',
+            },
+            onDelete: 'cascade',
+          }),
+          queryInterface.addConstraint('FieldValues', ['fieldId'], {
+            type: 'FOREIGN KEY',
+            references: {
+              table: 'Fields',
+              field: 'id',
+            },
+            onDelete: 'cascade',
+          }),
+        ]),
     ];
   },
   down: (queryInterface, Sequelize) => {
