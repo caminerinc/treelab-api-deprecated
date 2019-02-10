@@ -1,7 +1,7 @@
 'use strict';
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return [
+    return Promise.all([
       queryInterface
         .createTable('BasePositions', {
           id: {
@@ -157,15 +157,15 @@ module.exports = {
             onDelete: 'cascade',
           }),
         ]),
-    ];
+    ]);
   },
 
   down: (queryInterface, Sequelize) => {
-    return [
+    return Promise([
       queryInterface.dropTable('BasePositions'),
       queryInterface.dropTable('TablePositions'),
       queryInterface.dropTable('RecordPositions'),
       queryInterface.dropTable('FieldPositions'),
-    ];
+    ]);
   },
 };
