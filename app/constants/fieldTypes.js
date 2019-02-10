@@ -12,7 +12,7 @@ const FIELD_TYPES = {
     valueName: 'numberValue',
   },
   3: {
-    name: 'foreignKey',
+    name: 'reference',
     isTypeOptionsRequired: true,
     typeModel: 'foreignKeyTypes',
     typeName: 'foreignKeyTypes',

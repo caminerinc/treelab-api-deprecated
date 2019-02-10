@@ -2,12 +2,17 @@ const fs = require('fs');
 const path = require('path');
 const Sequelize = require('sequelize');
 const minimist = require('minimist');
+const createNamespace = require('cls-hooked').createNamespace;
+
 const basename = path.basename(__filename);
-
 const args = minimist(process.argv.slice(2));
-const env = args.env || process.env.NODE_ENV;
-
+const envConfig = require(__dirname + `/../../config/config.js`);
+const env = args.env || envConfig.nodeEnv;
 const config = require(__dirname + `/../../config/db-config.json`)[env];
+const namespace = createNamespace('treelab-api');
+
+Sequelize.useCLS(namespace);
+
 const db = {};
 
 let sequelize;

@@ -1,11 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const CryptoJS = require('crypto-js');
-const U64 = require('n64').U64;
-const { error, Status, ECodes } = require('../util/error');
-
-const PID = 1;
-let SEQUENCE = 0;
+const { error, ECodes } = require('../util/error');
 
 const load = (root, files = {}) => {
   if (fs.statSync(root).isFile()) {
@@ -37,28 +33,6 @@ const sha1 = text => {
   return CryptoJS.SHA1(text.toString()).toString();
 };
 
-const createUid = type => {
-  type = type.toString();
-  let djb33 = function() {
-    let lwrcase = Array.from(type.toLowerCase());
-    return lwrcase.reduce(function(h, v) {
-      h = (h << 5) + h + v.charCodeAt(0);
-      return h & 0xffffffff;
-    }, 5381);
-  };
-  let TM20180101 = 1514764800000;
-  let id = U64(Date.now() - TM20180101);
-  return (
-    type +
-    id
-      .ishln(22)
-      .iorn((PID & 0xff) << 14)
-      .iorn((SEQUENCE++ & 0x3ff) << 4)
-      .iorn(djb33(type) & 0x0f)
-      .toString(16)
-  );
-};
-
 const checkKeyExists = (map, ...keys) => {
   for (let key of keys) {
     if (!(key in map)) error(null, ECodes.REQUIRED, key);
@@ -69,6 +43,5 @@ const checkKeyExists = (map, ...keys) => {
 module.exports = {
   load,
   sha1,
-  createUid,
   checkKeyExists,
 };

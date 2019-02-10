@@ -1,50 +1,13 @@
 const Router = require('koa-router');
 const router = new Router();
 
-const {
-  resolveGetBases,
-  resolveCreateBase,
-  resolveDeleteBase,
-  resolveGetBase,
-} = require('../resolvers/bases');
-const {
-  resolveGetTables,
-  resolveGetTable,
-  resolveCreateTable,
-  resolveDeleteTable,
-} = require('../resolvers/tables');
-const {
-  resolveCreateField,
-  resolveDeleteField,
-  resolveResizeColumn,
-  resolveUpdateField,
-} = require('../resolvers/fields');
-const {
-  resolveCreateOrUpdatePrimitiveField,
-  resolveUpdateArrayTypeByAdding,
-  resolveClearFieldValue,
-  resolveDeleteArrayValue,
-  resolveBulkCopyFieldValue,
-} = require('../resolvers/fieldValues');
-const {
-  resolveCreateRecord,
-  resolveDeleteRecord,
-} = require('../resolvers/records');
-const {
-  resolveGetUsers,
-  resolveCreateUser,
-  resolveLogin,
-  resolveTestAuth,
-} = require('../resolvers/users');
-const { resolveChangePosition } = require('../resolvers/positions');
-const { resolveGetPouches, resolveGetPouch } = require('../resolvers/pouches');
-const {
-  resolveGetModules,
-  resolveExtraction,
-} = require('../resolvers/modules');
-
-const { checkTableExist } = require('../middlewares/tables');
-const { checkBaseExist } = require('../middlewares/bases');
+const bseResolver = require('../resolvers/bases');
+const tblResolver = require('../resolvers/tables');
+const fldResolver = require('../resolvers/fields');
+const fldValResolver = require('../resolvers/fieldValues');
+const recResolver = require('../resolvers/records');
+const usrResolver = require('../resolvers/users');
+const posResolver = require('../resolvers/positions');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -52,49 +15,43 @@ router.get('/api/public/health-check', ctx => {
 });
 
 // Base
-router.get('/api/bases', resolveGetBases);
-router.post('/api/base', resolveCreateBase);
-router.delete('/api/base/:baseId', checkBaseExist, resolveDeleteBase);
-router.get('/api/base/:baseId', checkBaseExist, resolveGetBase);
+router.get('/api/bases', bseResolver.getAll);
+router.get('/api/base/:baseId', bseResolver.getOne);
+router.post('/api/base', bseResolver.create);
+router.delete('/api/base/:baseId', bseResolver.delete);
 
-//Table
-router.get('/api/tables/:baseId', resolveGetTables);
-router.get('/api/table/:tableId', resolveGetTable);
-router.post('/api/table', checkBaseExist, resolveCreateTable);
-router.delete('/api/table/:tableId', checkTableExist, resolveDeleteTable);
+// Table
+router.get('/api/tables/:baseId', tblResolver.getAll);
+router.get('/api/table/:tableId', tblResolver.getOne);
+router.post('/api/table', tblResolver.create);
+router.delete('/api/table/:tableId', tblResolver.delete);
+router.get('/api/table/:tableId/shallow-rows', tblResolver.getShallowRows);
 
-//Field
-router.post('/api/field', checkTableExist, resolveCreateField);
-router.delete('/api/delete-field', resolveDeleteField);
-router.post('/api/resize-column', resolveResizeColumn);
-router.put('/api/field', resolveUpdateField);
+// //Field
+router.post('/api/field', fldResolver.create);
+router.put('/api/resize-column', fldResolver.resizeColumn);
+router.put('/api/field', fldResolver.update);
+router.delete('/api/field/:fieldId', fldResolver.delete);
 
-//Record
-router.post('/api/record', checkTableExist, resolveCreateRecord);
-router.delete('/api/delete-rows', resolveDeleteRecord);
+// //Record
+router.post('/api/record', recResolver.create);
+router.delete('/api/delete-rows', recResolver.deleteMultiple);
 
-//FieldValue
-router.put('/api/primitive-field', resolveCreateOrUpdatePrimitiveField);
-router.post('/api/array-field', resolveUpdateArrayTypeByAdding);
-router.delete('/api/clear-field-value', resolveClearFieldValue);
-router.delete('/api/array-field', resolveDeleteArrayValue);
-router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
+// //FieldValue
+router.post('/api/array-field', fldValResolver.updateArrayByAdding);
+router.put('/api/primitive-field', fldValResolver.createOrUpdatePrimitive);
+router.delete('/api/clear-field-value', fldValResolver.clearValue);
+router.delete('/api/array-field', fldValResolver.deleteArrayValue);
+// TODO fix bulk copy
+// router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
-//Position
-router.put('/api/change-position', resolveChangePosition);
-
-//Pouch
-router.get('/api/pouches', resolveGetPouches);
-router.get('/api/pouch/:pouchId', resolveGetPouch);
-
-//Module
-router.get('/api/modules', resolveGetModules);
-router.post('/api/module/extraction', resolveExtraction);
+// //Position
+// router.put('/api/change-position', posResolver.changePosition);
 
 //Users
-router.get('/api/users', resolveGetUsers);
-router.post('/api/public/user', resolveCreateUser);
-router.post('/api/public/login', resolveLogin);
-router.get('/api/public/test-auth', resolveTestAuth);
+router.get('/api/users', usrResolver.getAll);
+router.get('/api/public/test-auth', usrResolver.testAuth);
+router.post('/api/public/user', usrResolver.create);
+router.post('/api/public/login', usrResolver.login);
 
 module.exports = router;

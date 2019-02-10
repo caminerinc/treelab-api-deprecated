@@ -1,51 +1,29 @@
-const { records, sequelize } = require('../models');
-const {
-  createPosition,
-  deletePositions,
-  getPositionsByIds,
-} = require('../controllers/positions');
+const posController = require('../controllers/positions');
+const { POSITION_TYPE } = require('../constants/app');
+const recQueries = require('../queries/records');
+
+const create = async tableId => {
+  const result = await recQueries.create({ tableId });
+  const position = await posController.create({
+    parentId: tableId,
+    siblingId: result.id,
+    type: POSITION_TYPE.RECORD,
+  });
+
+  result.position = position.position;
+  return result;
+};
 
 module.exports = {
-  async createRecord(params, t1) {
-    async function transactionSteps(t) {
-      const result = await records.create(params, { transaction: t });
-      await createPosition(
-        {
-          parentId: params.tableId,
-          id: result.id,
-          type: 'record',
-        },
-        t,
-      );
-      return result;
-    }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+  create,
+  async checkTableAndCreate(tableId) {
+    // TODO: Require is not working properly
+    const tblCtrl = require('../controllers/tables');
+    await tblCtrl.checkIfExists(tableId);
+    return create(tableId);
   },
 
-  async deleteRecord({ rows }) {
-    async function transactionSteps(t) {
-      await records.destroy({
-        where: {
-          id: {
-            $in: rows,
-          },
-        },
-        transaction: t,
-      });
-      const result = await getPositionsByIds(rows);
-      if (result.length) {
-        await deletePositions(
-          {
-            deletePositions: Array.from(result, i => i.position),
-            parentId: result[0].parentId,
-            type: 'record',
-          },
-          t,
-        );
-      }
-    }
-    return await sequelize.transaction(transactionSteps);
+  deleteMultiple(rows) {
+    return recQueries.destroy(rows);
   },
 };

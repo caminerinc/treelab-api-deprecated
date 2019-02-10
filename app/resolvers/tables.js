@@ -1,198 +1,122 @@
-const { get, pick, forEach, map } = require('lodash');
+const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const {
-  getTables,
-  createTable,
-  getTable,
-  deleteTable,
-  findSymmetricFieldId,
-} = require('../controllers/tables');
-const { getBase } = require('../controllers/bases');
-const {
-  deleteParentId,
-  deletePositions,
-  getPositionsByIds,
-  getPrimaryFieldId,
-} = require('../controllers/positions');
-const { findFieldValue } = require('../controllers/fieldValues');
+const tblController = require('../controllers/tables');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
-const socketIo = require('../../lib/core/socketIo');
+const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
-const adaptForeignKey = async (fieldValue, fieldProps) => {
-  let foreignRecords = [];
-  for (const foreignKeyValues of fieldValue[fieldProps.valueName]) {
-    const fgn = foreignKeyValues.symFldV || foreignKeyValues.fldV;
-    if (fgn) {
-      const primaryFieldId = await getPrimaryFieldId(fgn.rec.tableId);
-      const foreignDisplayName = await findFieldValue(
-        fgn.rec.dataValues.id,
-        primaryFieldId.id,
-      );
-      foreignRecords.push({
-        foreignRowId: fgn.dataValues.rec.id,
-        foreignDisplayName: foreignDisplayName
-          ? foreignDisplayName.dataValues.textValue ||
-            foreignDisplayName.dataValues.numberValue
-          : null,
-      });
-    }
-  }
-  return foreignRecords;
-};
-
-const ADAPT_MAP = {
-  foreignKey: adaptForeignKey,
-};
-
-const adaptTables = tables => {
-  return {
-    tableSchemas: tables.map(table => ({
-      ...pick(table, ['id', 'name']),
-      columns: table.flds.map(field => {
-        const fieldProps = FIELD_TYPES[field.fieldTypeId];
-        const otherProps = {};
-        if (fieldProps.isTypeOptionsRequired) {
-          otherProps.typeOptions = pick(
-            get(field, fieldProps.typeName),
-            fieldProps.typeProps,
-          );
-        }
-        return {
-          ...pick(field, ['id', 'name']),
-          ...otherProps,
-          type: fieldProps.name,
-        };
-      }),
+const adaptTables = tables => ({
+  tableSchemas: tables.map(table => ({
+    ...pick(table, ['id', 'name']),
+    columns: table.flds.map(field => ({
+      ...pick(field, ['id', 'name', 'typeOptions']),
+      type: FIELD_TYPES[field.fieldTypeId].name,
     })),
-  };
-};
+  })),
+});
 
-const adaptTable = async table => {
-  return {
-    tableDatas: {
-      ...pick(table, ['id']),
-      rowsById: await getRowsById(table.recs),
+const adaptTable = table => ({
+  tableDatas: {
+    ...pick(table, ['id']),
+    rowsById: getRowsById(table.recs),
+  },
+  // TODO: Needs refactor
+  viewDatas: [
+    {
+      columnOrder: table.fieldPositions.map(fieldPos => ({
+        id: fieldPos.siblingId,
+        width: fieldPos.field ? fieldPos.field.width : null,
+      })),
+      rowOrder: table.recordPositions.map(recPos => ({ id: recPos.siblingId })),
     },
-    viewDatas: [
-      {
-        columnOrder: table.positions
-          .filter(i => {
-            if (i.type === 'field') return i;
-          })
-          .map(i => {
-            return {
-              id: i.id,
-              position: i.position,
-              width: i.field ? i.field.width : null,
-            };
-          }),
-        rowOrder: table.positions
-          .filter(i => {
-            if (i.type === 'record') return i;
-          })
-          .map(i => {
-            return { id: i.id, position: i.position };
-          }),
-      },
-    ],
+  ],
+});
+
+const adaptShallowRows = (table, tableSchema) => {
+  const adaptedTable = adaptTable(table);
+  let rowResults = [];
+  let columnsById = {};
+
+  for (const i in adaptedTable.viewDatas[0].rowOrder) {
+    const rowId = adaptedTable.viewDatas[0].rowOrder[i].id;
+    rowResults.push(adaptedTable.tableDatas.rowsById[rowId]);
+  }
+
+  for (const col of tableSchema) {
+    columnsById[col.id] = {
+      ...pick(col, ['id', 'name', 'typeOptions']),
+      type: FIELD_TYPES[col.fieldTypeId].name,
+    };
+  }
+
+  return {
+    rowResults,
+    columnsById,
+    columnOrder: adaptedTable.viewDatas[0].columnOrder,
   };
 };
 
-const getRowsById = async records => {
+const getRowsById = records => {
   let rowAccum = {};
   for (const record of records) {
     rowAccum[record.id] = {
       ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: await getCellValuesByColumnId(record.fldVs),
+      cellValuesByColumnId: getCellValuesByColumnId(record.fldVs),
     };
   }
   return rowAccum;
 };
 
-const getCellValuesByColumnId = async fieldValues => {
+const getCellValuesByColumnId = fieldValues => {
   let cellAccum = {};
   for (const fieldValue of fieldValues) {
-    const fieldTypeId = get(fieldValue.dataValues, 'fld.fieldTypeId');
-    const fieldProps = fieldTypeId && FIELD_TYPES[fieldTypeId];
-    if (!fieldProps)
-      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE, fieldTypeId);
-    const adaptData = ADAPT_MAP[fieldProps.name];
-    if (adaptData) {
-      cellAccum[fieldValue.fieldId] = await adaptData(fieldValue, fieldProps);
-    } else {
-      cellAccum[fieldValue.fieldId] = fieldValue[fieldProps.valueName];
-    }
+    cellAccum[fieldValue.fieldId] = fieldValue.value;
   }
   return cellAccum;
 };
 
 module.exports = {
-  async resolveGetTables(ctx) {
+  async create(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'name', 'baseId');
+    const result = await sequelize.transaction(() =>
+      tblController.createNewTableSet(params),
+    );
+    ctx.body = result;
+    socketIo.sync({ op: 'createTable', body: result });
+  },
+
+  async getAll(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'baseId');
-    const tables = await getTables(params.baseId);
+    const tables = await tblController.getAll(params.baseId);
     ctx.body = adaptTables(tables);
   },
 
-  async resolveGetTable(ctx) {
+  async getOne(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-    const table = await getTable(params.tableId);
+    const table = await tblController.getOne(params.tableId);
     if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
-    ctx.body = await adaptTable(table);
+    ctx.body = adaptTable(table);
   },
 
-  async resolveCreateTable(ctx) {
-    const params = ctx.request.body;
-    checkKeyExists(params, 'name');
-    const result = await createTable(params);
-    result.fields = result.fields.map(i =>
-      Object.assign({}, i, {
-        fieldTypeName: FIELD_TYPES[i.fieldTypeId].name,
-      }),
+  async getShallowRows(ctx) {
+    const params = ctx.params;
+    checkKeyExists(params, 'tableId');
+    const { table, tableSchema } = await tblController.getShallowRows(
+      params.tableId,
     );
-    ctx.body = result;
-    socketIo.sync({
-      op: 'createTable',
-      body: result,
-    });
+    const adaptedData = adaptShallowRows(table, tableSchema);
+    console.log('CMON WHY IS ADAPTEDD DATA', adaptedData);
+    ctx.body = adaptedData;
   },
 
-  async resolveDeleteTable(ctx) {
-    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
-    const fieldId = [];
-    const symmetricField = {};
-    forEach(symmetricFieldIds.flds, field => {
-      if (!field.foreignKeyTypes) {
-        return;
-      }
-      let symmetricFieldId = get(field, 'foreignKeyTypes.symmetricFieldId');
-      fieldId.push(symmetricFieldId);
-      let symmetricTableId = get(
-        field,
-        'foreignKeyTypes.symmetricField.tableId',
-      );
-      symmetricField[symmetricTableId]
-        ? symmetricField[symmetricTableId].push(symmetricFieldId)
-        : (symmetricField[symmetricTableId] = [symmetricFieldId]);
-    });
-    forEach(symmetricField, async (v, k) => {
-      const symmetricFieldPositions = await getPositionsByIds(v);
-      await deletePositions({
-        deletePositions: map(symmetricFieldPositions, 'position'),
-        parentId: k,
-        type: 'field',
-      });
-    });
-    await deleteTable(ctx.params.tableId, fieldId);
-    await deleteParentId([ctx.params.tableId]);
-    const positions = await getPositionsByIds([ctx.params.tableId]);
-    await deletePositions({
-      deletePositions: [positions[0].position],
-      parentId: symmetricFieldIds.baseId,
-      type: 'table',
-    });
+  async delete(ctx) {
+    const params = ctx.params;
+    checkKeyExists(params, 'tableId');
+    await sequelize.transaction(() => tblController.delete(params.tableId));
     ctx.body = { message: 'success' };
   },
 };

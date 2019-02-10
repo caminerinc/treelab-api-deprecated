@@ -1,22 +1,33 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('multipleAttachmentValues', {
+    return queryInterface.createTable('Users', {
       id: {
         allowNull: false,
         primaryKey: true,
+        type: Sequelize.UUID,
+      },
+      firstName: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      fieldValueId: {
-        type: Sequelize.INTEGER,
-      },
-      url: {
+      lastName: {
+        allowNull: false,
         type: Sequelize.STRING,
       },
-      fileName: {
+      email: {
+        allowNull: false,
         type: Sequelize.STRING,
+        unique: true,
+        indexes: [
+          {
+            unique: true,
+            fields: ['email'],
+          },
+        ],
       },
-      fileType: {
-        type: Sequelize.STRING,
+      passwordDigest: {
+        allowNull: false,
+        type: Sequelize.CHAR(40),
       },
       createdAt: {
         allowNull: false,
@@ -29,6 +40,6 @@ module.exports = {
     });
   },
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('multipleAttachmentValues');
+    return queryInterface.dropTable('Users');
   },
 };

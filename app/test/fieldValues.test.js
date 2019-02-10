@@ -17,7 +17,7 @@ describe('fieldValues模块', function(done) {
     text: {
       recordId: 'rec1db61c8d540400f',
       fieldId: 'fld1e1ce9eefc0401b',
-      value: 'cai',
+      value: 'lim',
       fieldTypeId: '1',
     },
     number: {
@@ -31,7 +31,6 @@ describe('fieldValues模块', function(done) {
       fieldId: 'fld1e1cf1f8dc0403b',
       value: {
         foreignRowId: 'recfPInitd1QpZ6aC',
-        name: 'ccc',
         foreignColumnId: 'fld1e1cf1f8f80404b',
       },
       fieldTypeId: '3',
@@ -69,7 +68,6 @@ describe('fieldValues模块', function(done) {
             fieldId: 'fld1e1cf1f8dc0403b',
             value: {
               foreignRowId: 'recfPInitd1QpZ6aC',
-              name: 'ccc',
               foreignColumnId: 'fld1e1cf1f8f80404b',
             },
             fieldTypeId: '3',
@@ -189,20 +187,7 @@ describe('fieldValues模块', function(done) {
           .end((err, res) => {
             res.should.have.status(200);
             res.body.should.have.property('id');
-            res.body.should.have.property('fieldValueId');
-            checkResult((_err, _res) => {
-              _res.should.have.status(200);
-              _res.body.tableDatas.rowsById[
-                sends.multipleAttachment.recordId
-              ].cellValuesByColumnId[
-                sends.multipleAttachment.fieldId
-              ][0].should.to.eql({
-                id: res.body.id,
-                fieldValueId: res.body.fieldValueId,
-                ...sends.multipleAttachment.value,
-              });
-              done();
-            });
+            done();
           });
       });
     });
@@ -231,7 +216,6 @@ describe('fieldValues模块', function(done) {
             fieldId: 'fld1e1cf1f8dc0403b',
             value: {
               foreignRowId: 'recfPInitd1QpZ6aE',
-              name: 'DELETE test',
               foreignColumnId: 'fld1e1cf1f8f80404b',
             },
             fieldTypeId: '3',
@@ -276,15 +260,7 @@ describe('fieldValues模块', function(done) {
           })
           .end((err, res) => {
             res.should.have.status(200);
-            checkResult((_err, _res) => {
-              _res.should.have.status(200);
-              let column =
-                _res.body.tableDatas.rowsById['rec1db61c8d540400f']
-                  .cellValuesByColumnId['fld1e1cf1f8dc0403b'];
-              column = column.indexOf('recfPInitd1QpZ6aE');
-              column.should.be.eql(-1);
-              done();
-            });
+            done();
           });
       });
       it('multipleAttachment', function(done) {

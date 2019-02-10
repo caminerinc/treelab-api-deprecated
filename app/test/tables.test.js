@@ -81,6 +81,27 @@ describe('tables模块', function(done) {
     });
   });
 
+  describe('GET /api/table/:tableId/getRowsMatchingName', function(done) {
+    it('ok', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/table/tblNGUPdSs9Va4X5u/getRowsMatchingName')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+    it('error tableId', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/table/1111111')
+        .end((err, res) => {
+          res.should.have.status(403);
+          done();
+        });
+    });
+  });
+
   describe('delete /api/table/:tableId', function(done) {
     describe('ERROR', function(done) {
       it('not baseId', function(done) {
@@ -105,10 +126,10 @@ describe('tables模块', function(done) {
             done();
           });
       });
-      it('check: tblNGUPdSs9Va4X5u', function(done) {
+      it('check: t', function(done) {
         chai
           .request('http://localhost:8000')
-          .get('/api/table/tblNGUPdSs9Va4X5u')
+          .get('/api/table/t')
           .end((err, res) => {
             res.should.have.status(403);
             done();

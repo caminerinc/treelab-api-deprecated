@@ -7,11 +7,11 @@ module.exports = {
     return helper.sha1(password) === passwordDigest;
   },
   getToken(payload) {
-    return jwt.sign(payload, process.env.SHARED_SECRET, {
+    return jwt.sign(payload, config.sharedSecret, {
       expiresIn: config.tokenExpiresIn || '4h',
     });
   },
   createAuthToken({ token }) {
-    return jwt.verify(token.split(' ')[1], process.env.SHARED_SECRET);
+    return jwt.verify(token.split(' ')[1], config.sharedSecret);
   },
 };

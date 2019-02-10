@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  const fieldValues = sequelize.define(
-    'fieldValues',
+  const FieldValues = sequelize.define(
+    'FieldValues',
     {
       id: {
         allowNull: false,
@@ -11,40 +11,27 @@ module.exports = (sequelize, DataTypes) => {
       },
       recordId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         unique: 'fieldValues_recordId_fieldId_uk',
       },
       fieldId: {
         allowNull: false,
-        type: DataTypes.STRING,
+        type: DataTypes.UUID,
         unique: 'fieldValues_recordId_fieldId_uk',
       },
-      textValue: DataTypes.STRING,
-      numberValue: DataTypes.INTEGER,
+      value: DataTypes.JSONB,
     },
     {},
   );
-  fieldValues.associate = function(models) {
-    fieldValues.belongsTo(models.fields, {
+  FieldValues.associate = function(models) {
+    FieldValues.belongsTo(models.Fields, {
       foreignKey: 'fieldId',
       as: 'fld',
     });
-    fieldValues.belongsTo(models.records, {
+    FieldValues.belongsTo(models.Records, {
       foreignKey: 'recordId',
       as: 'rec',
     });
-    fieldValues.hasMany(models.multipleAttachmentValues, {
-      foreignKey: 'fieldValueId',
-      as: 'multiAttV',
-    });
-    fieldValues.hasMany(models.foreignKeyValues, {
-      foreignKey: 'symmetricFieldValueId',
-      as: 'symKV',
-    });
-    fieldValues.hasMany(models.foreignKeyValues, {
-      foreignKey: 'fieldValueId',
-      as: 'fgnKV',
-    });
   };
-  return fieldValues;
+  return FieldValues;
 };

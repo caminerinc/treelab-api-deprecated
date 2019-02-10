@@ -1,247 +1,100 @@
 const { pick } = require('lodash');
-const {
-  fields,
-  numberTypes,
-  foreignKeyTypes,
-  sequelize,
-} = require('../models');
-const { FIELD_TYPES } = require('../constants/fieldTypes');
+const fldQueries = require('../queries/fields');
+const posController = require('../controllers/positions');
+const { POSITION_TYPE } = require('../constants/app');
 const { checkKeyExists } = require('../util/helper');
-const {
-  createPosition,
-  deletePositions,
-  getPositionsByIds,
-} = require('../controllers/positions');
+const { error, Status, ECodes } = require('../util/error');
 
-const TYPE_OPTION_MAP = {
-  text: createGenericField,
-  number: createNumberOptions,
-  foreignKey: createForeignKey,
-  multipleAttachment: createGenericField,
+const checkFieldExists = async id => {
+  const field = await fldQueries.getById(id);
+  if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+
+  return field;
 };
 
-async function createGenericField(fieldParams, options, t) {
-  const field = await fields.create(fieldParams, { transaction: t });
-  return { fieldId: field.id };
-}
-
-async function createNumberOptions(fieldParams, options, t) {
-  checkKeyExists(options, 'format', 'negative');
-  const field = await fields.create(fieldParams, { transaction: t });
-  await numberTypes.create(
-    {
-      ...options,
-      fieldId: field.id,
-    },
-    { transaction: t },
-  );
-  return {
-    fieldId: field.id,
-  };
-}
-
-async function createForeignKey(fieldParams, options, t) {
-  checkKeyExists(options, 'relationship', 'foreignTableId');
-  const newField = await fields.create(fieldParams, { transaction: t });
-  const newSymmetricField = await fields.create(
-    {
-      tableId: options.foreignTableId,
-      name: 'Link',
-      fieldTypeId: 3,
-    },
-    { transaction: t },
-  );
-  await foreignKeyTypes.create(
-    {
-      ...options,
-      symmetricFieldId: newSymmetricField.id,
-      fieldId: newField.id,
-    },
-    { transaction: t },
-  );
-  await foreignKeyTypes.create(
-    {
-      relationship: options.relationship,
-      foreignTableId: fieldParams.tableId,
-      symmetricFieldId: newField.id,
-      fieldId: newSymmetricField.id,
-    },
-    { transaction: t },
-  );
-  return {
-    foreignFieldId: newField.id,
-    symmetricFieldId: newSymmetricField.id,
-  };
-}
-
-const DELETE_MAP = {
-  text: deleteGenericField,
-  number: deleteGenericField,
-  foreignKey: deleteForeignField,
-  multipleAttachment: deleteGenericField,
+const checkNameWithinTable = async ({ tableId, name }) => {
+  const field = await fldQueries.getFieldByTableAndName(tableId, name);
+  if (field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
 };
-async function deleteGenericField({ fieldId }, t) {
-  return await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-    transaction: t,
+
+const createWithPosition = async params => {
+  const field = await fldQueries.create(params);
+  await posController.create({
+    parentId: params.tableId,
+    siblingId: field.id,
+    type: POSITION_TYPE.FIELD,
   });
-}
-async function deleteForeignField({ fieldId, fieldProps }, t) {
-  const symmetricFieldId = await fields.findOne({
-    where: {
-      id: fieldId,
+
+  return field;
+};
+
+const createReferenceField = async (params, createdField) => {
+  checkKeyExists(params.typeOptions, 'referenceTableId', 'relationship');
+  const tblCtrl = require('../controllers/tables');
+  const currentTable = await tblCtrl.getEasyTable(params.tableId);
+  // TODO: Check the field type, see what is inside typeOptions
+
+  // Create Reference field using the newly created field
+  const referenceField = await createWithPosition({
+    name: currentTable.name,
+    tableId: params.typeOptions.referenceTableId,
+    fieldTypeId: 3,
+    typeOptions: {
+      relationship: params.typeOptions.relationship,
+      referenceTableId: createdField.tableId,
+      symmetricColumnId: createdField.id,
     },
-    attributes: [
-      [sequelize.col(`${fieldProps.typeName}.symmetricFieldId`), 'id'],
-    ],
-    include: [
-      {
-        model: foreignKeyTypes,
-        attributes: [],
-        as: fieldProps.typeName,
+  });
+
+  // Update newly created field with referenceTableId
+  await fldQueries.update(
+    {
+      typeOptions: {
+        relationship: params.typeOptions.relationship,
+        referenceTableId: params.typeOptions.referenceTableId,
+        symmetricColumnId: referenceField.id,
       },
-    ],
-    raw: true,
-    transaction: t,
-  });
-  await fields.destroy({
-    where: { id: fieldId },
-    cascade: true,
-    transaction: t,
-  });
-  await fields.destroy({
-    where: { id: symmetricFieldId.id },
-    cascade: true,
-    transaction: t,
-  });
-  return { fieldId, symmetricFieldId: symmetricFieldId.id };
-}
-async function createFieldStep(params, t) {
-  const fieldProps = FIELD_TYPES[params.fieldTypeId];
-  const createOption = TYPE_OPTION_MAP[fieldProps.name];
-  const fieldParams = pick(params, ['id', 'tableId', 'name', 'fieldTypeId']);
-  const result = await createOption(fieldParams, params.typeOptions, t);
-  return {
-    fieldProps,
-    result,
-  };
-}
-function deleteFieldStep({ id: fieldId, fieldTypeId }, t) {
-  const fieldProps = FIELD_TYPES[fieldTypeId];
-  const deleteOption = DELETE_MAP[fieldProps.name];
+    },
+    createdField.id,
+  );
+};
 
-  return deleteOption({ fieldId, fieldProps }, t);
-}
 module.exports = {
-  async createField(params, t1) {
-    async function transactionSteps(t) {
-      const { fieldProps, result } = await createFieldStep(params, t);
-      if (fieldProps.name === 'foreignKey') {
-        await createPosition(
-          {
-            parentId: params.tableId,
-            id: result.foreignFieldId,
-            type: 'field',
-          },
-          t,
-        );
-        await createPosition(
-          {
-            parentId: params.typeOptions.foreignTableId,
-            id: result.symmetricFieldId,
-            type: 'field',
-          },
-          t,
-        );
-      } else {
-        await createPosition(
-          {
-            parentId: params.tableId,
-            id: result.fieldId || result.id,
-            type: 'field',
-          },
-          t,
-        );
-      }
-      return result;
+  async create(params) {
+    await checkNameWithinTable(params);
+    const fieldParams = pick(params, [
+      'id',
+      'tableId',
+      'name',
+      'fieldTypeId',
+      'typeOptions',
+    ]);
+    const field = await createWithPosition(fieldParams);
+
+    // TODO: Check field type id from db table
+    if (params.fieldTypeId === 3) {
+      await createReferenceField(params, field);
     }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+
+    return field;
   },
 
-  async findFieldType({ fieldId: id }) {
-    return await fields.findOne({
-      where: { id },
-      attributes: ['id', 'name', 'tableId', 'fieldTypeId'],
-      raw: true,
-    });
+  async update(params) {
+    // TODO handle reference fieldTypes
+    await checkFieldExists(params.fieldId);
+    const updatedFields = pick(params, ['typeOptions', 'name']);
+    return await fldQueries.update(updatedFields, params.fieldId);
   },
 
-  async deleteField({ id, fieldTypeId }, t1) {
-    async function transactionSteps(t) {
-      const ids = await deleteFieldStep({ id, fieldTypeId }, t);
-      const result = await getPositionsByIds(
-        [ids.fieldId, ids.symmetricFieldId],
-        t,
-      );
-      if (result.length) {
-        await deletePositions(
-          {
-            deletePositions: Array.from(result, i => i.position),
-            parentId: result[0].parentId,
-            type: 'field',
-          },
-          t,
-        );
-      }
-    }
-    return t1
-      ? transactionSteps(t1)
-      : await sequelize.transaction(transactionSteps);
+  async updateWidth({ fieldId: id, width }) {
+    await checkFieldExists(id);
+    return fldQueries.updateWidth(id, width);
   },
 
-  replaceField(field, params) {
-    return sequelize.transaction(async t => {
-      await deleteFieldStep(
-        {
-          ...field,
-        },
-        t,
-      );
-      params.name = params.name || field.name;
-      const { result } = await createFieldStep(
-        {
-          id: field.id,
-          tableId: field.tableId,
-          ...params,
-        },
-        t,
-      );
-      return result;
-    });
-  },
-  updateField(field, params) {
-    return fields.update(
-      {
-        name: params.name,
-      },
-      {
-        where: { id: field.id },
-      },
-    );
-  },
-  updateFieldWidth({ fieldId: id, width }) {
-    return fields.update(
-      {
-        width,
-      },
-      {
-        where: {
-          id,
-        },
-      },
-    );
+  async delete(id) {
+    // TODO handle reference fieldTypes
+    // TODO can not delete first column
+    await checkFieldExists(id);
+    await fldQueries.destroy(id);
   },
 };

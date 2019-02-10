@@ -1,36 +1,24 @@
-const { pick, map } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
-const {
-  getBases,
-  createBase,
-  deleteBase,
-  findSymmetricFieldId,
-} = require('../controllers/bases');
-const { getTableByBaseId } = require('../controllers/tables');
-const socketIo = require('../../lib/core/socketIo');
-const { deleteParentId } = require('../controllers/positions');
+const bseController = require('../controllers/bases');
+const socketIo = require('../../lib/socketIo');
+const { sequelize } = require('../models/index');
 
-const adaptBases = bases => {
-  return Array.from(bases, base => {
-    base = JSON.parse(JSON.stringify(base));
-    return {
-      id: base.id,
-      name: base.name,
-      primaryTableId: base.tablePositions[0] ? base.tablePositions[0].id : null,
-    };
-  });
-};
+const adaptBases = bases =>
+  bases.map(base => ({
+    id: base.id,
+    name: base.name,
+    primaryTableId: base.tablePositions[0]
+      ? base.tablePositions[0].siblingId
+      : null,
+  }));
 
 module.exports = {
-  async resolveGetBases(ctx) {
-    const bases = await getBases();
-    ctx.body = { bases: adaptBases(bases) };
-  },
-
-  async resolveCreateBase(ctx) {
+  async create(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name');
-    const result = await createBase(params);
+    const result = await sequelize.transaction(() =>
+      bseController.create(params),
+    );
     ctx.body = {
       id: result.base.id,
       name: result.base.name,
@@ -42,16 +30,22 @@ module.exports = {
     });
   },
 
-  async resolveDeleteBase(ctx) {
-    const symmetricFieldIds = await findSymmetricFieldId(ctx.params);
-    await deleteBase(ctx.params.baseId, symmetricFieldIds);
-    let tableIds = await getTableByBaseId(ctx.params);
-    tableIds = map(tableIds, 'id');
-    await deleteParentId([ctx.params.baseId, ...tableIds]);
-    ctx.body = { message: 'success' };
+  async getOne(ctx) {
+    const baseId = ctx.request.body.baseId || ctx.params.baseId;
+    if (!baseId) error(null, ECodes.REQUIRED, 'baseId');
+    const base = await bseController.getOne(baseId);
+    ctx.body = base;
   },
 
-  async resolveGetBase(ctx) {
-    ctx.body = ctx.base;
+  async getAll(ctx) {
+    const result = await bseController.getAll();
+    ctx.body = { bases: adaptBases(result) };
+  },
+
+  async delete(ctx) {
+    const params = ctx.params;
+    checkKeyExists(params, 'baseId');
+    bseController.delete(params.baseId);
+    ctx.body = { message: 'success' };
   },
 };

@@ -1,27 +1,23 @@
-const { users } = require('../models');
-const { sha1 } = require('../util/helper');
+const { error, Status, ECodes } = require('../util/error');
+const usrQueries = require('../queries/users');
+
+const getAll = () => usrQueries.getAll();
+
+const getOne = async params => {
+  const user = await usrQueries.getOne(params);
+  if (!user) error(Status.Unauthorized, ECodes.USER_NOT_FOUND);
+
+  return user;
+};
+
+const checkAndCreate = async params => {
+  const user = await usrQueries.getOne(params);
+  if (user) error(null, ECodes.USER_ALREADY_EXISTS);
+  await usrQueries.create(params);
+};
 
 module.exports = {
-  getAllUsers() {
-    return users.findAll({
-      attributes: ['id', 'firstName', 'lastName', 'email'],
-      raw: true,
-    });
-  },
-  createUser({ firstName, lastName, password, email }) {
-    return users.create({
-      firstName,
-      lastName,
-      passwordDigest: sha1(password),
-      email,
-    });
-  },
-  getUser({ email }) {
-    return users.findOne({
-      where: {
-        email,
-      },
-      raw: true,
-    });
-  },
+  checkAndCreate,
+  getAll,
+  getOne,
 };
