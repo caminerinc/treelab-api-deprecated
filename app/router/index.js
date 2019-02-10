@@ -46,7 +46,7 @@ router.delete('/api/array-field', fldValResolver.deleteArrayValue);
 // router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
 // //Position
-router.put('/api/change-position', posResolver.changePosition);
+// router.put('/api/change-position', posResolver.changePosition);
 
 //Users
 router.get('/api/users', usrResolver.getAll);
