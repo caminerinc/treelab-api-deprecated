@@ -57,13 +57,17 @@ const adaptShallowRows = (table, tableSchema) => {
   };
 };
 
-const adaptCreateTable = ({ table, fields, records }) => ({
-  name: table.name,
-  id: table.id,
-  columns: fields.map(i =>
-    pick(i, ['id', 'name', 'typeOptions', 'fieldTypeId']),
-  ),
-  records: records.map(i => pick(i, ['id'])),
+const adaptCreateTable = ({ table, fields }) => ({
+  tableSchemas: [
+    {
+      name: table.name,
+      id: table.id,
+      columns: fields.map(i => ({
+        ...pick(i, ['id', 'name', 'typeOptions']),
+        type: FIELD_TYPES[i.fieldTypeId].name,
+      })),
+    },
+  ],
 });
 
 const getRowsById = records => {
