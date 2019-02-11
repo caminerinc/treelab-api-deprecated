@@ -1,11 +1,11 @@
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return Promise.all([
-      queryInterface.addConstraint('Tables', ['baseId', 'name'], {
-        type: 'unique',
-      }),
-    ]);
+    return queryInterface.addConstraint('Tables', ['baseId', 'name'], {
+      type: 'unique',
+    });
   },
 
-  down: (queryInterface, Sequelize) => {},
+  down: (queryInterface, Sequelize) => {
+    return queryInterface.removeConstraint('Tables', 'Tables_baseId_name_uk');
+  },
 };
