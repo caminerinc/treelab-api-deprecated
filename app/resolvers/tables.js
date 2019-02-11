@@ -57,6 +57,15 @@ const adaptShallowRows = (table, tableSchema) => {
   };
 };
 
+const adaptCreateTable = ({ table, fields, records }) => ({
+  name: table.name,
+  id: table.id,
+  columns: fields.map(i =>
+    pick(i, ['id', 'name', 'typeOptions', 'fieldTypeId']),
+  ),
+  records: records.map(i => pick(i, ['id'])),
+});
+
 const getRowsById = records => {
   let rowAccum = {};
   for (const record of records) {
@@ -83,8 +92,8 @@ module.exports = {
     const result = await sequelize.transaction(() =>
       tblController.createNewTableSet(params),
     );
-    ctx.body = result;
-    socketIo.sync({ op: 'createTable', body: result });
+    ctx.body = adaptCreateTable(result);
+    socketIo.sync({ op: 'createTable', body: ctx.body });
   },
 
   async getAll(ctx) {
