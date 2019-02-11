@@ -100,4 +100,23 @@ module.exports = {
   destroy(id) {
     return Tables.destroy({ where: { id } });
   },
+
+  update({ name, tableId: id }) {
+    return Tables.update({ name }, { where: { id } });
+  },
+
+  getTableByBaseAndName(baseId, name) {
+    return Tables.findOne({
+      attributes: ['name'],
+      where: {
+        $and: [
+          { baseId },
+          sequelize.where(
+            sequelize.fn('lower', sequelize.col('name')),
+            sequelize.fn('lower', name),
+          ),
+        ],
+      },
+    });
+  },
 };

@@ -26,6 +26,7 @@ router.get('/api/table/:tableId', tblResolver.getOne);
 router.post('/api/table', tblResolver.create);
 router.delete('/api/table/:tableId', tblResolver.delete);
 router.get('/api/table/:tableId/shallow-rows', tblResolver.getShallowRows);
+router.put('/api/table', tblResolver.update);
 
 // //Field
 router.post('/api/field', fldResolver.create);
