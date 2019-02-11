@@ -1,6 +1,6 @@
 {
   "develop": {
-    "database": "elephante_db",
+    "database": "treelab_db",
     "username": "postgres",
     "password": "psql_password",
     "host": "localhost",
@@ -13,7 +13,7 @@
     }
   },
   "test": {
-    "database": "elephante_test",
+    "database": "treelab_db",
     "username": "postgres",
     "password": "psql_password",
     "host": "localhost",
