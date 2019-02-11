@@ -42,7 +42,7 @@ const createReferenceField = async (params, createdField) => {
     typeOptions: {
       relationship: params.typeOptions.relationship,
       referenceTableId: createdField.tableId,
-      symmetricColumnId: createdField.id,
+      referenceColumnId: createdField.id,
     },
   });
 
@@ -52,7 +52,7 @@ const createReferenceField = async (params, createdField) => {
       typeOptions: {
         relationship: params.typeOptions.relationship,
         referenceTableId: params.typeOptions.referenceTableId,
-        symmetricColumnId: referenceField.id,
+        referenceColumnId: referenceField.id,
       },
     },
     createdField.id,
