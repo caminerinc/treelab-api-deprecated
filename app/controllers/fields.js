@@ -57,6 +57,9 @@ const createReferenceField = async (params, createdField) => {
     },
     createdField.id,
   );
+
+  // Return the referenceColumnId so that front end can also receive
+  return referenceField.id;
 };
 
 module.exports = {
@@ -73,7 +76,10 @@ module.exports = {
 
     // TODO: Check field type id from db table
     if (params.fieldTypeId === 3) {
-      await createReferenceField(params, field);
+      field.typeOptions.referenceColumnId = await createReferenceField(
+        params,
+        field,
+      );
     }
 
     return field;
