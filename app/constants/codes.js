@@ -1,11 +1,15 @@
 const ECodes = {
-  UNIQUE_CONSTRAINT: {
-    code: 'UNIQUE_CONSTRAINT',
-    message: 'Duplicate key value violates unique constraint.',
+  TABLE_NAME_EMPTY: {
+    code: 'TABLE_NAME_EMPTY',
+    message: 'Table name could not be empty.',
   },
   FOREIGN_TABLE_NOT_FOUND: {
     code: 'FOREIGN_TABLE_NOT_FOUND',
     message: 'Foreign table not be found.',
+  },
+  TABLE_NAME_EXIST: {
+    code: 'TABLE_NAME_EXIST',
+    message: 'Table name already exists.',
   },
   FIELD_NAME_EXIST: {
     code: 'FIELD_NAME_EXIST',

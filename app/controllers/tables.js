@@ -12,6 +12,11 @@ const checkIfExists = async id => {
   return table;
 };
 
+const checkNameWithinBase = async (baseId, name) => {
+  const table = await tblQueries.getTableByBaseAndName(baseId, name);
+  if (table) error(Status.Forbidden, ECodes.TABLE_NAME_EXIST);
+};
+
 module.exports = {
   checkIfExists,
   async createNewTableSet(params) {
@@ -75,5 +80,12 @@ module.exports = {
   async delete(id) {
     await checkIfExists(id);
     await tblQueries.destroy(id);
+  },
+
+  async update(params) {
+    const table = await checkIfExists(params.tableId);
+    if (params.name.toLowerCase() === table.name.toLowerCase()) return null;
+    await checkNameWithinBase(table.baseId, params.name);
+    return await tblQueries.update(params);
   },
 };
