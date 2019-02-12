@@ -42,7 +42,7 @@ const createReferenceField = async (params, createdField) => {
     typeOptions: {
       relationship: params.typeOptions.relationship,
       referenceTableId: createdField.tableId,
-      symmetricColumnId: createdField.id,
+      referenceColumnId: createdField.id,
     },
   });
 
@@ -52,11 +52,14 @@ const createReferenceField = async (params, createdField) => {
       typeOptions: {
         relationship: params.typeOptions.relationship,
         referenceTableId: params.typeOptions.referenceTableId,
-        symmetricColumnId: referenceField.id,
+        referenceColumnId: referenceField.id,
       },
     },
     createdField.id,
   );
+
+  // Return the referenceColumnId so that front end can also receive
+  return referenceField.id;
 };
 
 module.exports = {
@@ -73,7 +76,10 @@ module.exports = {
 
     // TODO: Check field type id from db table
     if (params.fieldTypeId === 3) {
-      await createReferenceField(params, field);
+      field.typeOptions.referenceColumnId = await createReferenceField(
+        params,
+        field,
+      );
     }
 
     return field;
