@@ -88,7 +88,7 @@ module.exports = {
   async update(params) {
     // TODO handle reference fieldTypes
     await checkFieldExists(params.fieldId);
-    const updatedFields = pick(params, ['typeOptions', 'name']);
+    const updatedFields = pick(params, ['typeOptions', 'name', 'fieldTypeId']);
     return await fldQueries.update(updatedFields, params.fieldId);
   },
 
