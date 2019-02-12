@@ -38,6 +38,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'parentId',
       as: 'pos',
     });
+    Fields.belongsTo(models.FieldTypes, {
+      foreignKey: 'fieldTypeId',
+      as: 'flts',
+    });
   };
   return Fields;
 };

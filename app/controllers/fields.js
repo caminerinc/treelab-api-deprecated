@@ -75,7 +75,7 @@ module.exports = {
     const field = await createWithPosition(fieldParams);
 
     // TODO: Check field type id from db table
-    if (params.fieldTypeId === 3) {
+    if (parseInt(params.fieldTypeId) === 3) {
       field.typeOptions.referenceColumnId = await createReferenceField(
         params,
         field,

@@ -1,4 +1,5 @@
 const {
+  sequelize,
   Fields,
   FieldPositions,
   FieldValues,
@@ -6,7 +7,7 @@ const {
   RecordPositions,
   Tables,
   TablePositions,
-  sequelize,
+  FieldTypes,
 } = require('../models');
 
 module.exports = {
@@ -69,6 +70,13 @@ module.exports = {
           model: Fields,
           as: 'flds',
           attributes: ['id', 'name', 'fieldTypeId', 'typeOptions'],
+          include: [
+            {
+              model: FieldTypes,
+              as: 'flts',
+              attributes: ['name'],
+            },
+          ],
         },
         {
           model: TablePositions,
@@ -91,6 +99,11 @@ module.exports = {
           as: 'pos',
           attributes: ['position'],
           required: false,
+        },
+        {
+          model: FieldTypes,
+          as: 'flts',
+          attributes: ['name'],
         },
       ],
       order: [[sequelize.col('pos.position'), 'asc']],

@@ -11,7 +11,7 @@ const adaptTables = tables => ({
     ...pick(table, ['id', 'name']),
     columns: table.flds.map(field => ({
       ...pick(field, ['id', 'name', 'typeOptions']),
-      type: FIELD_TYPES[field.fieldTypeId].name,
+      type: field.flts.name,
     })),
   })),
 });
@@ -46,7 +46,7 @@ const adaptShallowRows = (table, tableSchema) => {
   for (const col of tableSchema) {
     columnsById[col.id] = {
       ...pick(col, ['id', 'name', 'typeOptions']),
-      type: FIELD_TYPES[col.fieldTypeId].name,
+      type: col.flts.name,
     };
   }
 
