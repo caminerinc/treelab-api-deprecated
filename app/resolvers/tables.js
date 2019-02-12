@@ -6,6 +6,8 @@ const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
 
+const SHALLOW_LIMIT = 5;
+
 const adaptTables = tables => ({
   tableSchemas: tables.map(table => ({
     ...pick(table, ['id', 'name']),
@@ -37,23 +39,31 @@ const adaptShallowRows = (table, tableSchema) => {
   const adaptedTable = adaptTable(table);
   let rowResults = [];
   let columnsById = {};
-
-  for (const i in adaptedTable.viewDatas[0].rowOrder) {
-    const rowId = adaptedTable.viewDatas[0].rowOrder[i].id;
-    rowResults.push(adaptedTable.tableDatas.rowsById[rowId]);
-  }
+  let index = 0;
 
   for (const col of tableSchema) {
+    if (index >= SHALLOW_LIMIT) break;
     columnsById[col.id] = {
       ...pick(col, ['id', 'name', 'typeOptions']),
       type: FIELD_TYPES[col.fieldTypeId].name,
     };
+    index++;
+  }
+
+  for (const i in adaptedTable.viewDatas[0].rowOrder) {
+    const rowId = adaptedTable.viewDatas[0].rowOrder[i].id;
+    const rowResult = adaptedTable.tableDatas.rowsById[rowId];
+    for (const i in rowResult.cellValuesByColumnId) {
+      if (columnsById[i] === undefined)
+        delete rowResult.cellValuesByColumnId[i];
+    }
+    rowResults.push(rowResult);
   }
 
   return {
     rowResults,
     columnsById,
-    columnOrder: adaptedTable.viewDatas[0].columnOrder,
+    columnOrder: adaptedTable.viewDatas[0].columnOrder.slice(0, SHALLOW_LIMIT),
   };
 };
 
