@@ -40,8 +40,13 @@ const checkKeyExists = (map, ...keys) => {
   return map;
 };
 
+const trim = str => {
+  return str.replace(/(^\s*)|(\s*$)/g, '');
+};
+
 module.exports = {
   load,
   sha1,
   checkKeyExists,
+  trim,
 };

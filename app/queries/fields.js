@@ -1,4 +1,4 @@
-const { Fields } = require('../models');
+const { Fields, sequelize } = require('../models');
 
 module.exports = {
   create(params) {
@@ -13,7 +13,18 @@ module.exports = {
   },
 
   getFieldByTableAndName(tableId, name) {
-    return Fields.findOne({ attributes: ['name'], where: { tableId, name } });
+    return Fields.findOne({
+      attributes: ['name'],
+      where: {
+        $and: [
+          { tableId },
+          sequelize.where(
+            sequelize.fn('lower', sequelize.col('name')),
+            sequelize.fn('lower', name),
+          ),
+        ],
+      },
+    });
   },
 
   update(updates, id) {

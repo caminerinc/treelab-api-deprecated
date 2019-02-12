@@ -11,10 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       name: {
         allowNull: false,
         type: DataTypes.STRING,
+        unique: 'Tables_baseId_name_uk',
       },
       baseId: {
         allowNull: false,
         type: DataTypes.UUID,
+        unique: 'Tables_baseId_name_uk',
       },
     },
     {},

@@ -1,5 +1,5 @@
 const { pick } = require('lodash');
-const { checkKeyExists } = require('../util/helper');
+const { checkKeyExists, trim } = require('../util/helper');
 const tblController = require('../controllers/tables');
 const { FIELD_TYPES } = require('../constants/fieldTypes');
 const socketIo = require('../../lib/socketIo');
@@ -130,6 +130,15 @@ module.exports = {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
     await sequelize.transaction(() => tblController.delete(params.tableId));
+    ctx.body = { message: 'success' };
+  },
+
+  async update(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'tableId');
+    params.name = trim(params.name);
+    if (params.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
+    await tblController.update(params);
     ctx.body = { message: 'success' };
   },
 };
