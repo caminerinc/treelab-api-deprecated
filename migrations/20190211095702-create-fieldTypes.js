@@ -17,6 +17,12 @@ module.exports = {
           },
         ],
       },
+      isPrimitive: {
+        type: Sequelize.BOOLEAN,
+      },
+      isArray: {
+        type: Sequelize.BOOLEAN,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

@@ -1,20 +1,20 @@
 const { checkKeyExists } = require('../util/helper');
 const fldValController = require('../controllers/fieldValues');
+const fldController = require('../controllers/fields');
 const socketIo = require('../../lib/socketIo');
 const { sequelize } = require('../models/index');
+const { getFieldTypes } = require('../util/fieldTypes');
+const { error, Status, ECodes } = require('../util/error');
 
 module.exports = {
   async createOrUpdatePrimitive(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
-    // TODO Check field type is valid
-    // const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    // if (fieldProps.isArrayValue)
-    //   error(
-    //     Status.Forbidden,
-    //     ECodes.UNSURPPORTED_FIELD_TYPE,
-    //     params.fieldTypeId,
-    //   );
+    checkKeyExists(params, 'recordId', 'fieldId', 'value');
+    const field = await fldController.getById(params.fieldId);
+    if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+    if (!field.flts || !field.flts.field.isPrimitive)
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+
     await sequelize.transaction(() => fldValController.upsertPrimitive(params));
     ctx.body = { message: 'success' };
     socketIo.sync({

@@ -1,7 +1,7 @@
 const { pick } = require('lodash');
 const { checkKeyExists, trim } = require('../util/helper');
 const tblController = require('../controllers/tables');
-const { FIELD_TYPES } = require('../constants/fieldTypes');
+const { getFieldTypes } = require('../util/fieldTypes');
 const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');

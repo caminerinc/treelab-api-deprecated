@@ -31,13 +31,13 @@ module.exports = {
     let nameField = await fldController.create({
       tableId: table.id,
       name: 'Name',
-      fieldTypeId: 1,
+      type: 'text',
     });
 
     let descField = await fldController.create({
       tableId: table.id,
       name: 'Description',
-      fieldTypeId: 1,
+      type: 'text',
     });
 
     let recordResults = [];

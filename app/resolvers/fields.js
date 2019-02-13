@@ -7,7 +7,6 @@ module.exports = {
   async create(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'tableId', 'name', 'type');
-
     const result = await sequelize.transaction(() =>
       fldController.create(params),
     );

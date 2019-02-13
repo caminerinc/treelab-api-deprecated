@@ -11,6 +11,12 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: false,
         type: DataTypes.STRING,
       },
+      isPrimitive: {
+        type: DataTypes.BOOLEAN,
+      },
+      isArray: {
+        type: DataTypes.BOOLEAN,
+      },
     },
     {},
   );

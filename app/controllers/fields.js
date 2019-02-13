@@ -2,8 +2,9 @@ const { pick } = require('lodash');
 const fldQueries = require('../queries/fields');
 const posController = require('../controllers/positions');
 const { POSITION_TYPE } = require('../constants/app');
-const { checkKeyExists } = require('../util/helper');
+const { checkKeyExists, trim } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
+const { getFieldTypes } = require('../util/fieldTypes');
 
 const checkFieldExists = async id => {
   const field = await fldQueries.getById(id);
@@ -64,30 +65,33 @@ const createReferenceField = async (params, createdField) => {
 
 module.exports = {
   async create(params) {
+    params.name = trim(params.name);
+    if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
+    const fieldTypes = await getFieldTypes();
+    if (!fieldTypes.name2Id[params.type])
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
     await checkNameWithinTable(params);
-    const fieldParams = pick(params, [
-      'id',
-      'tableId',
-      'name',
-      'fieldTypeId',
-      'typeOptions',
-    ]);
+
+    const fieldParams = pick(params, ['id', 'tableId', 'name', 'typeOptions']);
+    fieldParams.fieldTypeId = fieldTypes.name2Id[params.type];
     const field = await createWithPosition(fieldParams);
 
-    // TODO: Check field type id from db table
-    if (parseInt(params.fieldTypeId) === 3) {
+    if (params.type === 'reference') {
       field.typeOptions.referenceColumnId = await createReferenceField(
         params,
         field,
       );
     }
 
+    field.dataValues.type = params.type;
     return field;
   },
 
   async update(params) {
     // TODO handle reference fieldTypes
     await checkFieldExists(params.fieldId);
+    params.name = trim(params.name);
+    if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     const updatedFields = pick(params, ['typeOptions', 'name']);
     return await fldQueries.update(updatedFields, params.fieldId);
   },
@@ -102,5 +106,9 @@ module.exports = {
     // TODO can not delete first column
     await checkFieldExists(id);
     await fldQueries.destroy(id);
+  },
+
+  getById(id) {
+    return fldQueries.getById(id);
   },
 };

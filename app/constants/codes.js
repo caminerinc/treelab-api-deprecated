@@ -1,4 +1,8 @@
 const ECodes = {
+  FIELD_NAME_EMPTY: {
+    code: 'FIELD_NAME_EMPTY',
+    message: 'Field name could not be empty.',
+  },
   TABLE_NAME_EMPTY: {
     code: 'TABLE_NAME_EMPTY',
     message: 'Table name could not be empty.',
