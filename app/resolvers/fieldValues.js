@@ -1,24 +1,17 @@
 const { checkKeyExists } = require('../util/helper');
 const fldValController = require('../controllers/fieldValues');
-const fldController = require('../controllers/fields');
 const socketIo = require('../../lib/socketIo');
 const { sequelize } = require('../models/index');
-const { getFieldTypes } = require('../util/fieldTypes');
+const { checkField } = require('../util/fieldTypes');
 const { error, Status, ECodes } = require('../util/error');
-
-const checkFieldAndFieldType = async fieldId => {
-  const field = await fldController.getById(fieldId);
-  if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-  if (!field.types || !field.types.isPrimitive)
-    error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
-  return field;
-};
 
 module.exports = {
   async createOrUpdatePrimitive(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value');
-    await checkFieldAndFieldType(params.fieldId);
+    const field = await checkField(params.fieldId);
+    if (!field.types.isPrimitive)
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
 
     await sequelize.transaction(() => fldValController.upsertPrimitive(params));
     ctx.body = { message: 'success' };
@@ -42,7 +35,9 @@ module.exports = {
   async updateArrayByAdding(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'value');
-    const field = await checkFieldAndFieldType(params.fieldId);
+    const field = await checkField(params.fieldId);
+    if (!field.types.isArray)
+      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
 
     params.type = field.types.name;
     const result = await sequelize.transaction(() =>
@@ -58,7 +53,7 @@ module.exports = {
   async deleteArrayValue(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'item');
-    const field = await checkFieldAndFieldType(params.fieldId);
+    const field = await checkField(params.fieldId);
 
     params.type = field.types.name;
     await sequelize.transaction(() =>

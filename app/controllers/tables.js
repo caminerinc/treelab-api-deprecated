@@ -5,20 +5,21 @@ const fldController = require('../controllers/fields');
 const { POSITION_TYPE } = require('../constants/app');
 const { error, Status, ECodes } = require('../util/error');
 
-const checkIfExists = async id => {
+const checkTable = async id => {
   const table = await tblQueries.getEasyTable(id);
   if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
-
   return table;
 };
 
 const checkNameWithinBase = async (baseId, name) => {
+  const bseController = require('../controllers/bases');
+  await bseController.getOne(baseId);
   const table = await tblQueries.getTableByBaseAndName(baseId, name);
   if (table) error(Status.Forbidden, ECodes.TABLE_NAME_EXIST);
 };
 
 module.exports = {
-  checkIfExists,
+  checkTable,
   async createNewTableSet(params) {
     await checkNameWithinBase(params.baseId, params.name);
 
@@ -54,7 +55,6 @@ module.exports = {
       records: recordResults,
     };
   },
-
   async getAll(baseId) {
     // @TODO Putting this require at the top doesn't work
     const bseCtrl = require('../controllers/bases');
@@ -63,12 +63,12 @@ module.exports = {
   },
 
   async getOne(id) {
-    await checkIfExists(id);
+    await checkTable(id);
     return tblQueries.getOneById(id);
   },
 
   async getShallowRows(id) {
-    await checkIfExists(id);
+    await checkTable(id);
     const table = await tblQueries.getOneById(id);
     const tableSchema = await tblQueries.getTableSchema(id);
 
@@ -80,12 +80,12 @@ module.exports = {
   },
 
   async delete(id) {
-    await checkIfExists(id);
+    await checkTable(id);
     await tblQueries.destroy(id);
   },
 
   async update(params) {
-    const table = await checkIfExists(params.tableId);
+    const table = await checkTable(params.tableId);
     if (params.name.toLowerCase() === table.name.toLowerCase()) return null;
     await checkNameWithinBase(table.baseId, params.name);
     return await tblQueries.update(params);

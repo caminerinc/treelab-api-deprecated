@@ -2,8 +2,8 @@ const Router = require('koa-router');
 const router = new Router();
 
 const bseResolver = require('../resolvers/bases');
-const tblResolver = require('../resolvers/tables');
 const fldResolver = require('../resolvers/fields');
+const tblResolver = require('../resolvers/tables');
 const fldValResolver = require('../resolvers/fieldValues');
 const recResolver = require('../resolvers/records');
 const usrResolver = require('../resolvers/users');

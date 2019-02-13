@@ -48,7 +48,6 @@ module.exports = {
     const { recordId, fieldId, value, referenceColumnId } = params;
     await updateArrayByAdding(recordId, fieldId, value);
 
-    // Hardcoded for now, value here needs referenceRowId, and params need referenceColumnId
     if (params.type === 'reference') {
       await updateArrayByAdding(value.referenceRowId, referenceColumnId, {
         referenceRowId: recordId,
@@ -60,7 +59,6 @@ module.exports = {
     const { recordId, fieldId, item, referenceColumnId } = params;
     await updateArrayByRemoving(recordId, fieldId, item);
 
-    // Hardcoded for now, item here needs referenceRowId, and params need referenceColumnId
     if (params.type === 'reference') {
       await updateArrayByRemoving(item.referenceRowId, referenceColumnId, {
         referenceRowId: recordId,

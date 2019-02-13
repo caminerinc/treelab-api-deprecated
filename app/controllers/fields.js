@@ -4,16 +4,12 @@ const posController = require('../controllers/positions');
 const { POSITION_TYPE } = require('../constants/app');
 const { checkKeyExists, trim } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
-const { getFieldTypes } = require('../util/fieldTypes');
+const { checkField, checkType } = require('../util/fieldTypes');
 
-const checkFieldExists = async id => {
-  const field = await fldQueries.getById(id);
-  if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+const checkNameWithinTable = async (tableId, name) => {
+  const tblController = require('../controllers/tables');
+  await tblController.checkTable(tableId);
 
-  return field;
-};
-
-const checkNameWithinTable = async ({ tableId, name }) => {
   const field = await fldQueries.getFieldByTableAndName(tableId, name);
   if (field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
 };
@@ -39,7 +35,7 @@ const createReferenceField = async (params, createdField) => {
   const referenceField = await createWithPosition({
     name: currentTable.name,
     tableId: params.typeOptions.referenceTableId,
-    fieldTypeId: 3,
+    fieldTypeId: await checkType('reference'),
     typeOptions: {
       relationship: params.typeOptions.relationship,
       referenceTableId: createdField.tableId,
@@ -67,13 +63,10 @@ module.exports = {
   async create(params) {
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
-    const fieldTypes = await getFieldTypes();
-    if (!fieldTypes.name2Id[params.type])
-      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
-    await checkNameWithinTable(params);
+    await checkNameWithinTable(params.tableId, params.name);
 
     const fieldParams = pick(params, ['id', 'tableId', 'name', 'typeOptions']);
-    fieldParams.fieldTypeId = fieldTypes.name2Id[params.type];
+    fieldParams.fieldTypeId = await checkType(params.type);
     const field = await createWithPosition(fieldParams);
 
     if (params.type === 'reference') {
@@ -85,12 +78,12 @@ module.exports = {
 
     const _field = JSON.parse(JSON.stringify(field));
     _field.type = params.type;
-    return _field;
+    return { _field };
   },
 
   async update(params) {
     // TODO handle reference fieldTypes
-    await checkFieldExists(params.fieldId);
+    await checkField(params.fieldId);
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     const updatedFields = pick(params, ['typeOptions', 'name']);
@@ -98,14 +91,14 @@ module.exports = {
   },
 
   async updateWidth({ fieldId: id, width }) {
-    await checkFieldExists(id);
+    await checkField(id);
     return fldQueries.updateWidth(id, width);
   },
 
   async delete(id) {
     // TODO handle reference fieldTypes
     // TODO can not delete first column
-    await checkFieldExists(id);
+    await checkField(id);
     await fldQueries.destroy(id);
   },
 
