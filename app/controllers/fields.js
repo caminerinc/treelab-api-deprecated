@@ -75,10 +75,7 @@ module.exports = {
         field,
       );
     }
-
-    const _field = JSON.parse(JSON.stringify(field));
-    _field.type = params.type;
-    return _field;
+    return { ...field.toJSON(), type: params.type };
   },
 
   async update(params) {
