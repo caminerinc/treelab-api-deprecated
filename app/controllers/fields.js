@@ -26,6 +26,7 @@ const createWithPosition = async params => {
 };
 
 const createReferenceField = async (params, createdField) => {
+  checkKeyExists(params, 'typeOptions');
   checkKeyExists(params.typeOptions, 'referenceTableId', 'relationship');
   const tblCtrl = require('../controllers/tables');
   const currentTable = await tblCtrl.getEasyTable(params.tableId);

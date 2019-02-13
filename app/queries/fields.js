@@ -13,7 +13,7 @@ module.exports = {
         {
           model: FieldTypes,
           as: 'types',
-          attributes: ['name', 'isPrimitive'],
+          attributes: { exclude: ['updatedAt', 'createdAt'] },
         },
       ],
     });
