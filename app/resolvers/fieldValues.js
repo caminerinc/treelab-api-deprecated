@@ -11,7 +11,7 @@ module.exports = {
     checkKeyExists(params, 'recordId', 'fieldId', 'value');
     const field = await checkField(params.fieldId);
     if (!field.types.isPrimitive)
-      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+      error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
 
     await sequelize.transaction(() => fldValController.upsertPrimitive(params));
     ctx.body = { message: 'success' };
@@ -37,7 +37,7 @@ module.exports = {
     checkKeyExists(params, 'recordId', 'fieldId', 'value');
     const field = await checkField(params.fieldId);
     if (!field.types.isArray)
-      error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+      error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
 
     params.type = field.types.name;
     const result = await sequelize.transaction(() =>

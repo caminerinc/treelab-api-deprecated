@@ -29,14 +29,14 @@ const checkField = async fieldId => {
   const fldController = require('../controllers/fields');
   const field = await fldController.getById(fieldId);
   if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
-  if (!field.types) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+  if (!field.types) error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
   return field;
 };
 
 const checkType = async type => {
   const fieldTypes = await getFieldTypes();
   if (!fieldTypes.nameToId[type])
-    error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+    error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
   return fieldTypes.nameToId[type];
 };
 

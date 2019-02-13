@@ -115,7 +115,7 @@ module.exports = {
   //           });
   //         }
   //       } else {
-  //         error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
+  //         error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
   //       }
   //     }
   //   }
