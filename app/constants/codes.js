@@ -52,8 +52,8 @@ const ECodes = {
     code: 'USER_ALREADY_EXISTS',
     message: 'User already exists.',
   },
-  UNSURPPORTED_FIELD_TYPE: {
-    code: 'UNSURPPORTED_FIELD_TYPE',
+  UNSUPPORTED_FIELD_TYPE: {
+    code: 'UNSUPPORTED_FIELD_TYPE',
     message: 'Unsupported field type.',
   },
   BULK_COPY_PARAMS_MISSING: {
