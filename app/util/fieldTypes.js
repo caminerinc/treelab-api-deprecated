@@ -1,5 +1,4 @@
 const fldTypesController = require('../controllers/fieldTypes');
-const fldController = require('../controllers/fields');
 const { error, Status, ECodes } = require('./error');
 
 const CACHE_TIME = 5 * 60 * 1000; //ms
@@ -27,6 +26,7 @@ const getFieldTypes = async () => {
 };
 
 const checkField = async fieldId => {
+  const fldController = require('../controllers/fields');
   const field = await fldController.getById(fieldId);
   if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
   if (!field.types) error(Status.Forbidden, ECodes.UNSURPPORTED_FIELD_TYPE);
