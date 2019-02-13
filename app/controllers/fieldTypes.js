@@ -1,7 +1,9 @@
-const fltQueries = require('../queries/fieldTypes');
+const fldTypesQueries = require('../queries/fieldTypes');
 
 module.exports = {
   getAll() {
-    return fltQueries.getAll({ attributes: ['id', 'name'] });
+    return fldTypesQueries.getAll({
+      attributes: { exclude: ['updatedAt', 'createdAt'] },
+    });
   },
 };

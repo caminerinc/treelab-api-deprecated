@@ -8,7 +8,7 @@ const fldValResolver = require('../resolvers/fieldValues');
 const recResolver = require('../resolvers/records');
 const usrResolver = require('../resolvers/users');
 const posResolver = require('../resolvers/positions');
-const fltResolver = require('../resolvers/fieldTypes');
+const fldTypesResolver = require('../resolvers/fieldTypes');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -51,7 +51,7 @@ router.delete('/api/array-field', fldValResolver.deleteArrayValue);
 // router.put('/api/change-position', posResolver.changePosition);
 
 //FieldTypes
-router.get('/api/fieldTypes', fltResolver.getAll);
+router.get('/api/fieldTypes', fldTypesResolver.getAll);
 
 //Users
 router.get('/api/users', usrResolver.getAll);

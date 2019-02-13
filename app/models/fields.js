@@ -40,7 +40,7 @@ module.exports = (sequelize, DataTypes) => {
     });
     Fields.belongsTo(models.FieldTypes, {
       foreignKey: 'fieldTypeId',
-      as: 'flts',
+      as: 'types',
     });
   };
   return Fields;

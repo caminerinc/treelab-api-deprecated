@@ -20,6 +20,8 @@ const checkNameWithinBase = async (baseId, name) => {
 module.exports = {
   checkIfExists,
   async createNewTableSet(params) {
+    await checkNameWithinBase(params.baseId, params.name);
+
     const table = await tblQueries.create(params);
 
     await posController.create({

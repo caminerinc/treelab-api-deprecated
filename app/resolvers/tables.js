@@ -1,7 +1,6 @@
 const { pick } = require('lodash');
 const { checkKeyExists, trim } = require('../util/helper');
 const tblController = require('../controllers/tables');
-const { getFieldTypes } = require('../util/fieldTypes');
 const socketIo = require('../../lib/socketIo');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
@@ -11,7 +10,7 @@ const adaptTables = tables => ({
     ...pick(table, ['id', 'name']),
     columns: table.flds.map(field => ({
       ...pick(field, ['id', 'name', 'typeOptions']),
-      type: field.flts.name,
+      type: field.types.name,
     })),
   })),
 });
@@ -46,7 +45,7 @@ const adaptShallowRows = (table, tableSchema) => {
   for (const col of tableSchema) {
     columnsById[col.id] = {
       ...pick(col, ['id', 'name', 'typeOptions']),
-      type: col.flts.name,
+      type: col.types.name,
     };
   }
 
@@ -62,10 +61,7 @@ const adaptCreateTable = ({ table, fields }) => ({
     {
       name: table.name,
       id: table.id,
-      columns: fields.map(i => ({
-        ...pick(i, ['id', 'name', 'typeOptions']),
-        type: FIELD_TYPES[i.fieldTypeId].name,
-      })),
+      columns: fields.map(i => pick(i, ['id', 'name', 'typeOptions', 'type'])),
     },
   ],
 });
@@ -93,6 +89,8 @@ module.exports = {
   async create(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'name', 'baseId');
+    params.name = trim(params.name);
+    if (params.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
     const result = await sequelize.transaction(() =>
       tblController.createNewTableSet(params),
     );
@@ -122,7 +120,6 @@ module.exports = {
       params.tableId,
     );
     const adaptedData = adaptShallowRows(table, tableSchema);
-    console.log('CMON WHY IS ADAPTEDD DATA', adaptedData);
     ctx.body = adaptedData;
   },
 

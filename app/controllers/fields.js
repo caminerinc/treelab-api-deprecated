@@ -83,8 +83,9 @@ module.exports = {
       );
     }
 
-    field.dataValues.type = params.type;
-    return field;
+    const _field = JSON.parse(JSON.stringify(field));
+    _field.type = params.type;
+    return _field;
   },
 
   async update(params) {

@@ -73,7 +73,7 @@ module.exports = {
           include: [
             {
               model: FieldTypes,
-              as: 'flts',
+              as: 'types',
               attributes: ['name'],
             },
           ],
@@ -102,7 +102,7 @@ module.exports = {
         },
         {
           model: FieldTypes,
-          as: 'flts',
+          as: 'types',
           attributes: ['name'],
         },
       ],
