@@ -346,7 +346,7 @@ describe('fieldValues模块', function(done) {
         });
     });
     it('JSON parse error', function(done) {
-      const _params = JSON.parse(JSON.stringify(params));
+      const _params = params.toJSON();
       _params.sourceColumnConfigs = '[}';
       chai
         .request('http://localhost:8000')
@@ -358,7 +358,7 @@ describe('fieldValues模块', function(done) {
         });
     });
     it('not array', function(done) {
-      const _params = JSON.parse(JSON.stringify(params));
+      const _params = params.toJSON();
       _params.sourceColumnConfigs = '{}';
       chai
         .request('http://localhost:8000')
