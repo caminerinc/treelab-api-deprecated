@@ -1,0 +1,9 @@
+branch-defaults:
+  develop:
+    environment: TreelabApi-env
+global:
+  application_name: treelab-api
+  default_ec2_keyname: null
+  default_platform: Node.js running on 64bit Amazon Linux/4.8.0
+  default_region: cn-north-1
+  sc: git

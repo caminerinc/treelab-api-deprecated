@@ -20,7 +20,7 @@ let sequelize;
 sequelize = new Sequelize(
   config.database,
   config.username,
-  config.password,
+  process.env.AWS_DB_PASSWORD || config.password,
   config,
 );
 
