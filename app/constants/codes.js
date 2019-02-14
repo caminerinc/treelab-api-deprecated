@@ -6,6 +6,9 @@ const ECodes = {
   BUD_NOT_FOUND: {
     code: 'BUD_NOT_FOUND',
     message: 'Bud could not be found.',
+  INVALID_JSON: {
+    code: 'INVALID_JSON',
+    message: 'Incorrect JSON format.',
   },
   FIELD_NAME_EMPTY: {
     code: 'FIELD_NAME_EMPTY',
