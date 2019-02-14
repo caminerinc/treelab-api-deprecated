@@ -138,4 +138,9 @@ module.exports = {
     await tblController.update(params);
     ctx.body = { message: 'success' };
   },
+
+  async bulkTables(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'tableId');
+  },
 };
