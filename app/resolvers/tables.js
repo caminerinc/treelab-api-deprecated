@@ -150,7 +150,31 @@ module.exports = {
             name: 'Field 1',
             type: 'text',
             typeOptions: {},
-            values: ['sd'],
+            values: ['Value 1', 'Value 2', 'Value 3'],
+          },
+          {
+            name: 'Field 2',
+            type: 'text',
+            typeOptions: {},
+            values: ['Value 21', 'Value 22'],
+          },
+        ],
+      },
+      {
+        name: 'SIZE',
+        rows: 5,
+        fields: [
+          {
+            name: 'Field s1',
+            type: 'text',
+            typeOptions: {},
+            values: ['Value s1', 'Value s2', 'Value s3'],
+          },
+          {
+            name: 'Field s2',
+            type: 'text',
+            typeOptions: {},
+            values: ['Value s21', 'Value s22'],
           },
         ],
       },
