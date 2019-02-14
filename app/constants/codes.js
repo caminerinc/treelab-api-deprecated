@@ -47,7 +47,10 @@ const ECodes = {
     code: 'ITEM_NOT_FOUND',
     message: 'Field value item is not found.',
   },
-  INVALID_EMAIL: { code: 'INVALID_EMAIL', message: 'Incorrect email format.' },
+  INVALID_EMAIL: {
+    code: 'INVALID_EMAIL',
+    message: 'Incorrect email format.',
+  },
   USER_ALREADY_EXISTS: {
     code: 'USER_ALREADY_EXISTS',
     message: 'User already exists.',
