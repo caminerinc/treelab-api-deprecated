@@ -141,8 +141,27 @@ module.exports = {
 
   async bulkTables(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'tableId');
-    await sequelize.transaction(() => tblController.delete(params.tableId));
+    params.tables = [
+      {
+        name: 'PO',
+        rows: 5,
+        fields: [
+          {
+            name: 'Field 1',
+            type: 'text',
+            typeOptions: {},
+            values: ['sd'],
+          },
+        ],
+      },
+    ];
+    checkKeyExists(params, 'tables');
+    try {
+      params.tables = JSON.parse(params.tables);
+    } catch (e) {
+      error(Status.Forbidden, ECodes.INVALID_JSON);
+    }
+    await sequelize.transaction(() => tblController.bulkTables(params.tables));
     ctx.body = { message: 'success' };
   },
 };
