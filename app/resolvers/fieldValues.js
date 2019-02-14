@@ -2,19 +2,17 @@ const { checkKeyExists } = require('../util/helper');
 const fldValController = require('../controllers/fieldValues');
 const socketIo = require('../../lib/socketIo');
 const { sequelize } = require('../models/index');
+const { checkField } = require('../util/fieldTypes');
+const { error, Status, ECodes } = require('../util/error');
 
 module.exports = {
   async createOrUpdatePrimitive(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
-    // TODO Check field type is valid
-    // const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    // if (fieldProps.isArrayValue)
-    //   error(
-    //     Status.Forbidden,
-    //     ECodes.UNSURPPORTED_FIELD_TYPE,
-    //     params.fieldTypeId,
-    //   );
+    checkKeyExists(params, 'recordId', 'fieldId', 'value');
+    const field = await checkField(params.fieldId);
+    if (!field.types.isPrimitive)
+      error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
+
     await sequelize.transaction(() => fldValController.upsertPrimitive(params));
     ctx.body = { message: 'success' };
     socketIo.sync({
@@ -36,15 +34,12 @@ module.exports = {
 
   async updateArrayByAdding(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'value', 'fieldTypeId');
-    // TODO Check field types and values, prop is put into "item"
-    // const fieldProps = FIELD_TYPES[params.fieldTypeId];
-    // if (!fieldProps.isArrayValue)
-    //   error(
-    //     Status.Forbidden,
-    //     ECodes.UNSURPPORTED_FIELD_TYPE,
-    //     params.fieldTypeId,
-    //   );
+    checkKeyExists(params, 'recordId', 'fieldId', 'value');
+    const field = await checkField(params.fieldId);
+    if (!field.types.isArray)
+      error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
+
+    params.type = field.types.name;
     const result = await sequelize.transaction(() =>
       fldValController.updateArrayFieldTypesByAdding(params),
     );
@@ -57,7 +52,10 @@ module.exports = {
 
   async deleteArrayValue(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'recordId', 'fieldId', 'item', 'fieldTypeId');
+    checkKeyExists(params, 'recordId', 'fieldId', 'item');
+    const field = await checkField(params.fieldId);
+
+    params.type = field.types.name;
     await sequelize.transaction(() =>
       fldValController.deleteArrayFieldTypesByRemoving(params),
     );

@@ -4,6 +4,12 @@ const tblController = require('../controllers/tables');
 const { POSITION_TYPE } = require('../constants/app');
 const { error, Status, ECodes } = require('../util/error');
 
+const getOne = async id => {
+  const base = await bseQueries.getOne(id);
+  if (!base) error(Status.Unauthorized, ECodes.BASE_NOT_FOUND);
+  return base;
+};
+
 module.exports = {
   async create(params) {
     const base = await bseQueries.create(params.name);
@@ -23,12 +29,7 @@ module.exports = {
   getAll() {
     return bseQueries.getAll();
   },
-
-  async getOne(id) {
-    const base = await bseQueries.getOne(id);
-    if (!base) error(Status.Unauthorized, ECodes.BASE_NOT_FOUND);
-    return base;
-  },
+  getOne,
 
   delete(baseId) {
     return bseQueries.destroy(baseId);

@@ -1,4 +1,8 @@
 const ECodes = {
+  FIELD_NAME_EMPTY: {
+    code: 'FIELD_NAME_EMPTY',
+    message: 'Field name could not be empty.',
+  },
   TABLE_NAME_EMPTY: {
     code: 'TABLE_NAME_EMPTY',
     message: 'Table name could not be empty.',
@@ -43,13 +47,16 @@ const ECodes = {
     code: 'ITEM_NOT_FOUND',
     message: 'Field value item is not found.',
   },
-  INVALID_EMAIL: { code: 'INVALID_EMAIL', message: 'Incorrect email format.' },
+  INVALID_EMAIL: {
+    code: 'INVALID_EMAIL',
+    message: 'Incorrect email format.',
+  },
   USER_ALREADY_EXISTS: {
     code: 'USER_ALREADY_EXISTS',
     message: 'User already exists.',
   },
-  UNSURPPORTED_FIELD_TYPE: {
-    code: 'UNSURPPORTED_FIELD_TYPE',
+  UNSUPPORTED_FIELD_TYPE: {
+    code: 'UNSUPPORTED_FIELD_TYPE',
     message: 'Unsupported field type.',
   },
   BULK_COPY_PARAMS_MISSING: {

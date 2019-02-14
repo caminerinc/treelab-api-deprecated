@@ -1,4 +1,4 @@
-const { Fields, sequelize } = require('../models');
+const { sequelize, Fields, FieldTypes } = require('../models');
 
 module.exports = {
   create(params) {
@@ -9,6 +9,13 @@ module.exports = {
     return Fields.findOne({
       where: { id },
       attributes: ['id', 'name', 'tableId', 'fieldTypeId'],
+      include: [
+        {
+          model: FieldTypes,
+          as: 'types',
+          attributes: { exclude: ['updatedAt', 'createdAt'] },
+        },
+      ],
     });
   },
 

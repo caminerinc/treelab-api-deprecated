@@ -2,17 +2,14 @@ const { pick } = require('lodash');
 const fldQueries = require('../queries/fields');
 const posController = require('../controllers/positions');
 const { POSITION_TYPE } = require('../constants/app');
-const { checkKeyExists } = require('../util/helper');
+const { checkKeyExists, trim } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
+const { checkField, checkType } = require('../util/fieldTypes');
 
-const checkFieldExists = async id => {
-  const field = await fldQueries.getById(id);
-  if (!field) error(Status.Forbidden, ECodes.FIELD_NOT_FOUND);
+const checkNameWithinTable = async (tableId, name) => {
+  const tblController = require('../controllers/tables');
+  await tblController.checkTable(tableId);
 
-  return field;
-};
-
-const checkNameWithinTable = async ({ tableId, name }) => {
   const field = await fldQueries.getFieldByTableAndName(tableId, name);
   if (field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
 };
@@ -29,6 +26,7 @@ const createWithPosition = async params => {
 };
 
 const createReferenceField = async (params, createdField) => {
+  checkKeyExists(params, 'typeOptions');
   checkKeyExists(params.typeOptions, 'referenceTableId', 'relationship');
   const tblCtrl = require('../controllers/tables');
   const currentTable = await tblCtrl.getEasyTable(params.tableId);
@@ -38,7 +36,7 @@ const createReferenceField = async (params, createdField) => {
   const referenceField = await createWithPosition({
     name: currentTable.name,
     tableId: params.typeOptions.referenceTableId,
-    fieldTypeId: 3,
+    fieldTypeId: await checkType('reference'),
     typeOptions: {
       relationship: params.typeOptions.relationship,
       referenceTableId: createdField.tableId,
@@ -64,43 +62,45 @@ const createReferenceField = async (params, createdField) => {
 
 module.exports = {
   async create(params) {
-    await checkNameWithinTable(params);
-    const fieldParams = pick(params, [
-      'id',
-      'tableId',
-      'name',
-      'fieldTypeId',
-      'typeOptions',
-    ]);
+    params.name = trim(params.name);
+    if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
+    await checkNameWithinTable(params.tableId, params.name);
+
+    const fieldParams = pick(params, ['id', 'tableId', 'name', 'typeOptions']);
+    fieldParams.fieldTypeId = await checkType(params.type);
     const field = await createWithPosition(fieldParams);
 
-    // TODO: Check field type id from db table
-    if (params.fieldTypeId === 3) {
+    if (params.type === 'reference') {
       field.typeOptions.referenceColumnId = await createReferenceField(
         params,
         field,
       );
     }
-
-    return field;
+    return { ...field.toJSON(), type: params.type };
   },
 
   async update(params) {
     // TODO handle reference fieldTypes
-    await checkFieldExists(params.fieldId);
+    await checkField(params.fieldId);
+    params.name = trim(params.name);
+    if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     const updatedFields = pick(params, ['typeOptions', 'name']);
     return await fldQueries.update(updatedFields, params.fieldId);
   },
 
   async updateWidth({ fieldId: id, width }) {
-    await checkFieldExists(id);
+    await checkField(id);
     return fldQueries.updateWidth(id, width);
   },
 
   async delete(id) {
     // TODO handle reference fieldTypes
     // TODO can not delete first column
-    await checkFieldExists(id);
+    await checkField(id);
     await fldQueries.destroy(id);
+  },
+
+  getById(id) {
+    return fldQueries.getById(id);
   },
 };

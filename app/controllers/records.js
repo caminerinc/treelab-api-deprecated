@@ -19,7 +19,7 @@ module.exports = {
   async checkTableAndCreate(tableId) {
     // TODO: Require is not working properly
     const tblCtrl = require('../controllers/tables');
-    await tblCtrl.checkIfExists(tableId);
+    await tblCtrl.checkTable(tableId);
     return create(tableId);
   },
 
