@@ -5,7 +5,7 @@ jobs:
     working_directory: ~/treelab-api
     branches:
       only:
-          - circle-ci-moya
+          - develop
     docker:
       - image: node:10.15.0
     steps:
