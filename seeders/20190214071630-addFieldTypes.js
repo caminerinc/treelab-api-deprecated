@@ -35,6 +35,8 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.bulkDelete('FieldTypes', null, {});
+    return queryInterface.bulkDelete('FieldTypes', {
+      where: { id: { $in: [5, 6, 7, 8] } },
+    });
   },
 };
