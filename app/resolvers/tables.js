@@ -142,5 +142,7 @@ module.exports = {
   async bulkTables(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'tableId');
+    await sequelize.transaction(() => tblController.delete(params.tableId));
+    ctx.body = { message: 'success' };
   },
 };
