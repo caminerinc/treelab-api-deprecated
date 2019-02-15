@@ -32,4 +32,8 @@ module.exports = {
       where: { recordId, fieldId },
     });
   },
+
+  bulkCreate(records) {
+    return FieldValues.bulkCreate(records);
+  },
 };

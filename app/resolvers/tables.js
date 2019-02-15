@@ -141,51 +141,15 @@ module.exports = {
 
   async bulkTables(ctx) {
     const params = ctx.request.body;
-    params.tables = [
-      {
-        name: 'PO',
-        rows: 5,
-        fields: [
-          {
-            name: 'Field 1',
-            type: 'text',
-            typeOptions: {},
-            values: ['Value 1', 'Value 2', 'Value 3'],
-          },
-          {
-            name: 'Field 2',
-            type: 'text',
-            typeOptions: {},
-            values: ['Value 21', 'Value 22'],
-          },
-        ],
-      },
-      {
-        name: 'SIZE',
-        rows: 5,
-        fields: [
-          {
-            name: 'Field s1',
-            type: 'text',
-            typeOptions: {},
-            values: ['Value s1', 'Value s2', 'Value s3'],
-          },
-          {
-            name: 'Field s2',
-            type: 'text',
-            typeOptions: {},
-            values: ['Value s21', 'Value s22'],
-          },
-        ],
-      },
-    ];
-    checkKeyExists(params, 'tables');
+    checkKeyExists(params, 'tables', 'baseId');
     try {
       params.tables = JSON.parse(params.tables);
     } catch (e) {
       error(Status.Forbidden, ECodes.INVALID_JSON);
     }
-    await sequelize.transaction(() => tblController.bulkTables(params.tables));
+    await sequelize.transaction(() =>
+      tblController.bulkTables(params.baseId, params.tables),
+    );
     ctx.body = { message: 'success' };
   },
 };

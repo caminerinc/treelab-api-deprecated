@@ -120,4 +120,8 @@ module.exports = {
   //     }
   //   }
   // },
+
+  bulkCreate(records) {
+    return fldValQueries.bulkCreate(records);
+  },
 };

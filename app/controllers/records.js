@@ -26,4 +26,8 @@ module.exports = {
   deleteMultiple(rows) {
     return recQueries.destroy(rows);
   },
+
+  bulkCreate(records) {
+    return recQueries.bulkCreate(records);
+  },
 };
