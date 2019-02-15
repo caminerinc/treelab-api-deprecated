@@ -37,4 +37,9 @@ module.exports = {
   query(sql, options) {
     return sequelize.query(sql, options);
   },
+
+  bulkCreate(records, type) {
+    const PosModel = POSITION_MODELS[type];
+    return PosModel.bulkCreate(records);
+  },
 };
