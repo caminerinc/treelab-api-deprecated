@@ -132,4 +132,8 @@ module.exports = {
       },
     });
   },
+
+  bulkCreate(records) {
+    return Tables.bulkCreate(records);
+  },
 };

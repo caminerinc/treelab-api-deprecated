@@ -29,7 +29,7 @@ router.post('/api/table', tblResolver.create);
 router.delete('/api/table/:tableId', tblResolver.delete);
 router.get('/api/table/:tableId/shallow-rows', tblResolver.getShallowRows);
 router.put('/api/table', tblResolver.update);
-router.put('/api/bulk-tables', tblResolver.bulkTables);
+router.post('/api/public/bulk-tables', tblResolver.bulkTables);
 
 // //Field
 router.post('/api/field', fldResolver.create);

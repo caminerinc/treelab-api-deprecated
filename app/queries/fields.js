@@ -48,4 +48,8 @@ module.exports = {
       cascade: true,
     });
   },
+
+  bulkCreate(records) {
+    return Fields.bulkCreate(records);
+  },
 };

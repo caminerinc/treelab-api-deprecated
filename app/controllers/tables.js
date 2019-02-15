@@ -2,8 +2,11 @@ const tblQueries = require('../queries/tables');
 const posController = require('../controllers/positions');
 const recController = require('../controllers/records');
 const fldController = require('../controllers/fields');
+const fldValController = require('../controllers/fieldValues');
 const { POSITION_TYPE } = require('../constants/app');
 const { error, Status, ECodes } = require('../util/error');
+const { checkKeyExists, trim } = require('../util/helper');
+const { checkType } = require('../util/fieldTypes');
 
 const checkTable = async id => {
   const table = await tblQueries.getEasyTable(id);
@@ -89,5 +92,87 @@ module.exports = {
     if (params.name.toLowerCase() === table.name.toLowerCase()) return null;
     await checkNameWithinBase(table.baseId, params.name);
     return await tblQueries.update(params);
+  },
+
+  async bulkTables(baseId, tables) {
+    let tblRecords = [];
+    let fldRecords = [];
+    let recRecords = [];
+    let fldValRecords = [];
+    for (const table of tables) {
+      checkKeyExists(table, 'name', 'rows', 'fields');
+      table.name = trim(table.name);
+      if (table.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
+      await checkNameWithinBase(baseId, table.name);
+      tblRecords.push({ baseId, name: table.name });
+      const tableNum = tblRecords.length;
+      fldRecords[tableNum - 1] = [];
+      recRecords[tableNum - 1] = [];
+      for (const field of table.fields) {
+        checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
+        field.name = trim(field.name);
+        if (field.name === '') error(null, ECodes.FIELD_NAME_EMPTY);
+        fldRecords[tableNum - 1].push({
+          name: field.name,
+          fieldTypeId: await checkType(field.type),
+          typeOptions: field.typeOptions,
+        });
+        for (const value of field.values) {
+          fldValRecords.push({
+            recordId: null,
+            fieldId: null,
+            value,
+            valuesNum: field.values.length,
+          });
+        }
+      }
+      for (let i = 0; i < table.rows; i++) {
+        recRecords[tableNum - 1].push({});
+      }
+    }
+
+    const tblResults = await tblQueries.bulkCreate(tblRecords);
+    for (let i = 0; i < tblResults.length; i++) {
+      for (let j = 0; j < fldRecords[i].length; j++) {
+        fldRecords[i][j].tableId = tblResults[i].id;
+        await fldController.checkFieldByTableAndName(
+          tblResults[i].id,
+          fldRecords[i][j].name,
+        );
+      }
+      for (let j = 0; j < recRecords[i].length; j++) {
+        recRecords[i][j].tableId = tblResults[i].id;
+      }
+    }
+
+    const recResult = await recController.bulkCreate(
+      recRecords.reduce((a, item) => {
+        return a.concat(item);
+      }),
+    );
+
+    const fldResult = await fldController.bulkCreate(
+      fldRecords.reduce((a, item) => {
+        return a.concat(item);
+      }),
+    );
+
+    let k = 0;
+    for (let i = 0; i < fldResult.length; i++) {
+      let index = 0;
+      let valuesNum = fldValRecords[k] ? fldValRecords[k].valuesNum : 0;
+      for (let j = k; j < fldValRecords.length; j++) {
+        if (index < valuesNum) {
+          fldValRecords[j].recordId = recResult[index].id;
+          fldValRecords[j].fieldId = fldResult[i].id;
+          index++;
+          k++;
+        } else {
+          valuesNum = fldValRecords[j];
+          break;
+        }
+      }
+    }
+    return await fldValController.bulkCreate(fldValRecords);
   },
 };

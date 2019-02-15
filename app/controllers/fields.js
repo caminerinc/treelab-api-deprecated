@@ -61,6 +61,11 @@ const createReferenceField = async (params, createdField) => {
 };
 
 module.exports = {
+  async checkFieldByTableAndName(tableId, name) {
+    const field = await fldQueries.getFieldByTableAndName(tableId, name);
+    if (field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+  },
+
   async create(params) {
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
@@ -102,5 +107,9 @@ module.exports = {
 
   getById(id) {
     return fldQueries.getById(id);
+  },
+
+  bulkCreate(records) {
+    return fldQueries.bulkCreate(records);
   },
 };
