@@ -18,7 +18,7 @@ const checkNameWithinBase = async (baseId, name) => {
   const bseController = require('../controllers/bases');
   await bseController.getOne(baseId);
   const table = await tblQueries.getTableByBaseAndName(baseId, name);
-  if (table) error(Status.Forbidden, ECodes.TABLE_NAME_EXIST);
+  if (table) error(Status.Forbidden, ECodes.TABLE_NAME_EXIST, name);
 };
 
 module.exports = {
@@ -99,6 +99,9 @@ module.exports = {
     let fldRecords = [];
     let recRecords = [];
     let fldValRecords = [];
+    let tblPosRecords = [];
+    let recPosRecords = [];
+    let fldPosRecords = [];
     for (const table of tables) {
       checkKeyExists(table, 'name', 'rows', 'fields');
       table.name = trim(table.name);
@@ -132,6 +135,9 @@ module.exports = {
     }
 
     const tblResults = await tblQueries.bulkCreate(tblRecords);
+    const lastTablePos =
+      (await posController.getLastPosition(baseId, POSITION_TYPE.TABLE))
+        .dataValues.max || 0;
     for (let i = 0; i < tblResults.length; i++) {
       for (let j = 0; j < fldRecords[i].length; j++) {
         fldRecords[i][j].tableId = tblResults[i].id;
@@ -139,11 +145,27 @@ module.exports = {
           tblResults[i].id,
           fldRecords[i][j].name,
         );
+        fldPosRecords.push({
+          parentId: tblResults[i].id,
+          siblingId: null,
+          position: j + 1,
+        });
       }
       for (let j = 0; j < recRecords[i].length; j++) {
         recRecords[i][j].tableId = tblResults[i].id;
+        recPosRecords.push({
+          parentId: tblResults[i].id,
+          siblingId: null,
+          position: j + 1,
+        });
       }
+      tblPosRecords.push({
+        parentId: baseId,
+        siblingId: tblResults[i].id,
+        position: lastTablePos + i + 1,
+      });
     }
+    await posController.bulkCreate(tblPosRecords, POSITION_TYPE.TABLE);
 
     const recResult = await recController.bulkCreate(
       recRecords.reduce((a, item) => {
@@ -172,7 +194,12 @@ module.exports = {
           break;
         }
       }
+      fldPosRecords[i].siblingId = fldResult[i].id;
     }
-    return await fldValController.bulkCreate(fldValRecords);
+    recResult.forEach((i, index) => (recPosRecords[index].siblingId = i.id));
+    await fldValController.bulkCreate(fldValRecords);
+    await posController.bulkCreate(fldPosRecords, POSITION_TYPE.FIELD);
+    await posController.bulkCreate(recPosRecords, POSITION_TYPE.RECORD);
+    return;
   },
 };
