@@ -1,4 +1,8 @@
 const ECodes = {
+  BUD_NOT_FOUND: {
+    code: 'BUD_NOT_FOUND',
+    message: 'Bud could not be found.',
+  },
   FIELD_NAME_EMPTY: {
     code: 'FIELD_NAME_EMPTY',
     message: 'Field name could not be empty.',
