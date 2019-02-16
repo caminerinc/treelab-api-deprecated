@@ -40,23 +40,23 @@ module.exports = {
           model: FieldPositions,
           as: 'fieldPositions',
           attributes: ['siblingId'],
-          include: [
-            {
-              model: Fields,
-              as: 'field',
-              attributes: ['width'],
-            },
-          ],
+          // include: [
+          //   {
+          //     model: Fields,
+          //     as: 'field',
+          //     attributes: ['width'],
+          //   },
+          // ],
         },
-        {
-          model: RecordPositions,
-          as: 'recordPositions',
-          attributes: ['siblingId'],
-        },
+        // {
+        //   model: RecordPositions,
+        //   as: 'recordPositions',
+        //   attributes: ['siblingId'],
+        // },
       ],
       order: [
         [sequelize.col('fieldPositions.position'), 'asc'],
-        [sequelize.col('recordPositions.position'), 'asc'],
+        // [sequelize.col('recordPositions.position'), 'asc'],
       ],
     });
   },

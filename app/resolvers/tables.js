@@ -111,7 +111,7 @@ module.exports = {
     checkKeyExists(params, 'tableId');
     const table = await tblController.getOne(params.tableId);
     if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
-    ctx.body = adaptTable(table);
+    ctx.body = table;
   },
 
   async getShallowRows(ctx) {
