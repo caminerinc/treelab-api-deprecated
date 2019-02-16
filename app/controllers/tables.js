@@ -137,6 +137,14 @@ module.exports = {
             valuesNum: fvLen,
           });
         }
+        if (fvLen === 0) {
+          fldValRecords.push({
+            recordId: null,
+            fieldId: null,
+            value: null,
+            valuesNum: 0,
+          });
+        }
       }
       let lastTblFvNum = tblFvFlag[tblFvFlag.length - 1]
         ? tblFvFlag[tblFvFlag.length - 1].tblFvNum
@@ -193,18 +201,25 @@ module.exports = {
         return a.concat(item);
       }),
     );
+
     let fvIndex = 0;
     let lastFlag = tblFvFlag.shift();
     let rowsEnd = lastFlag.tblRows;
     let beginRows = 0;
     for (let i = 0; i < fldResult.length; i++) {
+      fldPosRecords[i].siblingId = fldResult[i].id;
       let recIndex = 0;
       let valuesNum = fldValRecords[fvIndex]
         ? fldValRecords[fvIndex].valuesNum
         : 0;
+      if (valuesNum === 0) {
+        fldValRecords.splice(fvIndex, 1);
+        continue;
+      }
       for (let j = fvIndex; j < fldValRecords.length; j++) {
         if (fvIndex >= lastFlag.tblFvNum) {
           lastFlag = tblFvFlag.shift();
+          if (!lastFlag) break;
           beginRows = rowsEnd;
           rowsEnd = lastFlag.tblRows;
         }
@@ -214,13 +229,13 @@ module.exports = {
           recIndex++;
           fvIndex++;
         } else {
-          valuesNum = fldValRecords[j];
+          valuesNum = fldValRecords[j].valuesNum;
           break;
         }
       }
-      fldPosRecords[i].siblingId = fldResult[i].id;
     }
     recResult.forEach((i, index) => (recPosRecords[index].siblingId = i.id));
+    // error(null, ECodes.FIELD_NAME_EMPTY);
     await fldValController.bulkCreate(fldValRecords);
     await posController.bulkCreate(fldPosRecords, POSITION_TYPE.FIELD);
     await posController.bulkCreate(recPosRecords, POSITION_TYPE.RECORD);
