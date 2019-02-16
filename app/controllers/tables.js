@@ -114,10 +114,11 @@ module.exports = {
       recRecords[tableNum - 1] = [];
       let tblRows = 0;
       let tblFvNum = 0;
+      let index = 0;
       for (const field of table.fields) {
         checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
         field.name = trim(field.name);
-        if (field.name === '') error(null, ECodes.FIELD_NAME_EMPTY);
+        if (field.name === '') field.name = 'Unknown Field ' + ++index;
         fldRecords[tableNum - 1].push({
           name: field.name,
           fieldTypeId: await checkType(field.type),
