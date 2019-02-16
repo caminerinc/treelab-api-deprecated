@@ -126,9 +126,6 @@ module.exports = {
         const fvLen = field.values.length;
         tblFvNum += fvLen;
         tblRows = fvLen > tblRows ? fvLen - tblRows : 0;
-        for (let i = 0; i < tblRows; i++) {
-          recRecords[tableNum - 1].push({});
-        }
         for (const value of field.values) {
           fldValRecords.push({
             recordId: null,
@@ -145,6 +142,9 @@ module.exports = {
             valuesNum: 0,
           });
         }
+      }
+      for (let i = 0; i < tblRows; i++) {
+        recRecords[tableNum - 1].push({});
       }
       let lastTblFvNum = tblFvFlag[tblFvFlag.length - 1]
         ? tblFvFlag[tblFvFlag.length - 1].tblFvNum
