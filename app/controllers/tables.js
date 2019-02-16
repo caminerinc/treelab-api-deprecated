@@ -235,7 +235,6 @@ module.exports = {
       }
     }
     recResult.forEach((i, index) => (recPosRecords[index].siblingId = i.id));
-    // error(null, ECodes.FIELD_NAME_EMPTY);
     await fldValController.bulkCreate(fldValRecords);
     await posController.bulkCreate(fldPosRecords, POSITION_TYPE.FIELD);
     await posController.bulkCreate(recPosRecords, POSITION_TYPE.RECORD);
