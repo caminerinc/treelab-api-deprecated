@@ -41,7 +41,7 @@ const checkKeyExists = (map, ...keys) => {
 };
 
 const trim = str => {
-  return str.replace(/(^\s*)|(\s*$)/g, '');
+  return str.toString().replace(/(^\s*)|(\s*$)/g, '');
 };
 
 module.exports = {
