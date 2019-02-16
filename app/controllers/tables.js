@@ -102,8 +102,9 @@ module.exports = {
     let tblPosRecords = [];
     let recPosRecords = [];
     let fldPosRecords = [];
+    let tblFvFlag = [];
     for (const table of tables) {
-      checkKeyExists(table, 'name', 'rows', 'fields');
+      checkKeyExists(table, 'name', 'fields');
       table.name = trim(table.name);
       if (table.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
       await checkNameWithinBase(baseId, table.name);
@@ -111,6 +112,7 @@ module.exports = {
       const tableNum = tblRecords.length;
       fldRecords[tableNum - 1] = [];
       recRecords[tableNum - 1] = [];
+      let rows = 0;
       for (const field of table.fields) {
         checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
         field.name = trim(field.name);
@@ -128,12 +130,13 @@ module.exports = {
             valuesNum: field.values.length,
           });
         }
-      }
-      for (let i = 0; i < table.rows; i++) {
-        recRecords[tableNum - 1].push({});
+        const fvLen = field.values.length;
+        rows = fvLen > rows ? fvLen - rows : 0;
+        for (let i = 0; i < rows; i++) {
+          recRecords[tableNum - 1].push({});
+        }
       }
     }
-
     const tblResults = await tblQueries.bulkCreate(tblRecords);
     const lastTablePos =
       (await posController.getLastPosition(baseId, POSITION_TYPE.TABLE))
@@ -179,16 +182,18 @@ module.exports = {
       }),
     );
 
-    let k = 0;
+    let fldValIndex = 0;
     for (let i = 0; i < fldResult.length; i++) {
-      let index = 0;
-      let valuesNum = fldValRecords[k] ? fldValRecords[k].valuesNum : 0;
-      for (let j = k; j < fldValRecords.length; j++) {
-        if (index < valuesNum) {
-          fldValRecords[j].recordId = recResult[index].id;
+      let recIndex = 0;
+      let valuesNum = fldValRecords[fldValIndex]
+        ? fldValRecords[fldValIndex].valuesNum
+        : 0;
+      for (let j = fldValIndex; j < fldValRecords.length; j++) {
+        if (recIndex < valuesNum) {
+          fldValRecords[j].recordId = recResult[recIndex].id;
           fldValRecords[j].fieldId = fldResult[i].id;
-          index++;
-          k++;
+          recIndex++;
+          fldValIndex++;
         } else {
           valuesNum = fldValRecords[j];
           break;
