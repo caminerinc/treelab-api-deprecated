@@ -80,7 +80,8 @@ const getRowsById = records => {
 const getCellValuesByColumnId = fieldValues => {
   let cellAccum = {};
   for (const fieldValue of fieldValues) {
-    cellAccum[fieldValue.fieldId] = fieldValue.value;
+    if (fieldValue.value !== null)
+      cellAccum[fieldValue.fieldId] = fieldValue.value;
   }
   return cellAccum;
 };
