@@ -36,18 +36,18 @@ module.exports = {
             },
           ],
         },
-        // {
-        //   model: FieldPositions,
-        //   as: 'fieldPositions',
-        //   attributes: ['siblingId'],
-        //   // include: [
-        //   //   {
-        //   //     model: Fields,
-        //   //     as: 'field',
-        //   //     attributes: ['width'],
-        //   //   },
-        //   // ],
-        // },
+        {
+          model: FieldPositions,
+          as: 'fieldPositions',
+          attributes: ['siblingId'],
+          // include: [
+          //   {
+          //     model: Fields,
+          //     as: 'field',
+          //     attributes: ['width'],
+          //   },
+          // ],
+        },
         {
           model: RecordPositions,
           as: 'recordPositions',
@@ -55,8 +55,8 @@ module.exports = {
         },
       ],
       order: [
-        // [sequelize.col('fieldPositions.position'), 'asc'],
-        // [sequelize.col('recordPositions.position'), 'asc'],
+        [sequelize.col('fieldPositions.position'), 'asc'],
+        [sequelize.col('recordPositions.position'), 'asc'],
       ],
     });
   },
