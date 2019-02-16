@@ -112,7 +112,8 @@ module.exports = {
       const tableNum = tblRecords.length;
       fldRecords[tableNum - 1] = [];
       recRecords[tableNum - 1] = [];
-      let rows = 0;
+      let tblRows = 0;
+      let tblFvNum = 0;
       for (const field of table.fields) {
         checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
         field.name = trim(field.name);
@@ -122,20 +123,31 @@ module.exports = {
           fieldTypeId: await checkType(field.type),
           typeOptions: field.typeOptions,
         });
+        const fvLen = field.values.length;
+        tblFvNum += fvLen;
+        tblRows = fvLen > tblRows ? fvLen - tblRows : 0;
+        for (let i = 0; i < tblRows; i++) {
+          recRecords[tableNum - 1].push({});
+        }
         for (const value of field.values) {
           fldValRecords.push({
             recordId: null,
             fieldId: null,
             value,
-            valuesNum: field.values.length,
+            valuesNum: fvLen,
           });
         }
-        const fvLen = field.values.length;
-        rows = fvLen > rows ? fvLen - rows : 0;
-        for (let i = 0; i < rows; i++) {
-          recRecords[tableNum - 1].push({});
-        }
       }
+      let lastTblFvNum = tblFvFlag[tblFvFlag.length - 1]
+        ? tblFvFlag[tblFvFlag.length - 1].tblFvNum
+        : 0;
+      let lastTblRows = tblFvFlag[tblFvFlag.length - 1]
+        ? tblFvFlag[tblFvFlag.length - 1].tblRows
+        : 0;
+      tblFvFlag.push({
+        tblFvNum: lastTblFvNum + tblFvNum,
+        tblRows: lastTblRows + recRecords[tableNum - 1].length,
+      });
     }
     const tblResults = await tblQueries.bulkCreate(tblRecords);
     const lastTablePos =
@@ -181,19 +193,26 @@ module.exports = {
         return a.concat(item);
       }),
     );
-
-    let fldValIndex = 0;
+    let fvIndex = 0;
+    let lastFlag = tblFvFlag.shift();
+    let rowsEnd = lastFlag.tblRows;
+    let beginRows = 0;
     for (let i = 0; i < fldResult.length; i++) {
       let recIndex = 0;
-      let valuesNum = fldValRecords[fldValIndex]
-        ? fldValRecords[fldValIndex].valuesNum
+      let valuesNum = fldValRecords[fvIndex]
+        ? fldValRecords[fvIndex].valuesNum
         : 0;
-      for (let j = fldValIndex; j < fldValRecords.length; j++) {
+      for (let j = fvIndex; j < fldValRecords.length; j++) {
+        if (fvIndex >= lastFlag.tblFvNum) {
+          lastFlag = tblFvFlag.shift();
+          beginRows = rowsEnd;
+          rowsEnd = lastFlag.tblRows;
+        }
         if (recIndex < valuesNum) {
-          fldValRecords[j].recordId = recResult[recIndex].id;
+          fldValRecords[j].recordId = recResult[beginRows + recIndex].id;
           fldValRecords[j].fieldId = fldResult[i].id;
           recIndex++;
-          fldValIndex++;
+          fvIndex++;
         } else {
           valuesNum = fldValRecords[j];
           break;
