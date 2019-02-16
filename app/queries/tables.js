@@ -25,7 +25,7 @@ module.exports = {
       where: { id },
       include: [
         {
-          attributes: ['id', 'createdAt'],
+          attributes: ['id'],
           model: Records,
           as: 'recs',
           include: [
