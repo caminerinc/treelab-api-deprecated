@@ -11,6 +11,10 @@ const ECodes = {
     code: 'INVALID_JSON',
     message: 'Incorrect JSON format.',
   },
+  BUD_DATA_MISSING: {
+    code: 'BUD_DATA_MISSING',
+    message: 'Progress and other data might be missing',
+  },
   FIELD_NAME_EMPTY: {
     code: 'FIELD_NAME_EMPTY',
     message: 'Field name could not be empty.',
