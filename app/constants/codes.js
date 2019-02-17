@@ -1,4 +1,12 @@
 const ECodes = {
+  BUDS_SERVER_ERROR: {
+    code: 'BUDS_SERVER_ERROR',
+    message: 'Some errors occurred on the buds server.',
+  },
+  BUD_NOT_FOUND: {
+    code: 'BUD_NOT_FOUND',
+    message: 'Bud could not be found.',
+  },
   FIELD_NAME_EMPTY: {
     code: 'FIELD_NAME_EMPTY',
     message: 'Field name could not be empty.',
