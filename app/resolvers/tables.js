@@ -80,7 +80,8 @@ const getRowsById = records => {
 const getCellValuesByColumnId = fieldValues => {
   let cellAccum = {};
   for (const fieldValue of fieldValues) {
-    cellAccum[fieldValue.fieldId] = fieldValue.value;
+    if (fieldValue.value !== null && fieldValue.value !== '')
+      cellAccum[fieldValue.fieldId] = fieldValue.value;
   }
   return cellAccum;
 };
@@ -136,6 +137,20 @@ module.exports = {
     params.name = trim(params.name);
     if (params.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
     await tblController.update(params);
+    ctx.body = { message: 'success' };
+  },
+
+  async bulkTables(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'tables', 'baseId');
+    try {
+      params.tables = JSON.parse(params.tables);
+    } catch (e) {
+      error(Status.Forbidden, ECodes.INVALID_JSON);
+    }
+    await sequelize.transaction(() =>
+      tblController.bulkTables(params.baseId, params.tables),
+    );
     ctx.body = { message: 'success' };
   },
 };

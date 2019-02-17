@@ -8,4 +8,8 @@ module.exports = {
   destroy(rows) {
     return Records.destroy({ where: { id: { $in: rows } } });
   },
+
+  bulkCreate(records) {
+    return Records.bulkCreate(records);
+  },
 };

@@ -42,4 +42,12 @@ module.exports = {
   getByIds(ids) {
     return posQueries.getByIds(ids);
   },
+
+  bulkCreate(records, type) {
+    return posQueries.bulkCreate(records, type);
+  },
+
+  getLastPosition(parentId, type) {
+    return posQueries.getLast(parentId, type);
+  },
 };
