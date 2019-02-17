@@ -2,8 +2,10 @@ const rp = require('request-promise');
 const { checkKeyExists } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
 
+const { url } = require('../../config/config');
+
 const BUDS_MAPPING = {
-  'data-extraction': 'http://52.81.16.146:8082/extract_service',
+  'data-extraction': url.attachmentExtraction,
 };
 
 module.exports = {
@@ -22,6 +24,7 @@ module.exports = {
       });
       ctx.body = result;
     } catch (e) {
+      console.log('Buds errors - ', e);
       error(Status.InternalServerError, ECodes.BUDS_SERVER_ERROR);
     }
   },

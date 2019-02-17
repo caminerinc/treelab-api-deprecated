@@ -8,7 +8,7 @@ module.exports = {
   tokenExpiresIn: '10h',
   offlineDelayTime: 2000,
   url: {
-    attachmentExtraction: 'http://52.80.52.148:5000',
+    attachmentExtraction: 'http://52.81.16.146:8082/extract_service',
   },
   sharedSecret: 'shared-secret',
   nodeEnv: 'develop',
