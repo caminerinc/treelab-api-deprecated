@@ -85,7 +85,11 @@ module.exports = {
       tblController.createNewTableSet(params),
     );
     ctx.body = adaptCreateTable(result);
-    socketIo.sync({ op: 'createTable', body: ctx.body });
+    socketIo.sync({
+      op: 'createTable',
+      body: ctx.body,
+      params: { baseId: params.basId },
+    });
   },
 
   async getAll(ctx) {
