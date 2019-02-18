@@ -16,7 +16,12 @@ const adaptTables = tables => ({
 });
 
 const adaptTable = table => {
-  let result = { tableDatas: { id: null, rowsById: {} }, viewDatas: {} };
+  let result = {
+    tableDatas: { id: null, rowsById: {} },
+    viewDatas: { columnOrder: [], rowOrder: [] },
+  };
+  let lastFieldId = '';
+  let recordIds = {};
   for (let i = 0; i < table.length; i++) {
     const value = table[i];
     if (!result.tableDatas.id) result.tableDatas.id = value.id;
@@ -25,7 +30,29 @@ const adaptTable = table => {
         id: value['Records.id'],
         cellValuesByColumnId: {},
       };
+    if (
+      value['FieldValues.value'] !== null &&
+      value['FieldValues.value'] !== ''
+    ) {
+      result.tableDatas.rowsById[value['Records.id']].cellValuesByColumnId[
+        value['Fields.id']
+      ] = value['FieldValues.value'];
+    }
+    if (value['Fields.id'] !== lastFieldId) {
+      result.viewDatas.columnOrder.push({
+        id: value['Fields.id'],
+        width: value['Fields.width'],
+      });
+      lastFieldId = value['Fields.id'];
+    }
+    if (!recordIds[value['Records.id']]) {
+      result.viewDatas.rowOrder.push({
+        id: value['Records.id'],
+      });
+      recordIds[value['Records.id']] = 1;
+    }
   }
+  return result;
 };
 
 const adaptShallowRows = (table, tableSchema) => {
@@ -61,26 +88,6 @@ const adaptCreateTable = ({ table, fields }) => ({
     },
   ],
 });
-
-const getRowsById = records => {
-  let rowAccum = {};
-  for (const record of records) {
-    rowAccum[record.id] = {
-      ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: getCellValuesByColumnId(record.fldVs),
-    };
-  }
-  return rowAccum;
-};
-
-const getCellValuesByColumnId = fieldValues => {
-  let cellAccum = {};
-  for (const fieldValue of fieldValues) {
-    if (fieldValue.value !== null && fieldValue.value !== '')
-      cellAccum[fieldValue.fieldId] = fieldValue.value;
-  }
-  return cellAccum;
-};
 
 module.exports = {
   async create(ctx) {

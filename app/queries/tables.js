@@ -21,15 +21,12 @@ module.exports = {
 
   getOneById(id) {
     const sql = `SELECT "Tables"."id",
-                  Records."id" AS "Records.id",
+                    Records."id" AS "Records.id",
                     Fields."id" AS "Fields.id",
                     Fields."width" AS "Fields.width",
-                  FieldValues."id" AS "FieldValues.id",
+                    FieldValues."id" AS "FieldValues.id",
                     FieldValues."value" AS "FieldValues.value",
-                    FieldPositions."id" AS "fieldPositions.id",
-                    FieldPositions."siblingId" AS "fieldPositions.siblingId",
-                  RecordPositions."id" AS "RecordPositions.id",
-                  RecordPositions."siblingId" AS "RecordPositions.siblingId"
+                    RecordPositions."siblingId" AS "RecordPositions.siblingId"
                   FROM "Tables"
                   INNER JOIN "Records" AS Records ON Records."tableId"="Tables"."id"
                   INNER JOIN "Fields" AS Fields ON Fields."tableId"="Tables"."id"
