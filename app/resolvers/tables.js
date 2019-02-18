@@ -18,7 +18,7 @@ const adaptTables = tables => ({
 const adaptTable = table => {
   let result = {
     tableDatas: { id: null, rowsById: {} },
-    viewDatas: { columnOrder: [], rowOrder: [] },
+    viewDatas: [{ columnOrder: [], rowOrder: [] }],
   };
   let lastFieldId = '';
   let recordIds = {};
@@ -39,14 +39,14 @@ const adaptTable = table => {
       ] = value['FieldValues.value'];
     }
     if (value['Fields.id'] !== lastFieldId) {
-      result.viewDatas.columnOrder.push({
+      result.viewDatas[0].columnOrder.push({
         id: value['Fields.id'],
         width: value['Fields.width'],
       });
       lastFieldId = value['Fields.id'];
     }
     if (!recordIds[value['Records.id']]) {
-      result.viewDatas.rowOrder.push({
+      result.viewDatas[0].rowOrder.push({
         id: value['Records.id'],
       });
       recordIds[value['Records.id']] = 1;
