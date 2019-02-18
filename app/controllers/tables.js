@@ -264,6 +264,6 @@ module.exports = {
     await fldValController.bulkCreate(fldValRecords);
     await posController.bulkCreate(fldPosRecords, POSITION_TYPE.FIELD);
     await posController.bulkCreate(recPosRecords, POSITION_TYPE.RECORD);
-    return tableSchemas;
+    return { tableSchemas };
   },
 };
