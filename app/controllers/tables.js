@@ -104,6 +104,7 @@ module.exports = {
     let recPosRecords = [];
     let fldPosRecords = [];
     let tblFvFlag = [];
+    let tblFldFlag = [];
     let tableSchemas = [];
     for (const table of tables) {
       checkKeyExists(table, 'name', 'fields');
@@ -159,16 +160,20 @@ module.exports = {
         }
       }
 
-      let lastTblFvNum = tblFvFlag[tblFvFlag.length - 1]
+      let lastTblFvNum = tblFvFlag.length
         ? tblFvFlag[tblFvFlag.length - 1].tblFvNum
         : 0;
-      let lastTblRows = tblFvFlag[tblFvFlag.length - 1]
+      let lastTblRows = tblFvFlag.length
         ? tblFvFlag[tblFvFlag.length - 1].tblRows
+        : 0;
+      let lastTblFldNum = tblFldFlag.length
+        ? tblFldFlag[tblFldFlag.length - 1]
         : 0;
       tblFvFlag.push({
         tblFvNum: lastTblFvNum + tblFvNum,
         tblRows: lastTblRows + recRecords[tableNum - 1].length,
       });
+      tblFldFlag.push(lastTblFldNum + table.fields.length);
       tableSchemas.push(tableSchema);
     }
     const tblResults = await tblQueries.bulkCreate(tblRecords);
@@ -221,7 +226,13 @@ module.exports = {
     let lastFlag = tblFvFlag.shift();
     let rowsEnd = lastFlag.tblRows;
     let beginRows = 0;
+    let fldIndex = 0;
     for (let i = 0; i < fldResult.length; i++) {
+      if (tblFldFlag[fldIndex]) {
+        if (i >= tblFldFlag[fldIndex]) fldIndex++;
+        let _t = !fldIndex ? i : i - tblFldFlag[fldIndex - 1];
+        tableSchemas[fldIndex].columns[_t].id = fldResult[i].id;
+      }
       fldPosRecords[i].siblingId = fldResult[i].id;
       let recIndex = 0;
       let valuesNum = fldValRecords[fvIndex]
