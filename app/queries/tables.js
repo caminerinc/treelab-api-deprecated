@@ -20,45 +20,25 @@ module.exports = {
   },
 
   getOneById(id) {
-    return Tables.findOne({
-      attributes: ['id'],
-      where: { id },
-      include: [
-        {
-          attributes: ['id'],
-          model: Records,
-          as: 'recs',
-          include: [
-            {
-              model: FieldValues,
-              attributes: ['fieldId', 'value'],
-              as: 'fldVs',
-            },
-          ],
-        },
-        {
-          model: FieldPositions,
-          as: 'fieldPositions',
-          attributes: ['siblingId'],
-          // include: [
-          //   {
-          //     model: Fields,
-          //     as: 'field',
-          //     attributes: ['width'],
-          //   },
-          // ],
-        },
-        {
-          model: RecordPositions,
-          as: 'recordPositions',
-          attributes: ['siblingId'],
-        },
-      ],
-      order: [
-        [sequelize.col('fieldPositions.position'), 'asc'],
-        [sequelize.col('recordPositions.position'), 'asc'],
-      ],
-    });
+    const sql = `SELECT "Tables"."id",
+                  Records."id" AS "Records.id",
+                    Fields."id" AS "Fields.id",
+                    Fields."width" AS "Fields.width",
+                  FieldValues."id" AS "FieldValues.id",
+                    FieldValues."value" AS "FieldValues.value",
+                    FieldPositions."id" AS "fieldPositions.id",
+                    FieldPositions."siblingId" AS "fieldPositions.siblingId",
+                  RecordPositions."id" AS "RecordPositions.id",
+                  RecordPositions."siblingId" AS "RecordPositions.siblingId"
+                  FROM "Tables"
+                  INNER JOIN "Records" AS Records ON Records."tableId"="Tables"."id"
+                  INNER JOIN "Fields" AS Fields ON Fields."tableId"="Tables"."id"
+                  INNER JOIN "FieldValues" as FieldValues ON Records."id"=FieldValues."recordId" AND Fields."id"=FieldValues."fieldId"
+                  INNER JOIN "FieldPositions" as FieldPositions ON FieldPositions."siblingId"=Fields."id"
+                  INNER JOIN "RecordPositions" as RecordPositions ON RecordPositions."siblingId"=Records."id"
+                  WHERE "Tables"."id" = ?
+                  ORDER BY FieldPositions."position" ASC, RecordPositions."position" ASC;`;
+    return sequelize.query(sql, { replacements: [id] });
   },
 
   getAllByBaseId(baseId) {

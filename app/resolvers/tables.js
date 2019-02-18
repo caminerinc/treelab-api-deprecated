@@ -16,20 +16,9 @@ const adaptTables = tables => ({
 });
 
 const adaptTable = table => ({
-  tableDatas: {
-    ...pick(table, ['id']),
-    rowsById: getRowsById(table.recs),
-  },
+  tableDatas: {},
   // TODO: Needs refactor
-  viewDatas: [
-    {
-      columnOrder: table.fieldPositions.map(fieldPos => ({
-        id: fieldPos.siblingId,
-        width: fieldPos.field ? fieldPos.field.width : null,
-      })),
-      rowOrder: table.recordPositions.map(recPos => ({ id: recPos.siblingId })),
-    },
-  ],
+  viewDatas: [],
 });
 
 const adaptShallowRows = (table, tableSchema) => {
