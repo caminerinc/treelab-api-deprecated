@@ -1,8 +1,11 @@
 const rp = require('request-promise');
 const socketIo = require('../../lib/socketIo');
 const fldValController = require('../controllers/fieldValues');
+// TODO: @Derek remove the import of resolver table from here
+const tblController = require('../controllers/tables');
 const { checkKeyExists } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
 
 const { url } = require('../../config/config');
 
@@ -33,17 +36,18 @@ module.exports = {
     }
     // ------------------
     ctx.body = { message: 'Module request sent' };
-
+    console.log('Package to python -- ', params.data);
     try {
-      await rp({
+      const result = await rp({
         uri: BUDS_MAPPING[params.action],
         method: 'POST',
-        form: { data: params.data },
+        form: { ...params.data },
         json: true,
       });
-
+      console.log('Response received -- ', result);
       // ------------------
       if (progressInfo) {
+        const baseId = progressInfo.baseId;
         const completeUpdate = {
           ...progressInfo,
           value: 'Complete',
@@ -53,10 +57,20 @@ module.exports = {
           op: 'updateProgress',
           body: completeUpdate,
         });
+
+        const createdTables = await sequelize.transaction(() =>
+          tblController.bulkTables(baseId, result),
+        );
+        socketIo.sync({
+          op: 'createMultipleTables',
+          body: createdTables,
+        });
+        console.log('what are the created Tables', createdTables);
       }
       // ------------------
     } catch (e) {
       // -------------------
+      console.log('Error occured -- ', e);
       if (progressInfo) {
         const errorUpdate = {
           ...progressInfo,
