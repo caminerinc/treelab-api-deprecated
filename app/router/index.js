@@ -9,6 +9,7 @@ const recResolver = require('../resolvers/records');
 const usrResolver = require('../resolvers/users');
 const posResolver = require('../resolvers/positions');
 const fldTypesResolver = require('../resolvers/fieldTypes');
+const budsResolver = require('../resolvers/buds');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -53,6 +54,9 @@ router.delete('/api/array-field', fldValResolver.deleteArrayValue);
 
 //FieldTypes
 router.get('/api/fieldTypes', fldTypesResolver.getAll);
+
+//Buds
+router.post('/api/execute-bud', budsResolver.executeBud);
 
 //Users
 router.get('/api/users', usrResolver.getAll);

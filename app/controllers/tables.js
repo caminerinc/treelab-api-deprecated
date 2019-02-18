@@ -114,10 +114,11 @@ module.exports = {
       recRecords[tableNum - 1] = [];
       let tblRows = 0;
       let tblFvNum = 0;
+      let index = 0;
       for (const field of table.fields) {
         checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
         field.name = trim(field.name);
-        if (field.name === '') error(null, ECodes.FIELD_NAME_EMPTY);
+        if (field.name === '') field.name = 'Unknown Field ' + ++index;
         fldRecords[tableNum - 1].push({
           name: field.name,
           fieldTypeId: await checkType(field.type),
@@ -126,9 +127,6 @@ module.exports = {
         const fvLen = field.values.length;
         tblFvNum += fvLen;
         tblRows = fvLen > tblRows ? fvLen - tblRows : 0;
-        for (let i = 0; i < tblRows; i++) {
-          recRecords[tableNum - 1].push({});
-        }
         for (const value of field.values) {
           fldValRecords.push({
             recordId: null,
@@ -145,6 +143,9 @@ module.exports = {
             valuesNum: 0,
           });
         }
+      }
+      for (let i = 0; i < tblRows; i++) {
+        recRecords[tableNum - 1].push({});
       }
       let lastTblFvNum = tblFvFlag[tblFvFlag.length - 1]
         ? tblFvFlag[tblFvFlag.length - 1].tblFvNum

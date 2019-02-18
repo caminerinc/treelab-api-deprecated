@@ -1,4 +1,12 @@
 const ECodes = {
+  BUDS_SERVER_ERROR: {
+    code: 'BUDS_SERVER_ERROR',
+    message: 'Some errors occurred on the buds server.',
+  },
+  BUD_NOT_FOUND: {
+    code: 'BUD_NOT_FOUND',
+    message: 'Bud could not be found.',
+  },
   INVALID_JSON: {
     code: 'INVALID_JSON',
     message: 'Incorrect JSON format.',
