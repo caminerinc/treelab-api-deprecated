@@ -15,22 +15,45 @@ const adaptTables = tables => ({
   })),
 });
 
-const adaptTable = table => ({
-  tableDatas: {
-    ...pick(table, ['id']),
-    rowsById: getRowsById(table.recs),
-  },
-  // TODO: Needs refactor
-  viewDatas: [
-    {
-      columnOrder: table.fieldPositions.map(fieldPos => ({
-        id: fieldPos.siblingId,
-        width: fieldPos.field ? fieldPos.field.width : null,
-      })),
-      rowOrder: table.recordPositions.map(recPos => ({ id: recPos.siblingId })),
-    },
-  ],
-});
+const adaptTable = table => {
+  let result = {
+    tableDatas: { id: '', rowsById: {} },
+    viewDatas: [{ columnOrder: [], rowOrder: [] }],
+  };
+  let lastFieldId = '';
+  let recordIds = {};
+  for (let i = 0; i < table.length; i++) {
+    const value = table[i];
+    if (!result.tableDatas.id) result.tableDatas.id = value.id;
+    if (!result.tableDatas.rowsById[value['Records.id']])
+      result.tableDatas.rowsById[value['Records.id']] = {
+        id: value['Records.id'],
+        cellValuesByColumnId: {},
+      };
+    if (
+      value['FieldValues.value'] !== null &&
+      value['FieldValues.value'] !== ''
+    ) {
+      result.tableDatas.rowsById[value['Records.id']].cellValuesByColumnId[
+        value['Fields.id']
+      ] = value['FieldValues.value'];
+    }
+    if (value['Fields.id'] !== lastFieldId) {
+      result.viewDatas[0].columnOrder.push({
+        id: value['Fields.id'],
+        width: value['Fields.width'],
+      });
+      lastFieldId = value['Fields.id'];
+    }
+    if (!recordIds[value['Records.id']]) {
+      result.viewDatas[0].rowOrder.push({
+        id: value['Records.id'],
+      });
+      recordIds[value['Records.id']] = 1;
+    }
+  }
+  return result;
+};
 
 const adaptShallowRows = (table, tableSchema) => {
   const adaptedTable = adaptTable(table);
@@ -66,26 +89,6 @@ const adaptCreateTable = ({ table, fields }) => ({
   ],
 });
 
-const getRowsById = records => {
-  let rowAccum = {};
-  for (const record of records) {
-    rowAccum[record.id] = {
-      ...pick(record, ['id', 'createdAt']),
-      cellValuesByColumnId: getCellValuesByColumnId(record.fldVs),
-    };
-  }
-  return rowAccum;
-};
-
-const getCellValuesByColumnId = fieldValues => {
-  let cellAccum = {};
-  for (const fieldValue of fieldValues) {
-    if (fieldValue.value !== null && fieldValue.value !== '')
-      cellAccum[fieldValue.fieldId] = fieldValue.value;
-  }
-  return cellAccum;
-};
-
 module.exports = {
   async create(ctx) {
     const params = ctx.request.body;
@@ -113,7 +116,7 @@ module.exports = {
   async getOne(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-    const table = await tblController.getOne(params.tableId);
+    const table = (await tblController.getOne(params.tableId))[0];
     if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
     ctx.body = adaptTable(table);
   },
