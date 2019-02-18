@@ -45,31 +45,45 @@ module.exports = {
         json: true,
       });
       console.log('Response received -- ', result);
-      // ------------------
-      if (progressInfo) {
-        const baseId = progressInfo.baseId;
-        const completeUpdate = {
-          ...progressInfo,
-          value: 'Complete',
-        };
-        fldValController.upsertPrimitive(completeUpdate);
-        socketIo.sync({
-          op: 'updateProgress',
-          body: completeUpdate,
-        });
 
-        const createdTables = await sequelize.transaction(() =>
-          tblController.bulkTables(baseId, result),
-        );
-        socketIo.sync({
-          op: 'createMultipleTables',
-          body: createdTables,
-        });
-        console.log('what are the created Tables', createdTables);
+      if (progressInfo) {
+        try {
+          const baseId = progressInfo.baseId;
+          const createdTables = await sequelize.transaction(() =>
+            tblController.bulkTables(baseId, result),
+          );
+          socketIo.sync({
+            op: 'createMultipleTables',
+            body: createdTables,
+          });
+
+          console.log('what are the created Tables', createdTables);
+          const completeUpdate = {
+            ...progressInfo,
+            value: 'Complete',
+          };
+          fldValController.upsertPrimitive(completeUpdate);
+          socketIo.sync({
+            op: 'updateProgress',
+            body: completeUpdate,
+          });
+        } catch (e) {
+          console.log('Error in creating tables!');
+
+          if (progressInfo) {
+            const errorUpdate = {
+              ...progressInfo,
+              value: 'Error',
+            };
+            fldValController.upsertPrimitive(errorUpdate);
+            socketIo.sync({
+              op: 'updateProgress',
+              body: errorUpdate,
+            });
+          }
+        }
       }
-      // ------------------
     } catch (e) {
-      // -------------------
       console.log('Error occured -- ', e);
       if (progressInfo) {
         const errorUpdate = {
@@ -82,7 +96,6 @@ module.exports = {
           body: errorUpdate,
         });
       }
-      // ---------------------
     }
   },
 };
