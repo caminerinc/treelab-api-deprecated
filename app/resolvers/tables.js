@@ -141,6 +141,7 @@ module.exports = {
     } catch (e) {
       error(Status.Forbidden, ECodes.INVALID_JSON);
     }
+    if (!params.tables.length) return (ctx.body = { tableSchemas: [] });
     const result = await sequelize.transaction(() =>
       tblController.bulkTables(params.baseId, params.tables),
     );
