@@ -90,6 +90,7 @@ module.exports = {
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     const updatedFields = pick(params, ['typeOptions', 'name']);
+    updatedFields.fieldTypeId = await checkType(params.type);
     return await fldQueries.update(updatedFields, params.fieldId);
   },
 
