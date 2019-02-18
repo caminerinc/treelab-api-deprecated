@@ -10,10 +10,15 @@ const usrResolver = require('../resolvers/users');
 const posResolver = require('../resolvers/positions');
 const fldTypesResolver = require('../resolvers/fieldTypes');
 const budsResolver = require('../resolvers/buds');
+const socketIo = require('../../lib/socketIo');
 
 // App
 router.get('/api/public/health-check', ctx => {
   ctx.body = 'Connection established';
+  socketIo.sync({
+    op: 'healthCheck',
+    body: 'Socket health check',
+  });
 });
 
 // Base
