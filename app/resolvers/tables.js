@@ -15,11 +15,18 @@ const adaptTables = tables => ({
   })),
 });
 
-const adaptTable = table => ({
-  tableDatas: {},
-  // TODO: Needs refactor
-  viewDatas: [],
-});
+const adaptTable = table => {
+  let result = { tableDatas: { id: null, rowsById: {} }, viewDatas: {} };
+  for (let i = 0; i < table.length; i++) {
+    const value = table[i];
+    if (!result.tableDatas.id) result.tableDatas.id = value.id;
+    if (!result.tableDatas.rowsById[value['Records.id']])
+      result.tableDatas.rowsById[value['Records.id']] = {
+        id: value['Records.id'],
+        cellValuesByColumnId: {},
+      };
+  }
+};
 
 const adaptShallowRows = (table, tableSchema) => {
   const adaptedTable = adaptTable(table);
@@ -102,7 +109,7 @@ module.exports = {
   async getOne(ctx) {
     const params = ctx.params;
     checkKeyExists(params, 'tableId');
-    const table = await tblController.getOne(params.tableId);
+    const table = (await tblController.getOne(params.tableId))[0];
     if (!table) error(Status.Forbidden, ECodes.TABLE_NOT_FOUND);
     ctx.body = adaptTable(table);
   },
