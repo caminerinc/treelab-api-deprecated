@@ -1,3 +1,4 @@
+const { pick } = require('lodash');
 const tblQueries = require('../queries/tables');
 const posController = require('../controllers/positions');
 const recController = require('../controllers/records');
@@ -103,6 +104,7 @@ module.exports = {
     let recPosRecords = [];
     let fldPosRecords = [];
     let tblFvFlag = [];
+    let tableSchemas = [];
     for (const table of tables) {
       checkKeyExists(table, 'name', 'fields');
       table.name = trim(table.name);
@@ -112,10 +114,12 @@ module.exports = {
       const tableNum = tblRecords.length;
       fldRecords[tableNum - 1] = [];
       recRecords[tableNum - 1] = [];
-      let tblRows = 0;
+      let tblMaxRows = 0;
       let tblFvNum = 0;
       let index = 0;
+      let tableSchema = { name: table.name, id: null, columns: [] };
       for (const field of table.fields) {
+        let tblRows = 0;
         checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
         field.name = trim(field.name);
         if (field.name === '') field.name = 'Unknown Field ' + ++index;
@@ -126,7 +130,10 @@ module.exports = {
         });
         const fvLen = field.values.length;
         tblFvNum += fvLen;
-        tblRows = fvLen > tblRows ? fvLen - tblRows : 0;
+        if (fvLen > tblMaxRows) {
+          tblRows = fvLen - tblMaxRows;
+          tblMaxRows = fvLen;
+        }
         for (const value of field.values) {
           fldValRecords.push({
             recordId: null,
@@ -143,10 +150,15 @@ module.exports = {
             valuesNum: 0,
           });
         }
+        tableSchema.columns.push({
+          id: null,
+          ...pick(field, ['name', 'type', 'typeOptions']),
+        });
+        for (let i = 0; i < tblRows; i++) {
+          recRecords[tableNum - 1].push({});
+        }
       }
-      for (let i = 0; i < tblRows; i++) {
-        recRecords[tableNum - 1].push({});
-      }
+
       let lastTblFvNum = tblFvFlag[tblFvFlag.length - 1]
         ? tblFvFlag[tblFvFlag.length - 1].tblFvNum
         : 0;
@@ -157,12 +169,14 @@ module.exports = {
         tblFvNum: lastTblFvNum + tblFvNum,
         tblRows: lastTblRows + recRecords[tableNum - 1].length,
       });
+      tableSchemas.push(tableSchema);
     }
     const tblResults = await tblQueries.bulkCreate(tblRecords);
     const lastTablePos =
       (await posController.getLastPosition(baseId, POSITION_TYPE.TABLE))
         .dataValues.max || 0;
     for (let i = 0; i < tblResults.length; i++) {
+      tableSchemas[i].id = tblResults[i].id;
       for (let j = 0; j < fldRecords[i].length; j++) {
         fldRecords[i][j].tableId = tblResults[i].id;
         await fldController.checkFieldByTableAndName(
@@ -239,6 +253,6 @@ module.exports = {
     await fldValController.bulkCreate(fldValRecords);
     await posController.bulkCreate(fldPosRecords, POSITION_TYPE.FIELD);
     await posController.bulkCreate(recPosRecords, POSITION_TYPE.RECORD);
-    return;
+    return tableSchemas;
   },
 };
