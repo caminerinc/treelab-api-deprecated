@@ -152,9 +152,8 @@ module.exports = {
     } catch (e) {
       error(Status.Forbidden, ECodes.INVALID_JSON);
     }
-    await sequelize.transaction(() =>
+    ctx.body = await sequelize.transaction(() =>
       tblController.bulkTables(params.baseId, params.tables),
     );
-    ctx.body = { message: 'success' };
   },
 };
