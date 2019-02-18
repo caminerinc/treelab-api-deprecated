@@ -28,11 +28,11 @@ module.exports = {
                     FieldValues."value" AS "FieldValues.value",
                     RecordPositions."siblingId" AS "RecordPositions.siblingId"
                   FROM "Tables"
-                  INNER JOIN "Records" AS Records ON Records."tableId"="Tables"."id"
-                  INNER JOIN "Fields" AS Fields ON Fields."tableId"="Tables"."id"
-                  INNER JOIN "FieldValues" as FieldValues ON Records."id"=FieldValues."recordId" AND Fields."id"=FieldValues."fieldId"
-                  INNER JOIN "FieldPositions" as FieldPositions ON FieldPositions."siblingId"=Fields."id"
-                  INNER JOIN "RecordPositions" as RecordPositions ON RecordPositions."siblingId"=Records."id"
+                  LEFT JOIN "Records" AS Records ON Records."tableId"="Tables"."id"
+                  LEFT JOIN "Fields" AS Fields ON Fields."tableId"="Tables"."id"
+                  LEFT JOIN "FieldValues" as FieldValues ON Records."id"=FieldValues."recordId" AND Fields."id"=FieldValues."fieldId"
+                  LEFT JOIN "FieldPositions" as FieldPositions ON FieldPositions."siblingId"=Fields."id"
+                  LEFT JOIN "RecordPositions" as RecordPositions ON RecordPositions."siblingId"=Records."id"
                   WHERE "Tables"."id" = ?
                   ORDER BY FieldPositions."position" ASC, RecordPositions."position" ASC;`;
     return sequelize.query(sql, { replacements: [id] });

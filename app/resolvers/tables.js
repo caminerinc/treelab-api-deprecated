@@ -17,7 +17,7 @@ const adaptTables = tables => ({
 
 const adaptTable = table => {
   let result = {
-    tableDatas: { id: null, rowsById: {} },
+    tableDatas: { id: '', rowsById: {} },
     viewDatas: [{ columnOrder: [], rowOrder: [] }],
   };
   let lastFieldId = '';
