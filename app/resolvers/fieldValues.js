@@ -54,6 +54,8 @@ module.exports = {
     const params = ctx.request.body;
     checkKeyExists(params, 'recordId', 'fieldId', 'item');
     const field = await checkField(params.fieldId);
+    if (!field.types.isArray)
+      error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
 
     params.type = field.types.name;
     await sequelize.transaction(() =>
