@@ -1,4 +1,4 @@
-const { get, findIndex } = require('lodash');
+const { get } = require('lodash');
 const fldValQueries = require('../queries/fieldValues');
 const { error, Status, ECodes } = require('../util/error');
 
@@ -20,19 +20,17 @@ const updateArrayByRemoving = async (recordId, fieldId, item) => {
   if (!fieldValue) error(Status.Forbidden, ECodes.FIELD_VALUE_NOT_FOUND);
 
   // Check if it is an array
-  const values = get(fieldValue, 'value.value', []);
+  const values = get(fieldValue, 'value');
   if (!Array.isArray(values))
     error(Status.Forbidden, ECodes.FIELD_VALUE_NOT_ARRAY);
 
   // Check if item exists
-  const index = findIndex(values, item);
+  const index = values.indexOf(item);
   if (index === -1) error(Status.Forbidden, ECodes.ITEM_NOT_FOUND);
 
-  const updatedValues = values
-    .slice(0, index)
-    .concat(values.slice(index + 1, values.length));
+  values.splice(index, 1);
 
-  return await fldValQueries.updateValue(recordId, fieldId, updatedValues);
+  return await fldValQueries.updateValue(recordId, fieldId, values);
 };
 
 module.exports = {
@@ -56,10 +54,10 @@ module.exports = {
   },
 
   async deleteArrayFieldTypesByRemoving(params) {
-    const { recordId, fieldId, item, referenceColumnId } = params;
+    const { recordId, fieldId, item, referenceColumnId, type } = params;
     await updateArrayByRemoving(recordId, fieldId, item);
 
-    if (params.type === 'reference') {
+    if (type === 'reference') {
       await updateArrayByRemoving(item.referenceRowId, referenceColumnId, {
         referenceRowId: recordId,
       });
