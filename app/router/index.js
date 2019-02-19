@@ -45,7 +45,7 @@ router.delete('/api/delete-rows', recResolver.deleteMultiple);
 router.post('/api/array-field', fldValResolver.updateArrayByAdding);
 router.put('/api/primitive-field', fldValResolver.createOrUpdatePrimitive);
 router.delete('/api/clear-field-value', fldValResolver.clearValue);
-router.delete('/api/array-field', fldValResolver.deleteArrayValue);
+router.delete('/api/array-field-item', fldValResolver.deleteArrayValue);
 // TODO fix bulk copy
 // router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
