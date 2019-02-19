@@ -99,6 +99,36 @@ describe('tables模块', function() {
         });
     });
   });
+  describe('update', function() {
+    it('ok', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .put('/api/table')
+        .send({ tableId: base.primaryTableId, name: 'newTable' })
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
+  describe('bulkTables', function() {
+    it('ok', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .post('/api/public/bulk-tables')
+        .send({
+          baseId: base.id,
+          tables: `[{"name": "sheet0", "fields": [{"name": "Fiscal Season", 
+          "type": "text", "typeOptions": null, "values": ["Division", 
+          "Tech Designer"]}, {"name": "FA18", "type": "text", "typeOptions": null,
+           "values": ["CHILDRENS", "BRITTANY BAKER"]}]}]`,
+        })
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
   describe('delete', function() {
     it('ok', function(done) {
       chai
