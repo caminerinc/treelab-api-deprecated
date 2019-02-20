@@ -1,6 +1,7 @@
 const { pick } = require('lodash');
 const fldQueries = require('../queries/fields');
 const posController = require('../controllers/positions');
+const fldValController = require('../controllers/fieldValues');
 const { POSITION_TYPE } = require('../constants/app');
 const { checkKeyExists, trim } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
@@ -103,6 +104,34 @@ module.exports = {
     if (field.types.name === params.type) {
       delete updatedFields.fieldTypeId;
     } else {
+      let values = await fldValController.getValuesByFieldId(params.fieldId);
+      if (field.types.isPrimitive) {
+        if (params.type === 'number') {
+          checkKeyExists(params, 'typeOptions');
+          checkKeyExists(params.typeOptions, 'precision');
+          let precision = parseInt(params.typeOptions.precision);
+          precision = isNaN(precision) ? 1 : precision;
+          values = values.map(i => {
+            const _value =
+              i.value !== null
+                ? parseFloat(
+                    i.value.toString().replace(/[^0-9\+.-]/g, ''),
+                  ).toFixed(precision)
+                : null;
+            return {
+              id: i.id,
+              value: isNaN(_value) ? null : _value,
+            };
+          });
+          fldValController.bulkUpdateToNumber(params.fieldId, values);
+        }
+      } else {
+        error(
+          Status.Forbidden,
+          ECodes.UNSUPPORTED_TYPE_CONVERSION,
+          params.type,
+        );
+      }
     }
     return await fldQueries.update(updatedFields, params.fieldId);
   },

@@ -1,4 +1,8 @@
 const ECodes = {
+  UNSUPPORTED_TYPE_CONVERSION: {
+    code: 'UNSUPPORTED_TYPE_CONVERSION',
+    message: 'Unsupported type conversion.',
+  },
   BUDS_SERVER_ERROR: {
     code: 'BUDS_SERVER_ERROR',
     message: 'Some errors occurred on the buds server.',

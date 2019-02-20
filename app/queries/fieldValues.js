@@ -1,4 +1,4 @@
-const { FieldValues } = require('../models');
+const { sequelize, FieldValues } = require('../models');
 
 module.exports = {
   upsert({ recordId, fieldId, value }) {
@@ -35,5 +35,23 @@ module.exports = {
 
   bulkCreate(records) {
     return FieldValues.bulkCreate(records);
+  },
+
+  getValuesByFieldId(fieldId) {
+    return FieldValues.findAll({
+      attributes: ['id', 'value'],
+      where: { fieldId },
+    });
+  },
+
+  bulkUpdateToNumber(fieldId, records) {
+    let sql = `update "FieldValues" set "value" = case`;
+    records.forEach(i => {
+      sql += ` when "id" = ${i.id} then ${
+        i.value === null ? null : "'" + i.value + "'"
+      }::jsonb`;
+    });
+    sql += ` else "value" end where "fieldId" = '${fieldId}'`;
+    return sequelize.query(sql);
   },
 };
