@@ -122,4 +122,12 @@ module.exports = {
   bulkCreate(records) {
     return fldValQueries.bulkCreate(records);
   },
+
+  getValuesByFieldId(fieldId) {
+    return fldValQueries.getValuesByFieldId(fieldId);
+  },
+
+  bulkUpdateToNumber(fieldId, records) {
+    return fldValQueries.bulkUpdateToNumber(fieldId, records);
+  },
 };

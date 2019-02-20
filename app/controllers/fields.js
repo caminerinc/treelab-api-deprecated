@@ -1,6 +1,7 @@
 const { pick } = require('lodash');
 const fldQueries = require('../queries/fields');
 const posController = require('../controllers/positions');
+const fldValController = require('../controllers/fieldValues');
 const { POSITION_TYPE } = require('../constants/app');
 const { checkKeyExists, trim } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
@@ -86,11 +87,52 @@ module.exports = {
 
   async update(params) {
     // TODO handle reference fieldTypes
-    await checkField(params.fieldId);
+    const field = await checkField(params.fieldId);
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     const updatedFields = pick(params, ['typeOptions', 'name']);
     updatedFields.fieldTypeId = await checkType(params.type);
+    if (params.name === field.name) {
+      delete updatedFields.name;
+    } else {
+      const _field = await fldQueries.getFieldByTableAndName(
+        field.tableId,
+        params.name,
+      );
+      if (_field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+    }
+    if (field.types.name === params.type) {
+      delete updatedFields.fieldTypeId;
+    } else {
+      let values = await fldValController.getValuesByFieldId(params.fieldId);
+      if (field.types.isPrimitive) {
+        if (params.type === 'number') {
+          checkKeyExists(params, 'typeOptions');
+          checkKeyExists(params.typeOptions, 'precision');
+          let precision = parseInt(params.typeOptions.precision);
+          precision = isNaN(precision) ? 1 : precision;
+          values = values.map(i => {
+            const _value =
+              i.value !== null
+                ? parseFloat(
+                    i.value.toString().replace(/[^0-9\+.-]/g, ''),
+                  ).toFixed(precision)
+                : null;
+            return {
+              id: i.id,
+              value: isNaN(_value) ? null : _value,
+            };
+          });
+          fldValController.bulkUpdateToNumber(params.fieldId, values);
+        }
+      } else {
+        error(
+          Status.Forbidden,
+          ECodes.UNSUPPORTED_TYPE_CONVERSION,
+          params.type,
+        );
+      }
+    }
     return await fldQueries.update(updatedFields, params.fieldId);
   },
 
