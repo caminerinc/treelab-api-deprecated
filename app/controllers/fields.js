@@ -90,7 +90,7 @@ const changeToNumber = async params => {
   checkKeyExists(params.typeOptions, 'precision');
   let values = await fldValController.getValuesByFieldId(params.fieldId);
   let precision = parseInt(params.typeOptions.precision);
-  precision = isNaN(precision) ? 1 : precision;
+  precision = isNaN(precision) || precision === null ? 1 : precision;
   values = values.map(i => {
     const _value =
       i.value !== null
