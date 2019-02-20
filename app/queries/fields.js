@@ -8,7 +8,7 @@ module.exports = {
   getById(id) {
     return Fields.findOne({
       where: { id },
-      attributes: ['id', 'name', 'tableId', 'fieldTypeId'],
+      attributes: ['id', 'name', 'tableId', 'fieldTypeId', 'typeOptions'],
       include: [
         {
           model: FieldTypes,

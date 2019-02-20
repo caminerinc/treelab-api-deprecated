@@ -46,12 +46,12 @@ module.exports = {
 
   bulkUpdateToNumber(fieldId, records) {
     let sql = `update "FieldValues" set "value" = case`;
+    let values = [];
     records.forEach(i => {
-      sql += ` when "id" = ${i.id} then ${
-        i.value === null ? null : "'" + i.value + "'"
-      }::jsonb`;
+      sql += ` when "id" = ${i.id} then ?`;
+      values.push(i.value);
     });
     sql += ` else "value" end where "fieldId" = '${fieldId}'`;
-    return sequelize.query(sql);
+    return sequelize.query(sql, { replacements: values });
   },
 };
