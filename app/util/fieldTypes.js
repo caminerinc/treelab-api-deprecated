@@ -40,8 +40,16 @@ const checkType = async type => {
   return fieldTypes.nameToId[type];
 };
 
+const getByName = async type => {
+  const fieldTypes = await getFieldTypes();
+  if (!fieldTypes.getByName[type])
+    error(Status.Forbidden, ECodes.UNSUPPORTED_FIELD_TYPE);
+  return fieldTypes.getByName[type];
+};
+
 module.exports = {
   getFieldTypes,
   checkField,
   checkType,
+  getByName,
 };
