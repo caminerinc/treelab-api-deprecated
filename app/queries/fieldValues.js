@@ -49,7 +49,7 @@ module.exports = {
     records.forEach(i => {
       sql += ` when "id" = ${i.id} then ${
         i.value === null ? null : "'" + i.value + "'"
-      }`;
+      }::jsonb`;
     });
     sql += ` else "value" end where "fieldId" = '${fieldId}'`;
     return sequelize.query(sql);
