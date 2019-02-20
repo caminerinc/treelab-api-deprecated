@@ -1,24 +1,13 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const should = chai.should();
 
+chai.should();
 chai.use(chaiHttp);
-describe('users模块', function(done) {
-  describe('GET /api/users', function(done) {
-    it('users', function(done) {
-      chai
-        .request('http://localhost:8000')
-        .get('/api/users')
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('array');
-          done();
-        });
-    });
-  });
 
-  describe('POST /api/public/user', function(done) {
-    it('createUser', function(done) {
+let testUserEmail = Date.now() + '@test.com';
+describe('users模块', function() {
+  describe('create', function() {
+    it('ok', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/user')
@@ -26,45 +15,43 @@ describe('users模块', function(done) {
           firstName: 'test',
           lastName: 'test',
           password: 'test',
-          email: 'test@test.com',
+          email: testUserEmail,
         })
         .end((err, res) => {
           res.should.have.status(200);
           done();
         });
     });
-    it('illegal email', function(done) {
+    it('err_illegal_email', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/user')
         .send({
           firstName: 'test',
           lastName: 'test',
-          email: 'test@test',
+          email: 'test',
           password: 'test',
         })
         .end((err, res) => {
           res.should.have.status(400);
-          res.body.should.be.a('object');
           done();
         });
     });
-    it('not password', function(done) {
+    it('err_password_missing', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/user')
         .send({
           firstName: 'test',
           lastName: 'test',
-          email: 'test@test.com',
+          email: testUserEmail,
         })
         .end((err, res) => {
           res.should.have.status(400);
-          res.body.should.be.a('object');
           done();
         });
     });
-    it('email exists', function(done) {
+    it('err_email_exists', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/user')
@@ -76,19 +63,29 @@ describe('users模块', function(done) {
         })
         .end((err, res) => {
           res.should.have.status(400);
-          res.body.should.be.a('object');
           done();
         });
     });
   });
-
-  describe('POST /api/public/login', function(done) {
-    it('login', function(done) {
+  describe('getAllUsers', function() {
+    it('ok', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/users')
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('array');
+          done();
+        });
+    });
+  });
+  describe('login', function() {
+    it('ok', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/login')
         .send({
-          email: 'test@test.com',
+          email: testUserEmail,
           password: 'test',
         })
         .end((err, res) => {
@@ -98,12 +95,12 @@ describe('users模块', function(done) {
           done();
         });
     });
-    it('wrong email', function(done) {
+    it('err_wrong_email', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/login')
         .send({
-          email: 'test@test',
+          email: 'test',
           password: 'test',
         })
         .end((err, res) => {
@@ -112,12 +109,12 @@ describe('users模块', function(done) {
           done();
         });
     });
-    it('authenticate failed', function(done) {
+    it('err_authenticate_failed', function(done) {
       chai
         .request('http://localhost:8000')
         .post('/api/public/login')
         .send({
-          email: 'test@test.com',
+          email: testUserEmail,
           password: 'testtest',
         })
         .end((err, res) => {
