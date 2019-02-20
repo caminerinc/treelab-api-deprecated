@@ -61,6 +61,38 @@ const createReferenceField = async (params, createdField) => {
   return referenceField.id;
 };
 
+const convertFieldValues = async (params, field) => {
+  let values = await fldValController.getValuesByFieldId(params.fieldId);
+  if (field.types.isPrimitive) {
+    if (params.type === 'number') {
+      return await changeToNumber(params, values);
+    } else if (params.type === 'text') {
+      return;
+    }
+  }
+  error(Status.Forbidden, ECodes.UNSUPPORTED_TYPE_CONVERSION, params.type);
+};
+
+const changeToNumber = async (params, values) => {
+  checkKeyExists(params, 'typeOptions');
+  checkKeyExists(params.typeOptions, 'precision');
+  let precision = parseInt(params.typeOptions.precision);
+  precision = isNaN(precision) ? 1 : precision;
+  values = values.map(i => {
+    const _value =
+      i.value !== null
+        ? parseFloat(i.value.toString().replace(/[^0-9\+.-]/g, '')).toFixed(
+            precision,
+          )
+        : null;
+    return {
+      id: i.id,
+      value: isNaN(_value) ? null : _value,
+    };
+  });
+  return await fldValController.bulkUpdateToNumber(params.fieldId, values);
+};
+
 module.exports = {
   async checkFieldByTableAndName(tableId, name) {
     const field = await fldQueries.getFieldByTableAndName(tableId, name);
@@ -104,34 +136,7 @@ module.exports = {
     if (field.types.name === params.type) {
       delete updatedFields.fieldTypeId;
     } else {
-      let values = await fldValController.getValuesByFieldId(params.fieldId);
-      if (field.types.isPrimitive) {
-        if (params.type === 'number') {
-          checkKeyExists(params, 'typeOptions');
-          checkKeyExists(params.typeOptions, 'precision');
-          let precision = parseInt(params.typeOptions.precision);
-          precision = isNaN(precision) ? 1 : precision;
-          values = values.map(i => {
-            const _value =
-              i.value !== null
-                ? parseFloat(
-                    i.value.toString().replace(/[^0-9\+.-]/g, ''),
-                  ).toFixed(precision)
-                : null;
-            return {
-              id: i.id,
-              value: isNaN(_value) ? null : _value,
-            };
-          });
-          fldValController.bulkUpdateToNumber(params.fieldId, values);
-        }
-      } else {
-        error(
-          Status.Forbidden,
-          ECodes.UNSUPPORTED_TYPE_CONVERSION,
-          params.type,
-        );
-      }
+      await convertFieldValues(params, field);
     }
     return await fldQueries.update(updatedFields, params.fieldId);
   },
