@@ -62,6 +62,7 @@ const createReferenceField = async (params, createdField) => {
 };
 
 const convertFieldValues = async params => {
+  //TODO number can not be saved as string in jsonb field
   if (params.field.types.name === params.type) {
     if (
       params.type === 'number' &&
