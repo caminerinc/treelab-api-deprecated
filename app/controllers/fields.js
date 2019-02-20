@@ -86,11 +86,24 @@ module.exports = {
 
   async update(params) {
     // TODO handle reference fieldTypes
-    await checkField(params.fieldId);
+    const field = await checkField(params.fieldId);
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     const updatedFields = pick(params, ['typeOptions', 'name']);
     updatedFields.fieldTypeId = await checkType(params.type);
+    if (params.name === field.name) {
+      delete updatedFields.name;
+    } else {
+      const _field = await fldQueries.getFieldByTableAndName(
+        field.tableId,
+        params.name,
+      );
+      if (_field) error(Status.Forbidden, ECodes.FIELD_NAME_EXIST);
+    }
+    if (field.types.name === params.type) {
+      delete updatedFields.fieldTypeId;
+    } else {
+    }
     return await fldQueries.update(updatedFields, params.fieldId);
   },
 
