@@ -83,7 +83,7 @@ module.exports = {
 
   async getShallowRows(id) {
     await checkTable(id);
-    const table = await tblQueries.getOneById(id);
+    const table = (await tblQueries.getOneById(id))[0];
     const tableSchema = await tblQueries.getTableSchema(id);
 
     return { table, tableSchema };
