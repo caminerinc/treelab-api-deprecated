@@ -6,6 +6,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "box-node-sdk": "^1.26.1",
     "cls-hooked": "^4.2.2",
     "crypto-js": "^3.1.9-1",
     "extend2": "^1.0.0",
