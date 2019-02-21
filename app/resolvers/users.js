@@ -4,6 +4,8 @@ const { EMAIL_REGEX } = require('../constants/validations');
 const { error, Status, ECodes } = require('../util/error');
 const { authenticate, createAuthToken, getToken } = require('../util/auth');
 
+const { prisma } = require('./generated/prisma-client');
+
 module.exports = {
   async getAll(ctx) {
     const users = await usrControllers.getAll();

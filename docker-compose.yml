@@ -1,11 +1,30 @@
 version: '3'
 services:
-  postgres:
+  prisma:
+    image: prismagraphql/prisma:1.26
+    restart: always
     ports:
     - "5432:5432"
-    image: postgres:9.6.8-alpine
+    environment:
+      PRISMA_CONFIG: |
+        port: 5432
+        databases:
+          default:
+            connector: postgres
+            host: postgres
+            port: 5432
+            user: postgres
+            password: psql_password
+            migrations: true
+  postgres:
+    image: postgres:10.5
+    restart: always
     container_name: treelab_psql
     environment:
+      POSTGRES_USER: postgres
       POSTGRES_PASSWORD: psql_password
     volumes:
-      - ./postgresql/data:/var/lib/postgresql/data
+      - postgres:/var/lib/postgresql/data
+volumes:
+  postgres:
+
