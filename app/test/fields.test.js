@@ -34,14 +34,9 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
-          fieldIdForUpdate = res.body.id;
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
+          fieldIdForUpdate = res.body.data.id;
           done();
         });
     });
@@ -59,14 +54,9 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
-          fieldIdForDelete = res.body.id;
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
+          fieldIdForDelete = res.body.data.id;
           done();
         });
     });
@@ -81,13 +71,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
@@ -112,13 +97,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
@@ -137,13 +117,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
@@ -158,13 +133,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
@@ -179,13 +149,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
@@ -200,13 +165,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
@@ -221,13 +181,8 @@ describe('fields模块', function() {
         })
         .end((err, res) => {
           res.should.have.status(200);
-          res.body.should.have.property('id');
-          res.body.should.have.property('name');
-          res.body.should.have.property('tableId');
-          res.body.should.have.property('fieldTypeId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('width');
-          res.body.should.have.property('typeOptions');
+          res.body.should.have.property('data');
+          res.body.should.have.property('external');
           done();
         });
     });
