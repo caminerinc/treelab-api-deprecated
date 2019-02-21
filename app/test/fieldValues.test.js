@@ -48,7 +48,7 @@ describe('fieldValues模块', function() {
       })
       .end((err, res) => {
         res.should.have.status(200);
-        newTextFieldId = res.body.id;
+        newTextFieldId = res.body.data.id;
         done();
       });
   });
@@ -73,7 +73,7 @@ describe('fieldValues模块', function() {
       })
       .end((err, res) => {
         res.should.have.status(200);
-        newArrayFieldId = res.body.id;
+        newArrayFieldId = res.body.data.id;
         done();
       });
   });
