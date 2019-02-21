@@ -10,6 +10,14 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
+    icon: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
+    color: {
+      allowNull: false,
+      type: DataTypes.STRING,
+    },
   });
   Bases.associate = function(models) {
     Bases.hasMany(models.Tables, {

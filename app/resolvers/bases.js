@@ -7,6 +7,8 @@ const adaptBases = bases =>
   bases.map(base => ({
     id: base.id,
     name: base.name,
+    icon: base.icon,
+    color: base.color,
     primaryTableId: base.tablePositions[0]
       ? base.tablePositions[0].siblingId
       : null,
@@ -15,7 +17,7 @@ const adaptBases = bases =>
 module.exports = {
   async create(ctx) {
     const params = ctx.request.body;
-    checkKeyExists(params, 'name');
+    checkKeyExists(params, 'name', 'icon', 'color');
     const result = await sequelize.transaction(() =>
       bseController.create(params),
     );
