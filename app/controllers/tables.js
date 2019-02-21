@@ -22,6 +22,16 @@ const checkNameWithinBase = async (baseId, name) => {
   if (table) error(Status.Forbidden, ECodes.TABLE_NAME_EXIST, name);
 };
 
+const getUniqueTableName = async (baseId, tableName, index = 0) => {
+  let newTableName = index ? `${tableName} (${index})` : tableName;
+  const table = await tblQueries.getTableByBaseAndName(baseId, newTableName);
+  if (table) {
+    index++;
+    return await getUniqueTableName(baseId, tableName, index);
+  }
+  return newTableName;
+};
+
 module.exports = {
   checkTable,
   async createNewTableSet(params) {
@@ -110,7 +120,7 @@ module.exports = {
       checkKeyExists(table, 'name', 'fields');
       table.name = trim(table.name);
       if (table.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
-      await checkNameWithinBase(baseId, table.name);
+      table.name = await getUniqueTableName(baseId, table.name);
       tblRecords.push({ baseId, name: table.name });
       const tableNum = tblRecords.length;
       fldRecords[tableNum - 1] = [];
