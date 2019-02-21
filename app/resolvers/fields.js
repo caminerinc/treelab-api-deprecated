@@ -10,7 +10,7 @@ module.exports = {
     const result = await sequelize.transaction(() =>
       fldController.create(params),
     );
-    ctx.body = { data: result };
+    ctx.body = result;
     socketIo.sync({
       op: 'createField',
       body: result,

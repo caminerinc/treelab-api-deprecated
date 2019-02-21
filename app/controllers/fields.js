@@ -26,16 +26,29 @@ const createWithPosition = async params => {
   return field;
 };
 
+const getUniqueFieldName = async (tableId, fieldName, index = 0) => {
+  let newFieldName = index ? `${fieldName} (${index})` : fieldName;
+  const field = await fldQueries.getFieldByTableAndName(tableId, newFieldName);
+  if (field) {
+    index++;
+    return await getUniqueFieldName(tableId, fieldName, index);
+  }
+  return newFieldName;
+};
+
 const createReferenceField = async (params, createdField) => {
   checkKeyExists(params, 'typeOptions');
   checkKeyExists(params.typeOptions, 'referenceTableId', 'relationship');
   const tblCtrl = require('../controllers/tables');
   const currentTable = await tblCtrl.getEasyTable(params.tableId);
-  // TODO: Check the field type, see what is inside typeOptions
+  const fieldName = await getUniqueFieldName(
+    params.typeOptions.referenceTableId,
+    currentTable.name,
+  );
 
   // Create Reference field using the newly created field
   const referenceField = await createWithPosition({
-    name: currentTable.name,
+    name: fieldName,
     tableId: params.typeOptions.referenceTableId,
     fieldTypeId: await checkType('reference'),
     typeOptions: {
@@ -58,7 +71,7 @@ const createReferenceField = async (params, createdField) => {
   );
 
   // Return the referenceColumnId so that front end can also receive
-  return referenceField.id;
+  return { ...referenceField.toJSON(), type: 'reference' };
 };
 
 const convertFieldValues = async params => {
@@ -113,6 +126,7 @@ module.exports = {
   },
 
   async create(params) {
+    const result = { data: {}, external: {} };
     params.name = trim(params.name);
     if (params.name === '') error(Status.Forbidden, ECodes.FIELD_NAME_EMPTY);
     await checkNameWithinTable(params.tableId, params.name);
@@ -122,12 +136,11 @@ module.exports = {
     const field = await createWithPosition(fieldParams);
 
     if (params.type === 'reference') {
-      field.typeOptions.referenceColumnId = await createReferenceField(
-        params,
-        field,
-      );
+      result.external = await createReferenceField(params, field);
+      field.typeOptions.referenceColumnId = result.external.id;
     }
-    return { ...field.toJSON(), type: params.type };
+    result.data = { ...field.toJSON(), type: params.type };
+    return result;
   },
 
   async update(params) {
