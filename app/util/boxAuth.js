@@ -8,7 +8,7 @@ const CLIENT_ID = 'vro9g0dl3ncewxme2wxfailr2hzj5uke',
   PRIVATE_KEY_PASSPHRASE = '2e643f91b47fbbe3745cdee5486b4848',
   ENTERPRISE_ID = '166203936';
 
-const sdk = new BoxSDK({
+const config = {
   clientID: CLIENT_ID,
   clientSecret: CLIENT_SECRET,
   appAuth: {
@@ -16,26 +16,44 @@ const sdk = new BoxSDK({
     privateKey: PRIVATE_KEY,
     passphrase: PRIVATE_KEY_PASSPHRASE,
   },
-});
+};
 
+const sdk = new BoxSDK(config);
 const adminAPIClient = sdk.getAppAuthClient('enterprise', ENTERPRISE_ID);
 
-const signUpBoxUser = name => {
+const signUpBoxUser = async userBoxId => {
   const requestParams = {
     body: {
-      name,
+      name: userBoxId,
       is_platform_access_only: true,
     },
   };
-  adminAPIClient.post(
-    '/users',
-    requestParams,
-    adminAPIClient.defaultResponseHandler((err, data) => {
-      if (err) {
-        console.log('There was an error! -- ', err);
-      }
 
-      console.log('Successful client sign up -- ', data);
-    }),
-  );
+  return adminAPIClient.post('/users', requestParams).then(user => user);
 };
+
+const getBoxUserById = async userBoxId =>
+  adminAPIClient.users.get(userBoxId).then(user => user);
+
+const getAccessToken = async userId =>
+  sdk
+    .getAppUserTokens(userId)
+    .then(userTokenObject => userTokenObject.accessToken);
+
+const execute = async () => {
+  const testUserId = '7380329035';
+  // const testUserId = 'me';
+
+  try {
+    // const newUser = await signUpBoxUser('test@test.com');
+    // console.log('successful user created', newUser);
+    const user = await getBoxUserById(testUserId);
+    console.log('Success in grabbing user! -- ', user);
+    const accessToken = await getAccessToken(user.id);
+    console.log('What is my access token', accessToken);
+  } catch (e) {
+    console.log('Error caught -- ', e);
+  }
+};
+
+execute();
