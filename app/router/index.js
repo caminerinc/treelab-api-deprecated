@@ -10,6 +10,7 @@ const usrResolver = require('../resolvers/users');
 const posResolver = require('../resolvers/positions');
 const fldTypesResolver = require('../resolvers/fieldTypes');
 const budsResolver = require('../resolvers/buds');
+const appsResolver = require('../resolvers/apps');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -57,6 +58,9 @@ router.get('/api/fieldTypes', fldTypesResolver.getAll);
 
 //Buds
 router.post('/api/execute-bud', budsResolver.executeBud);
+
+//Apps
+router.get('/api/apps', appsResolver.getAll);
 
 //Users
 router.get('/api/users', usrResolver.getAll);
