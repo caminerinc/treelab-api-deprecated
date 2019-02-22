@@ -148,7 +148,7 @@ const referenceToText = async (params, values) => {
         i.value !== null
           ? i.value
               .reduce((s, j) => {
-                return (s += recordIds[j.referenceRowId] + ',');
+                return (s += recordIds[j.referenceRowId] + ', ');
               }, '')
               .slice(0, -1)
           : null,
