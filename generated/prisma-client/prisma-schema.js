@@ -3,17 +3,816 @@ module.exports = {
   // Please don't change this file manually but run `prisma generate` to update it.
   // For more information, please read the docs: https://www.prisma.io/docs/prisma-client/
 
-/* GraphQL */ `type AggregateUser {
+/* GraphQL */ `type AggregateBases {
   count: Int!
+}
+
+type AggregateFields {
+  count: Int!
+}
+
+type AggregateFieldTypes {
+  count: Int!
+}
+
+type AggregateFieldValues {
+  count: Int!
+}
+
+type AggregateRecords {
+  count: Int!
+}
+
+type AggregateTables {
+  count: Int!
+}
+
+type AggregateUser {
+  count: Int!
+}
+
+type Bases {
+  id: UUID!
+  name: String!
+  tables(where: TablesWhereInput, orderBy: TablesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tables!]
+}
+
+type BasesConnection {
+  pageInfo: PageInfo!
+  edges: [BasesEdge]!
+  aggregate: AggregateBases!
+}
+
+input BasesCreateInput {
+  name: String!
+  tables: TablesCreateManyWithoutBaseIdInput
+}
+
+input BasesCreateOneWithoutTablesInput {
+  create: BasesCreateWithoutTablesInput
+  connect: BasesWhereUniqueInput
+}
+
+input BasesCreateWithoutTablesInput {
+  name: String!
+}
+
+type BasesEdge {
+  node: Bases!
+  cursor: String!
+}
+
+enum BasesOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type BasesPreviousValues {
+  id: UUID!
+  name: String!
+}
+
+type BasesSubscriptionPayload {
+  mutation: MutationType!
+  node: Bases
+  updatedFields: [String!]
+  previousValues: BasesPreviousValues
+}
+
+input BasesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: BasesWhereInput
+  AND: [BasesSubscriptionWhereInput!]
+  OR: [BasesSubscriptionWhereInput!]
+  NOT: [BasesSubscriptionWhereInput!]
+}
+
+input BasesUpdateInput {
+  name: String
+  tables: TablesUpdateManyWithoutBaseIdInput
+}
+
+input BasesUpdateManyMutationInput {
+  name: String
+}
+
+input BasesUpdateOneRequiredWithoutTablesInput {
+  create: BasesCreateWithoutTablesInput
+  update: BasesUpdateWithoutTablesDataInput
+  upsert: BasesUpsertWithoutTablesInput
+  connect: BasesWhereUniqueInput
+}
+
+input BasesUpdateWithoutTablesDataInput {
+  name: String
+}
+
+input BasesUpsertWithoutTablesInput {
+  update: BasesUpdateWithoutTablesDataInput!
+  create: BasesCreateWithoutTablesInput!
+}
+
+input BasesWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  tables_every: TablesWhereInput
+  tables_some: TablesWhereInput
+  tables_none: TablesWhereInput
+  AND: [BasesWhereInput!]
+  OR: [BasesWhereInput!]
+  NOT: [BasesWhereInput!]
+}
+
+input BasesWhereUniqueInput {
+  id: UUID
 }
 
 type BatchPayload {
   count: Long!
 }
 
+type Fields {
+  id: UUID!
+  name: String!
+  fieldTypeId: FieldTypes!
+  fieldValues(where: FieldValuesWhereInput, orderBy: FieldValuesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FieldValues!]
+  tableId: Tables!
+  width: Int
+  typeOptions: Json
+}
+
+type FieldsConnection {
+  pageInfo: PageInfo!
+  edges: [FieldsEdge]!
+  aggregate: AggregateFields!
+}
+
+input FieldsCreateInput {
+  name: String!
+  fieldTypeId: FieldTypesCreateOneInput!
+  fieldValues: FieldValuesCreateManyWithoutFieldIdInput
+  tableId: TablesCreateOneWithoutFieldsInput!
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsCreateManyWithoutTableIdInput {
+  create: [FieldsCreateWithoutTableIdInput!]
+  connect: [FieldsWhereUniqueInput!]
+}
+
+input FieldsCreateOneWithoutFieldValuesInput {
+  create: FieldsCreateWithoutFieldValuesInput
+  connect: FieldsWhereUniqueInput
+}
+
+input FieldsCreateWithoutFieldValuesInput {
+  name: String!
+  fieldTypeId: FieldTypesCreateOneInput!
+  tableId: TablesCreateOneWithoutFieldsInput!
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsCreateWithoutTableIdInput {
+  name: String!
+  fieldTypeId: FieldTypesCreateOneInput!
+  fieldValues: FieldValuesCreateManyWithoutFieldIdInput
+  width: Int
+  typeOptions: Json
+}
+
+type FieldsEdge {
+  node: Fields!
+  cursor: String!
+}
+
+enum FieldsOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  width_ASC
+  width_DESC
+  typeOptions_ASC
+  typeOptions_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FieldsPreviousValues {
+  id: UUID!
+  name: String!
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsScalarWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  width: Int
+  width_not: Int
+  width_in: [Int!]
+  width_not_in: [Int!]
+  width_lt: Int
+  width_lte: Int
+  width_gt: Int
+  width_gte: Int
+  AND: [FieldsScalarWhereInput!]
+  OR: [FieldsScalarWhereInput!]
+  NOT: [FieldsScalarWhereInput!]
+}
+
+type FieldsSubscriptionPayload {
+  mutation: MutationType!
+  node: Fields
+  updatedFields: [String!]
+  previousValues: FieldsPreviousValues
+}
+
+input FieldsSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FieldsWhereInput
+  AND: [FieldsSubscriptionWhereInput!]
+  OR: [FieldsSubscriptionWhereInput!]
+  NOT: [FieldsSubscriptionWhereInput!]
+}
+
+input FieldsUpdateInput {
+  name: String
+  fieldTypeId: FieldTypesUpdateOneRequiredInput
+  fieldValues: FieldValuesUpdateManyWithoutFieldIdInput
+  tableId: TablesUpdateOneRequiredWithoutFieldsInput
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsUpdateManyDataInput {
+  name: String
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsUpdateManyMutationInput {
+  name: String
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsUpdateManyWithoutTableIdInput {
+  create: [FieldsCreateWithoutTableIdInput!]
+  delete: [FieldsWhereUniqueInput!]
+  connect: [FieldsWhereUniqueInput!]
+  set: [FieldsWhereUniqueInput!]
+  disconnect: [FieldsWhereUniqueInput!]
+  update: [FieldsUpdateWithWhereUniqueWithoutTableIdInput!]
+  upsert: [FieldsUpsertWithWhereUniqueWithoutTableIdInput!]
+  deleteMany: [FieldsScalarWhereInput!]
+  updateMany: [FieldsUpdateManyWithWhereNestedInput!]
+}
+
+input FieldsUpdateManyWithWhereNestedInput {
+  where: FieldsScalarWhereInput!
+  data: FieldsUpdateManyDataInput!
+}
+
+input FieldsUpdateOneRequiredWithoutFieldValuesInput {
+  create: FieldsCreateWithoutFieldValuesInput
+  update: FieldsUpdateWithoutFieldValuesDataInput
+  upsert: FieldsUpsertWithoutFieldValuesInput
+  connect: FieldsWhereUniqueInput
+}
+
+input FieldsUpdateWithoutFieldValuesDataInput {
+  name: String
+  fieldTypeId: FieldTypesUpdateOneRequiredInput
+  tableId: TablesUpdateOneRequiredWithoutFieldsInput
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsUpdateWithoutTableIdDataInput {
+  name: String
+  fieldTypeId: FieldTypesUpdateOneRequiredInput
+  fieldValues: FieldValuesUpdateManyWithoutFieldIdInput
+  width: Int
+  typeOptions: Json
+}
+
+input FieldsUpdateWithWhereUniqueWithoutTableIdInput {
+  where: FieldsWhereUniqueInput!
+  data: FieldsUpdateWithoutTableIdDataInput!
+}
+
+input FieldsUpsertWithoutFieldValuesInput {
+  update: FieldsUpdateWithoutFieldValuesDataInput!
+  create: FieldsCreateWithoutFieldValuesInput!
+}
+
+input FieldsUpsertWithWhereUniqueWithoutTableIdInput {
+  where: FieldsWhereUniqueInput!
+  update: FieldsUpdateWithoutTableIdDataInput!
+  create: FieldsCreateWithoutTableIdInput!
+}
+
+input FieldsWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  fieldTypeId: FieldTypesWhereInput
+  fieldValues_every: FieldValuesWhereInput
+  fieldValues_some: FieldValuesWhereInput
+  fieldValues_none: FieldValuesWhereInput
+  tableId: TablesWhereInput
+  width: Int
+  width_not: Int
+  width_in: [Int!]
+  width_not_in: [Int!]
+  width_lt: Int
+  width_lte: Int
+  width_gt: Int
+  width_gte: Int
+  AND: [FieldsWhereInput!]
+  OR: [FieldsWhereInput!]
+  NOT: [FieldsWhereInput!]
+}
+
+input FieldsWhereUniqueInput {
+  id: UUID
+}
+
+type FieldTypes {
+  id: ID!
+  name: String!
+  isArray: Boolean
+  isPrimitive: Boolean
+}
+
+type FieldTypesConnection {
+  pageInfo: PageInfo!
+  edges: [FieldTypesEdge]!
+  aggregate: AggregateFieldTypes!
+}
+
+input FieldTypesCreateInput {
+  name: String!
+  isArray: Boolean
+  isPrimitive: Boolean
+}
+
+input FieldTypesCreateOneInput {
+  create: FieldTypesCreateInput
+  connect: FieldTypesWhereUniqueInput
+}
+
+type FieldTypesEdge {
+  node: FieldTypes!
+  cursor: String!
+}
+
+enum FieldTypesOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  isArray_ASC
+  isArray_DESC
+  isPrimitive_ASC
+  isPrimitive_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FieldTypesPreviousValues {
+  id: ID!
+  name: String!
+  isArray: Boolean
+  isPrimitive: Boolean
+}
+
+type FieldTypesSubscriptionPayload {
+  mutation: MutationType!
+  node: FieldTypes
+  updatedFields: [String!]
+  previousValues: FieldTypesPreviousValues
+}
+
+input FieldTypesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FieldTypesWhereInput
+  AND: [FieldTypesSubscriptionWhereInput!]
+  OR: [FieldTypesSubscriptionWhereInput!]
+  NOT: [FieldTypesSubscriptionWhereInput!]
+}
+
+input FieldTypesUpdateDataInput {
+  name: String
+  isArray: Boolean
+  isPrimitive: Boolean
+}
+
+input FieldTypesUpdateInput {
+  name: String
+  isArray: Boolean
+  isPrimitive: Boolean
+}
+
+input FieldTypesUpdateManyMutationInput {
+  name: String
+  isArray: Boolean
+  isPrimitive: Boolean
+}
+
+input FieldTypesUpdateOneRequiredInput {
+  create: FieldTypesCreateInput
+  update: FieldTypesUpdateDataInput
+  upsert: FieldTypesUpsertNestedInput
+  connect: FieldTypesWhereUniqueInput
+}
+
+input FieldTypesUpsertNestedInput {
+  update: FieldTypesUpdateDataInput!
+  create: FieldTypesCreateInput!
+}
+
+input FieldTypesWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  isArray: Boolean
+  isArray_not: Boolean
+  isPrimitive: Boolean
+  isPrimitive_not: Boolean
+  AND: [FieldTypesWhereInput!]
+  OR: [FieldTypesWhereInput!]
+  NOT: [FieldTypesWhereInput!]
+}
+
+input FieldTypesWhereUniqueInput {
+  id: ID
+  name: String
+}
+
+type FieldValues {
+  id: ID!
+  fieldId: Fields!
+  recordId: Records!
+  value: Json
+}
+
+type FieldValuesConnection {
+  pageInfo: PageInfo!
+  edges: [FieldValuesEdge]!
+  aggregate: AggregateFieldValues!
+}
+
+input FieldValuesCreateInput {
+  fieldId: FieldsCreateOneWithoutFieldValuesInput!
+  recordId: RecordsCreateOneWithoutFieldValuesInput!
+  value: Json
+}
+
+input FieldValuesCreateManyWithoutFieldIdInput {
+  create: [FieldValuesCreateWithoutFieldIdInput!]
+  connect: [FieldValuesWhereUniqueInput!]
+}
+
+input FieldValuesCreateManyWithoutRecordIdInput {
+  create: [FieldValuesCreateWithoutRecordIdInput!]
+  connect: [FieldValuesWhereUniqueInput!]
+}
+
+input FieldValuesCreateWithoutFieldIdInput {
+  recordId: RecordsCreateOneWithoutFieldValuesInput!
+  value: Json
+}
+
+input FieldValuesCreateWithoutRecordIdInput {
+  fieldId: FieldsCreateOneWithoutFieldValuesInput!
+  value: Json
+}
+
+type FieldValuesEdge {
+  node: FieldValues!
+  cursor: String!
+}
+
+enum FieldValuesOrderByInput {
+  id_ASC
+  id_DESC
+  value_ASC
+  value_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type FieldValuesPreviousValues {
+  id: ID!
+  value: Json
+}
+
+input FieldValuesScalarWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  AND: [FieldValuesScalarWhereInput!]
+  OR: [FieldValuesScalarWhereInput!]
+  NOT: [FieldValuesScalarWhereInput!]
+}
+
+type FieldValuesSubscriptionPayload {
+  mutation: MutationType!
+  node: FieldValues
+  updatedFields: [String!]
+  previousValues: FieldValuesPreviousValues
+}
+
+input FieldValuesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: FieldValuesWhereInput
+  AND: [FieldValuesSubscriptionWhereInput!]
+  OR: [FieldValuesSubscriptionWhereInput!]
+  NOT: [FieldValuesSubscriptionWhereInput!]
+}
+
+input FieldValuesUpdateInput {
+  fieldId: FieldsUpdateOneRequiredWithoutFieldValuesInput
+  recordId: RecordsUpdateOneRequiredWithoutFieldValuesInput
+  value: Json
+}
+
+input FieldValuesUpdateManyDataInput {
+  value: Json
+}
+
+input FieldValuesUpdateManyMutationInput {
+  value: Json
+}
+
+input FieldValuesUpdateManyWithoutFieldIdInput {
+  create: [FieldValuesCreateWithoutFieldIdInput!]
+  delete: [FieldValuesWhereUniqueInput!]
+  connect: [FieldValuesWhereUniqueInput!]
+  set: [FieldValuesWhereUniqueInput!]
+  disconnect: [FieldValuesWhereUniqueInput!]
+  update: [FieldValuesUpdateWithWhereUniqueWithoutFieldIdInput!]
+  upsert: [FieldValuesUpsertWithWhereUniqueWithoutFieldIdInput!]
+  deleteMany: [FieldValuesScalarWhereInput!]
+  updateMany: [FieldValuesUpdateManyWithWhereNestedInput!]
+}
+
+input FieldValuesUpdateManyWithoutRecordIdInput {
+  create: [FieldValuesCreateWithoutRecordIdInput!]
+  delete: [FieldValuesWhereUniqueInput!]
+  connect: [FieldValuesWhereUniqueInput!]
+  set: [FieldValuesWhereUniqueInput!]
+  disconnect: [FieldValuesWhereUniqueInput!]
+  update: [FieldValuesUpdateWithWhereUniqueWithoutRecordIdInput!]
+  upsert: [FieldValuesUpsertWithWhereUniqueWithoutRecordIdInput!]
+  deleteMany: [FieldValuesScalarWhereInput!]
+  updateMany: [FieldValuesUpdateManyWithWhereNestedInput!]
+}
+
+input FieldValuesUpdateManyWithWhereNestedInput {
+  where: FieldValuesScalarWhereInput!
+  data: FieldValuesUpdateManyDataInput!
+}
+
+input FieldValuesUpdateWithoutFieldIdDataInput {
+  recordId: RecordsUpdateOneRequiredWithoutFieldValuesInput
+  value: Json
+}
+
+input FieldValuesUpdateWithoutRecordIdDataInput {
+  fieldId: FieldsUpdateOneRequiredWithoutFieldValuesInput
+  value: Json
+}
+
+input FieldValuesUpdateWithWhereUniqueWithoutFieldIdInput {
+  where: FieldValuesWhereUniqueInput!
+  data: FieldValuesUpdateWithoutFieldIdDataInput!
+}
+
+input FieldValuesUpdateWithWhereUniqueWithoutRecordIdInput {
+  where: FieldValuesWhereUniqueInput!
+  data: FieldValuesUpdateWithoutRecordIdDataInput!
+}
+
+input FieldValuesUpsertWithWhereUniqueWithoutFieldIdInput {
+  where: FieldValuesWhereUniqueInput!
+  update: FieldValuesUpdateWithoutFieldIdDataInput!
+  create: FieldValuesCreateWithoutFieldIdInput!
+}
+
+input FieldValuesUpsertWithWhereUniqueWithoutRecordIdInput {
+  where: FieldValuesWhereUniqueInput!
+  update: FieldValuesUpdateWithoutRecordIdDataInput!
+  create: FieldValuesCreateWithoutRecordIdInput!
+}
+
+input FieldValuesWhereInput {
+  id: ID
+  id_not: ID
+  id_in: [ID!]
+  id_not_in: [ID!]
+  id_lt: ID
+  id_lte: ID
+  id_gt: ID
+  id_gte: ID
+  id_contains: ID
+  id_not_contains: ID
+  id_starts_with: ID
+  id_not_starts_with: ID
+  id_ends_with: ID
+  id_not_ends_with: ID
+  fieldId: FieldsWhereInput
+  recordId: RecordsWhereInput
+  AND: [FieldValuesWhereInput!]
+  OR: [FieldValuesWhereInput!]
+  NOT: [FieldValuesWhereInput!]
+}
+
+input FieldValuesWhereUniqueInput {
+  id: ID
+}
+
+scalar Json
+
 scalar Long
 
 type Mutation {
+  createBases(data: BasesCreateInput!): Bases!
+  updateBases(data: BasesUpdateInput!, where: BasesWhereUniqueInput!): Bases
+  updateManyBaseses(data: BasesUpdateManyMutationInput!, where: BasesWhereInput): BatchPayload!
+  upsertBases(where: BasesWhereUniqueInput!, create: BasesCreateInput!, update: BasesUpdateInput!): Bases!
+  deleteBases(where: BasesWhereUniqueInput!): Bases
+  deleteManyBaseses(where: BasesWhereInput): BatchPayload!
+  createFieldTypes(data: FieldTypesCreateInput!): FieldTypes!
+  updateFieldTypes(data: FieldTypesUpdateInput!, where: FieldTypesWhereUniqueInput!): FieldTypes
+  updateManyFieldTypeses(data: FieldTypesUpdateManyMutationInput!, where: FieldTypesWhereInput): BatchPayload!
+  upsertFieldTypes(where: FieldTypesWhereUniqueInput!, create: FieldTypesCreateInput!, update: FieldTypesUpdateInput!): FieldTypes!
+  deleteFieldTypes(where: FieldTypesWhereUniqueInput!): FieldTypes
+  deleteManyFieldTypeses(where: FieldTypesWhereInput): BatchPayload!
+  createFieldValues(data: FieldValuesCreateInput!): FieldValues!
+  updateFieldValues(data: FieldValuesUpdateInput!, where: FieldValuesWhereUniqueInput!): FieldValues
+  updateManyFieldValueses(data: FieldValuesUpdateManyMutationInput!, where: FieldValuesWhereInput): BatchPayload!
+  upsertFieldValues(where: FieldValuesWhereUniqueInput!, create: FieldValuesCreateInput!, update: FieldValuesUpdateInput!): FieldValues!
+  deleteFieldValues(where: FieldValuesWhereUniqueInput!): FieldValues
+  deleteManyFieldValueses(where: FieldValuesWhereInput): BatchPayload!
+  createFields(data: FieldsCreateInput!): Fields!
+  updateFields(data: FieldsUpdateInput!, where: FieldsWhereUniqueInput!): Fields
+  updateManyFieldses(data: FieldsUpdateManyMutationInput!, where: FieldsWhereInput): BatchPayload!
+  upsertFields(where: FieldsWhereUniqueInput!, create: FieldsCreateInput!, update: FieldsUpdateInput!): Fields!
+  deleteFields(where: FieldsWhereUniqueInput!): Fields
+  deleteManyFieldses(where: FieldsWhereInput): BatchPayload!
+  createRecords(data: RecordsCreateInput!): Records!
+  updateRecords(data: RecordsUpdateInput!, where: RecordsWhereUniqueInput!): Records
+  upsertRecords(where: RecordsWhereUniqueInput!, create: RecordsCreateInput!, update: RecordsUpdateInput!): Records!
+  deleteRecords(where: RecordsWhereUniqueInput!): Records
+  deleteManyRecordses(where: RecordsWhereInput): BatchPayload!
+  createTables(data: TablesCreateInput!): Tables!
+  updateTables(data: TablesUpdateInput!, where: TablesWhereUniqueInput!): Tables
+  updateManyTableses(data: TablesUpdateManyMutationInput!, where: TablesWhereInput): BatchPayload!
+  upsertTables(where: TablesWhereUniqueInput!, create: TablesCreateInput!, update: TablesUpdateInput!): Tables!
+  deleteTables(where: TablesWhereUniqueInput!): Tables
+  deleteManyTableses(where: TablesWhereInput): BatchPayload!
   createUser(data: UserCreateInput!): User!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateManyUsers(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
@@ -40,21 +839,468 @@ type PageInfo {
 }
 
 type Query {
+  bases(where: BasesWhereUniqueInput!): Bases
+  baseses(where: BasesWhereInput, orderBy: BasesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Bases]!
+  basesesConnection(where: BasesWhereInput, orderBy: BasesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): BasesConnection!
+  fieldTypes(where: FieldTypesWhereUniqueInput!): FieldTypes
+  fieldTypeses(where: FieldTypesWhereInput, orderBy: FieldTypesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FieldTypes]!
+  fieldTypesesConnection(where: FieldTypesWhereInput, orderBy: FieldTypesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FieldTypesConnection!
+  fieldValues(where: FieldValuesWhereUniqueInput!): FieldValues
+  fieldValueses(where: FieldValuesWhereInput, orderBy: FieldValuesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FieldValues]!
+  fieldValuesesConnection(where: FieldValuesWhereInput, orderBy: FieldValuesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FieldValuesConnection!
+  fields(where: FieldsWhereUniqueInput!): Fields
+  fieldses(where: FieldsWhereInput, orderBy: FieldsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Fields]!
+  fieldsesConnection(where: FieldsWhereInput, orderBy: FieldsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): FieldsConnection!
+  records(where: RecordsWhereUniqueInput!): Records
+  recordses(where: RecordsWhereInput, orderBy: RecordsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Records]!
+  recordsesConnection(where: RecordsWhereInput, orderBy: RecordsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): RecordsConnection!
+  tables(where: TablesWhereUniqueInput!): Tables
+  tableses(where: TablesWhereInput, orderBy: TablesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Tables]!
+  tablesesConnection(where: TablesWhereInput, orderBy: TablesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TablesConnection!
   user(where: UserWhereUniqueInput!): User
   users(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User]!
   usersConnection(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): UserConnection!
   node(id: ID!): Node
 }
 
+type Records {
+  id: UUID!
+  tableId: Tables!
+  fieldValues(where: FieldValuesWhereInput, orderBy: FieldValuesOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [FieldValues!]
+}
+
+type RecordsConnection {
+  pageInfo: PageInfo!
+  edges: [RecordsEdge]!
+  aggregate: AggregateRecords!
+}
+
+input RecordsCreateInput {
+  tableId: TablesCreateOneWithoutRecordsInput!
+  fieldValues: FieldValuesCreateManyWithoutRecordIdInput
+}
+
+input RecordsCreateManyWithoutTableIdInput {
+  create: [RecordsCreateWithoutTableIdInput!]
+  connect: [RecordsWhereUniqueInput!]
+}
+
+input RecordsCreateOneWithoutFieldValuesInput {
+  create: RecordsCreateWithoutFieldValuesInput
+  connect: RecordsWhereUniqueInput
+}
+
+input RecordsCreateWithoutFieldValuesInput {
+  tableId: TablesCreateOneWithoutRecordsInput!
+}
+
+input RecordsCreateWithoutTableIdInput {
+  fieldValues: FieldValuesCreateManyWithoutRecordIdInput
+}
+
+type RecordsEdge {
+  node: Records!
+  cursor: String!
+}
+
+enum RecordsOrderByInput {
+  id_ASC
+  id_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type RecordsPreviousValues {
+  id: UUID!
+}
+
+input RecordsScalarWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  AND: [RecordsScalarWhereInput!]
+  OR: [RecordsScalarWhereInput!]
+  NOT: [RecordsScalarWhereInput!]
+}
+
+type RecordsSubscriptionPayload {
+  mutation: MutationType!
+  node: Records
+  updatedFields: [String!]
+  previousValues: RecordsPreviousValues
+}
+
+input RecordsSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: RecordsWhereInput
+  AND: [RecordsSubscriptionWhereInput!]
+  OR: [RecordsSubscriptionWhereInput!]
+  NOT: [RecordsSubscriptionWhereInput!]
+}
+
+input RecordsUpdateInput {
+  tableId: TablesUpdateOneRequiredWithoutRecordsInput
+  fieldValues: FieldValuesUpdateManyWithoutRecordIdInput
+}
+
+input RecordsUpdateManyWithoutTableIdInput {
+  create: [RecordsCreateWithoutTableIdInput!]
+  delete: [RecordsWhereUniqueInput!]
+  connect: [RecordsWhereUniqueInput!]
+  set: [RecordsWhereUniqueInput!]
+  disconnect: [RecordsWhereUniqueInput!]
+  update: [RecordsUpdateWithWhereUniqueWithoutTableIdInput!]
+  upsert: [RecordsUpsertWithWhereUniqueWithoutTableIdInput!]
+  deleteMany: [RecordsScalarWhereInput!]
+}
+
+input RecordsUpdateOneRequiredWithoutFieldValuesInput {
+  create: RecordsCreateWithoutFieldValuesInput
+  update: RecordsUpdateWithoutFieldValuesDataInput
+  upsert: RecordsUpsertWithoutFieldValuesInput
+  connect: RecordsWhereUniqueInput
+}
+
+input RecordsUpdateWithoutFieldValuesDataInput {
+  tableId: TablesUpdateOneRequiredWithoutRecordsInput
+}
+
+input RecordsUpdateWithoutTableIdDataInput {
+  fieldValues: FieldValuesUpdateManyWithoutRecordIdInput
+}
+
+input RecordsUpdateWithWhereUniqueWithoutTableIdInput {
+  where: RecordsWhereUniqueInput!
+  data: RecordsUpdateWithoutTableIdDataInput!
+}
+
+input RecordsUpsertWithoutFieldValuesInput {
+  update: RecordsUpdateWithoutFieldValuesDataInput!
+  create: RecordsCreateWithoutFieldValuesInput!
+}
+
+input RecordsUpsertWithWhereUniqueWithoutTableIdInput {
+  where: RecordsWhereUniqueInput!
+  update: RecordsUpdateWithoutTableIdDataInput!
+  create: RecordsCreateWithoutTableIdInput!
+}
+
+input RecordsWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  tableId: TablesWhereInput
+  fieldValues_every: FieldValuesWhereInput
+  fieldValues_some: FieldValuesWhereInput
+  fieldValues_none: FieldValuesWhereInput
+  AND: [RecordsWhereInput!]
+  OR: [RecordsWhereInput!]
+  NOT: [RecordsWhereInput!]
+}
+
+input RecordsWhereUniqueInput {
+  id: UUID
+}
+
 type Subscription {
+  bases(where: BasesSubscriptionWhereInput): BasesSubscriptionPayload
+  fieldTypes(where: FieldTypesSubscriptionWhereInput): FieldTypesSubscriptionPayload
+  fieldValues(where: FieldValuesSubscriptionWhereInput): FieldValuesSubscriptionPayload
+  fields(where: FieldsSubscriptionWhereInput): FieldsSubscriptionPayload
+  records(where: RecordsSubscriptionWhereInput): RecordsSubscriptionPayload
+  tables(where: TablesSubscriptionWhereInput): TablesSubscriptionPayload
   user(where: UserSubscriptionWhereInput): UserSubscriptionPayload
+}
+
+type Tables {
+  id: UUID!
+  name: String!
+  baseId: Bases!
+  records(where: RecordsWhereInput, orderBy: RecordsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Records!]
+  fields(where: FieldsWhereInput, orderBy: FieldsOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Fields!]
+}
+
+type TablesConnection {
+  pageInfo: PageInfo!
+  edges: [TablesEdge]!
+  aggregate: AggregateTables!
+}
+
+input TablesCreateInput {
+  name: String!
+  baseId: BasesCreateOneWithoutTablesInput!
+  records: RecordsCreateManyWithoutTableIdInput
+  fields: FieldsCreateManyWithoutTableIdInput
+}
+
+input TablesCreateManyWithoutBaseIdInput {
+  create: [TablesCreateWithoutBaseIdInput!]
+  connect: [TablesWhereUniqueInput!]
+}
+
+input TablesCreateOneWithoutFieldsInput {
+  create: TablesCreateWithoutFieldsInput
+  connect: TablesWhereUniqueInput
+}
+
+input TablesCreateOneWithoutRecordsInput {
+  create: TablesCreateWithoutRecordsInput
+  connect: TablesWhereUniqueInput
+}
+
+input TablesCreateWithoutBaseIdInput {
+  name: String!
+  records: RecordsCreateManyWithoutTableIdInput
+  fields: FieldsCreateManyWithoutTableIdInput
+}
+
+input TablesCreateWithoutFieldsInput {
+  name: String!
+  baseId: BasesCreateOneWithoutTablesInput!
+  records: RecordsCreateManyWithoutTableIdInput
+}
+
+input TablesCreateWithoutRecordsInput {
+  name: String!
+  baseId: BasesCreateOneWithoutTablesInput!
+  fields: FieldsCreateManyWithoutTableIdInput
+}
+
+type TablesEdge {
+  node: Tables!
+  cursor: String!
+}
+
+enum TablesOrderByInput {
+  id_ASC
+  id_DESC
+  name_ASC
+  name_DESC
+  createdAt_ASC
+  createdAt_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+}
+
+type TablesPreviousValues {
+  id: UUID!
+  name: String!
+}
+
+input TablesScalarWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  AND: [TablesScalarWhereInput!]
+  OR: [TablesScalarWhereInput!]
+  NOT: [TablesScalarWhereInput!]
+}
+
+type TablesSubscriptionPayload {
+  mutation: MutationType!
+  node: Tables
+  updatedFields: [String!]
+  previousValues: TablesPreviousValues
+}
+
+input TablesSubscriptionWhereInput {
+  mutation_in: [MutationType!]
+  updatedFields_contains: String
+  updatedFields_contains_every: [String!]
+  updatedFields_contains_some: [String!]
+  node: TablesWhereInput
+  AND: [TablesSubscriptionWhereInput!]
+  OR: [TablesSubscriptionWhereInput!]
+  NOT: [TablesSubscriptionWhereInput!]
+}
+
+input TablesUpdateInput {
+  name: String
+  baseId: BasesUpdateOneRequiredWithoutTablesInput
+  records: RecordsUpdateManyWithoutTableIdInput
+  fields: FieldsUpdateManyWithoutTableIdInput
+}
+
+input TablesUpdateManyDataInput {
+  name: String
+}
+
+input TablesUpdateManyMutationInput {
+  name: String
+}
+
+input TablesUpdateManyWithoutBaseIdInput {
+  create: [TablesCreateWithoutBaseIdInput!]
+  delete: [TablesWhereUniqueInput!]
+  connect: [TablesWhereUniqueInput!]
+  set: [TablesWhereUniqueInput!]
+  disconnect: [TablesWhereUniqueInput!]
+  update: [TablesUpdateWithWhereUniqueWithoutBaseIdInput!]
+  upsert: [TablesUpsertWithWhereUniqueWithoutBaseIdInput!]
+  deleteMany: [TablesScalarWhereInput!]
+  updateMany: [TablesUpdateManyWithWhereNestedInput!]
+}
+
+input TablesUpdateManyWithWhereNestedInput {
+  where: TablesScalarWhereInput!
+  data: TablesUpdateManyDataInput!
+}
+
+input TablesUpdateOneRequiredWithoutFieldsInput {
+  create: TablesCreateWithoutFieldsInput
+  update: TablesUpdateWithoutFieldsDataInput
+  upsert: TablesUpsertWithoutFieldsInput
+  connect: TablesWhereUniqueInput
+}
+
+input TablesUpdateOneRequiredWithoutRecordsInput {
+  create: TablesCreateWithoutRecordsInput
+  update: TablesUpdateWithoutRecordsDataInput
+  upsert: TablesUpsertWithoutRecordsInput
+  connect: TablesWhereUniqueInput
+}
+
+input TablesUpdateWithoutBaseIdDataInput {
+  name: String
+  records: RecordsUpdateManyWithoutTableIdInput
+  fields: FieldsUpdateManyWithoutTableIdInput
+}
+
+input TablesUpdateWithoutFieldsDataInput {
+  name: String
+  baseId: BasesUpdateOneRequiredWithoutTablesInput
+  records: RecordsUpdateManyWithoutTableIdInput
+}
+
+input TablesUpdateWithoutRecordsDataInput {
+  name: String
+  baseId: BasesUpdateOneRequiredWithoutTablesInput
+  fields: FieldsUpdateManyWithoutTableIdInput
+}
+
+input TablesUpdateWithWhereUniqueWithoutBaseIdInput {
+  where: TablesWhereUniqueInput!
+  data: TablesUpdateWithoutBaseIdDataInput!
+}
+
+input TablesUpsertWithoutFieldsInput {
+  update: TablesUpdateWithoutFieldsDataInput!
+  create: TablesCreateWithoutFieldsInput!
+}
+
+input TablesUpsertWithoutRecordsInput {
+  update: TablesUpdateWithoutRecordsDataInput!
+  create: TablesCreateWithoutRecordsInput!
+}
+
+input TablesUpsertWithWhereUniqueWithoutBaseIdInput {
+  where: TablesWhereUniqueInput!
+  update: TablesUpdateWithoutBaseIdDataInput!
+  create: TablesCreateWithoutBaseIdInput!
+}
+
+input TablesWhereInput {
+  id: UUID
+  id_not: UUID
+  id_in: [UUID!]
+  id_not_in: [UUID!]
+  id_lt: UUID
+  id_lte: UUID
+  id_gt: UUID
+  id_gte: UUID
+  id_contains: UUID
+  id_not_contains: UUID
+  id_starts_with: UUID
+  id_not_starts_with: UUID
+  id_ends_with: UUID
+  id_not_ends_with: UUID
+  name: String
+  name_not: String
+  name_in: [String!]
+  name_not_in: [String!]
+  name_lt: String
+  name_lte: String
+  name_gt: String
+  name_gte: String
+  name_contains: String
+  name_not_contains: String
+  name_starts_with: String
+  name_not_starts_with: String
+  name_ends_with: String
+  name_not_ends_with: String
+  baseId: BasesWhereInput
+  records_every: RecordsWhereInput
+  records_some: RecordsWhereInput
+  records_none: RecordsWhereInput
+  fields_every: FieldsWhereInput
+  fields_some: FieldsWhereInput
+  fields_none: FieldsWhereInput
+  AND: [TablesWhereInput!]
+  OR: [TablesWhereInput!]
+  NOT: [TablesWhereInput!]
+}
+
+input TablesWhereUniqueInput {
+  id: UUID
 }
 
 type User {
   id: UUID!
   firstName: String!
   lastName: String!
-  email: String
+  email: String!
   passwordDigest: String!
 }
 
@@ -67,7 +1313,7 @@ type UserConnection {
 input UserCreateInput {
   firstName: String!
   lastName: String!
-  email: String
+  email: String!
   passwordDigest: String!
 }
 
@@ -97,7 +1343,7 @@ type UserPreviousValues {
   id: UUID!
   firstName: String!
   lastName: String!
-  email: String
+  email: String!
   passwordDigest: String!
 }
 

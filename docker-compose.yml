@@ -11,6 +11,7 @@ services:
         databases:
           default:
             connector: postgres
+            migrations: true
             host: postgres
             port: 5432
             user: postgres

@@ -2,109 +2,50 @@ type User {
   id: UUID! @unique
   firstName: String!
   lastName: String!
-  email: String @unique
-  passwordDigest: String!
-}
-
-type User @pgTable(name: "Users") {
-  id: UUID! @unique
-  firstName: String!
-  lastName: String!
   email: String! @unique
   passwordDigest: String!
 }
 
-type BasePosition @indexes(value: [{name: "base_positions_parent_id", fields: ["parentId"], unique: "false"}]) @pgTable(name: "BasePositions") {
-  id: Int! @unique
-  parentId: UUID!
-  position: Int!
-  siblingId: Basis!
-}
-
-type Basis @pgTable(name: "Bases") {
-  basePositions: BasePosition!
-  createdAt: DateTime!
-  id: UUID! @unique
-  name: String
-  tablePositions: TablePosition!
-  tables: Table!
-  updatedAt: DateTime!
-}
-
-type Field @pgTable(name: "Fields") {
-  createdAt: DateTime!
-  fieldPositions: FieldPosition!
-  fieldTypeId: Int!
-  fieldValues: FieldValue!
+type Bases {
   id: UUID! @unique
   name: String!
-  tableId: Table!
-  typeOptions: Json
-  updatedAt: DateTime!
+  tables: [Tables!]!
+}
+
+type Tables @indexes(value: [{name: "Tables_baseId_name_uk", fields: ["name", "baseId"]}]) {
+  id: UUID! @unique
+  name: String!
+  baseId: Bases!
+  records: [Records!]!
+  fields: [Fields!]!
+}
+
+type Fields {
+  id: UUID! @unique
+  name: String!
+  fieldTypeId: FieldTypes!
+  fieldValues: [FieldValues!]!
+  tableId: Tables!
   width: Int
+  typeOptions: Json
 }
 
-type FieldPosition @pgTable(name: "FieldPositions") {
-  id: Int! @unique
-  parentId: Table!
-  position: Int!
-  siblingId: Field!
-}
-
-type FieldType @pgTable(name: "FieldTypes") {
-  createdAt: DateTime!
-  id: Int! @unique
+type FieldTypes {
+  id: ID! @unique
+  name: String! @unique
   isArray: Boolean
   isPrimitive: Boolean
-  name: String! @unique
-  updatedAt: DateTime!
 }
 
-type FieldValue @indexes(value: [{name: "FieldValues_recordId_fieldId_uk", fields: ["recordId", "fieldId"]}]) @pgTable(name: "FieldValues") {
-  createdAt: DateTime!
-  fieldId: Field!
-  id: Int! @unique
-  recordId: Record!
-  updatedAt: DateTime!
+type Records {
+  id: UUID! @unique
+  tableId: Tables!
+  fieldValues: [FieldValues!]!
+}
+
+type FieldValues @indexes(value: [{name: "FieldValues_recordId_fieldId_uk", fields: ["recordId", "fieldId"]}]) {
+  id: ID! @unique
+  fieldId: Fields!
+  recordId: Records!
   value: Json
-}
-
-type Record @pgTable(name: "Records") {
-  createdAt: DateTime!
-  fieldValues: FieldValue!
-  id: UUID! @unique
-  recordPositions: RecordPosition!
-  tableId: Table!
-  updatedAt: DateTime!
-}
-
-type RecordPosition @pgTable(name: "RecordPositions") {
-  id: Int! @unique
-  parentId: Table!
-  position: Int!
-  siblingId: Record!
-}
-
-type SequelizeMeta {
-  id: ID! @pgColumn(name: "name") @unique
-}
-
-type Table @indexes(value: [{name: "Tables_baseId_name_uk", fields: ["name", "baseId"]}]) @pgTable(name: "Tables") {
-  baseId: Basis!
-  createdAt: DateTime!
-  fieldPositions: FieldPosition!
-  fields: Field!
-  id: UUID! @unique
-  name: String!
-  recordPositions: RecordPosition!
-  records: Record!
-  tablePositions: TablePosition!
-  updatedAt: DateTime!
-}
-
-type TablePosition @pgTable(name: "TablePositions") {
-  id: Int! @unique
-  parentId: Basis!
-  position: Int!
-  siblingId: Table!
 }

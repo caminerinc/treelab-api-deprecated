@@ -14,6 +14,12 @@ export type AtLeastOne<T, U = { [K in keyof T]: Pick<T, K> }> = Partial<T> &
   U[keyof U];
 
 export interface Exists {
+  bases: (where?: BasesWhereInput) => Promise<boolean>;
+  fieldTypes: (where?: FieldTypesWhereInput) => Promise<boolean>;
+  fieldValues: (where?: FieldValuesWhereInput) => Promise<boolean>;
+  fields: (where?: FieldsWhereInput) => Promise<boolean>;
+  records: (where?: RecordsWhereInput) => Promise<boolean>;
+  tables: (where?: TablesWhereInput) => Promise<boolean>;
   user: (where?: UserWhereInput) => Promise<boolean>;
 }
 
@@ -36,6 +42,144 @@ export interface Prisma {
    * Queries
    */
 
+  bases: (where: BasesWhereUniqueInput) => BasesPromise;
+  baseses: (
+    args?: {
+      where?: BasesWhereInput;
+      orderBy?: BasesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<Bases>;
+  basesesConnection: (
+    args?: {
+      where?: BasesWhereInput;
+      orderBy?: BasesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => BasesConnectionPromise;
+  fieldTypes: (where: FieldTypesWhereUniqueInput) => FieldTypesPromise;
+  fieldTypeses: (
+    args?: {
+      where?: FieldTypesWhereInput;
+      orderBy?: FieldTypesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<FieldTypes>;
+  fieldTypesesConnection: (
+    args?: {
+      where?: FieldTypesWhereInput;
+      orderBy?: FieldTypesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FieldTypesConnectionPromise;
+  fieldValues: (where: FieldValuesWhereUniqueInput) => FieldValuesPromise;
+  fieldValueses: (
+    args?: {
+      where?: FieldValuesWhereInput;
+      orderBy?: FieldValuesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<FieldValues>;
+  fieldValuesesConnection: (
+    args?: {
+      where?: FieldValuesWhereInput;
+      orderBy?: FieldValuesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FieldValuesConnectionPromise;
+  fields: (where: FieldsWhereUniqueInput) => FieldsPromise;
+  fieldses: (
+    args?: {
+      where?: FieldsWhereInput;
+      orderBy?: FieldsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<Fields>;
+  fieldsesConnection: (
+    args?: {
+      where?: FieldsWhereInput;
+      orderBy?: FieldsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FieldsConnectionPromise;
+  records: (where: RecordsWhereUniqueInput) => RecordsPromise;
+  recordses: (
+    args?: {
+      where?: RecordsWhereInput;
+      orderBy?: RecordsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<Records>;
+  recordsesConnection: (
+    args?: {
+      where?: RecordsWhereInput;
+      orderBy?: RecordsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => RecordsConnectionPromise;
+  tables: (where: TablesWhereUniqueInput) => TablesPromise;
+  tableses: (
+    args?: {
+      where?: TablesWhereInput;
+      orderBy?: TablesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => FragmentableArray<Tables>;
+  tablesesConnection: (
+    args?: {
+      where?: TablesWhereInput;
+      orderBy?: TablesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => TablesConnectionPromise;
   user: (where: UserWhereUniqueInput) => UserPromise;
   users: (
     args?: {
@@ -65,6 +209,107 @@ export interface Prisma {
    * Mutations
    */
 
+  createBases: (data: BasesCreateInput) => BasesPromise;
+  updateBases: (
+    args: { data: BasesUpdateInput; where: BasesWhereUniqueInput }
+  ) => BasesPromise;
+  updateManyBaseses: (
+    args: { data: BasesUpdateManyMutationInput; where?: BasesWhereInput }
+  ) => BatchPayloadPromise;
+  upsertBases: (
+    args: {
+      where: BasesWhereUniqueInput;
+      create: BasesCreateInput;
+      update: BasesUpdateInput;
+    }
+  ) => BasesPromise;
+  deleteBases: (where: BasesWhereUniqueInput) => BasesPromise;
+  deleteManyBaseses: (where?: BasesWhereInput) => BatchPayloadPromise;
+  createFieldTypes: (data: FieldTypesCreateInput) => FieldTypesPromise;
+  updateFieldTypes: (
+    args: { data: FieldTypesUpdateInput; where: FieldTypesWhereUniqueInput }
+  ) => FieldTypesPromise;
+  updateManyFieldTypeses: (
+    args: {
+      data: FieldTypesUpdateManyMutationInput;
+      where?: FieldTypesWhereInput;
+    }
+  ) => BatchPayloadPromise;
+  upsertFieldTypes: (
+    args: {
+      where: FieldTypesWhereUniqueInput;
+      create: FieldTypesCreateInput;
+      update: FieldTypesUpdateInput;
+    }
+  ) => FieldTypesPromise;
+  deleteFieldTypes: (where: FieldTypesWhereUniqueInput) => FieldTypesPromise;
+  deleteManyFieldTypeses: (where?: FieldTypesWhereInput) => BatchPayloadPromise;
+  createFieldValues: (data: FieldValuesCreateInput) => FieldValuesPromise;
+  updateFieldValues: (
+    args: { data: FieldValuesUpdateInput; where: FieldValuesWhereUniqueInput }
+  ) => FieldValuesPromise;
+  updateManyFieldValueses: (
+    args: {
+      data: FieldValuesUpdateManyMutationInput;
+      where?: FieldValuesWhereInput;
+    }
+  ) => BatchPayloadPromise;
+  upsertFieldValues: (
+    args: {
+      where: FieldValuesWhereUniqueInput;
+      create: FieldValuesCreateInput;
+      update: FieldValuesUpdateInput;
+    }
+  ) => FieldValuesPromise;
+  deleteFieldValues: (where: FieldValuesWhereUniqueInput) => FieldValuesPromise;
+  deleteManyFieldValueses: (
+    where?: FieldValuesWhereInput
+  ) => BatchPayloadPromise;
+  createFields: (data: FieldsCreateInput) => FieldsPromise;
+  updateFields: (
+    args: { data: FieldsUpdateInput; where: FieldsWhereUniqueInput }
+  ) => FieldsPromise;
+  updateManyFieldses: (
+    args: { data: FieldsUpdateManyMutationInput; where?: FieldsWhereInput }
+  ) => BatchPayloadPromise;
+  upsertFields: (
+    args: {
+      where: FieldsWhereUniqueInput;
+      create: FieldsCreateInput;
+      update: FieldsUpdateInput;
+    }
+  ) => FieldsPromise;
+  deleteFields: (where: FieldsWhereUniqueInput) => FieldsPromise;
+  deleteManyFieldses: (where?: FieldsWhereInput) => BatchPayloadPromise;
+  createRecords: (data: RecordsCreateInput) => RecordsPromise;
+  updateRecords: (
+    args: { data: RecordsUpdateInput; where: RecordsWhereUniqueInput }
+  ) => RecordsPromise;
+  upsertRecords: (
+    args: {
+      where: RecordsWhereUniqueInput;
+      create: RecordsCreateInput;
+      update: RecordsUpdateInput;
+    }
+  ) => RecordsPromise;
+  deleteRecords: (where: RecordsWhereUniqueInput) => RecordsPromise;
+  deleteManyRecordses: (where?: RecordsWhereInput) => BatchPayloadPromise;
+  createTables: (data: TablesCreateInput) => TablesPromise;
+  updateTables: (
+    args: { data: TablesUpdateInput; where: TablesWhereUniqueInput }
+  ) => TablesPromise;
+  updateManyTableses: (
+    args: { data: TablesUpdateManyMutationInput; where?: TablesWhereInput }
+  ) => BatchPayloadPromise;
+  upsertTables: (
+    args: {
+      where: TablesWhereUniqueInput;
+      create: TablesCreateInput;
+      update: TablesUpdateInput;
+    }
+  ) => TablesPromise;
+  deleteTables: (where: TablesWhereUniqueInput) => TablesPromise;
+  deleteManyTableses: (where?: TablesWhereInput) => BatchPayloadPromise;
   createUser: (data: UserCreateInput) => UserPromise;
   updateUser: (
     args: { data: UserUpdateInput; where: UserWhereUniqueInput }
@@ -90,6 +335,24 @@ export interface Prisma {
 }
 
 export interface Subscription {
+  bases: (
+    where?: BasesSubscriptionWhereInput
+  ) => BasesSubscriptionPayloadSubscription;
+  fieldTypes: (
+    where?: FieldTypesSubscriptionWhereInput
+  ) => FieldTypesSubscriptionPayloadSubscription;
+  fieldValues: (
+    where?: FieldValuesSubscriptionWhereInput
+  ) => FieldValuesSubscriptionPayloadSubscription;
+  fields: (
+    where?: FieldsSubscriptionWhereInput
+  ) => FieldsSubscriptionPayloadSubscription;
+  records: (
+    where?: RecordsSubscriptionWhereInput
+  ) => RecordsSubscriptionPayloadSubscription;
+  tables: (
+    where?: TablesSubscriptionWhereInput
+  ) => TablesSubscriptionPayloadSubscription;
   user: (
     where?: UserSubscriptionWhereInput
   ) => UserSubscriptionPayloadSubscription;
@@ -102,6 +365,72 @@ export interface ClientConstructor<T> {
 /**
  * Types
  */
+
+export type TablesOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type RecordsOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type FieldValuesOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "value_ASC"
+  | "value_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type FieldsOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "width_ASC"
+  | "width_DESC"
+  | "typeOptions_ASC"
+  | "typeOptions_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type BasesOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
+
+export type FieldTypesOrderByInput =
+  | "id_ASC"
+  | "id_DESC"
+  | "name_ASC"
+  | "name_DESC"
+  | "isArray_ASC"
+  | "isArray_DESC"
+  | "isPrimitive_ASC"
+  | "isPrimitive_DESC"
+  | "createdAt_ASC"
+  | "createdAt_DESC"
+  | "updatedAt_ASC"
+  | "updatedAt_DESC";
 
 export type UserOrderByInput =
   | "id_ASC"
@@ -121,11 +450,207 @@ export type UserOrderByInput =
 
 export type MutationType = "CREATED" | "UPDATED" | "DELETED";
 
-export interface UserCreateInput {
-  firstName: String;
-  lastName: String;
-  email?: String;
-  passwordDigest: String;
+export interface RecordsUpdateWithWhereUniqueWithoutTableIdInput {
+  where: RecordsWhereUniqueInput;
+  data: RecordsUpdateWithoutTableIdDataInput;
+}
+
+export type BasesWhereUniqueInput = AtLeastOne<{
+  id: UUID;
+}>;
+
+export interface FieldsUpdateOneRequiredWithoutFieldValuesInput {
+  create?: FieldsCreateWithoutFieldValuesInput;
+  update?: FieldsUpdateWithoutFieldValuesDataInput;
+  upsert?: FieldsUpsertWithoutFieldValuesInput;
+  connect?: FieldsWhereUniqueInput;
+}
+
+export interface FieldTypesWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  isArray?: Boolean;
+  isArray_not?: Boolean;
+  isPrimitive?: Boolean;
+  isPrimitive_not?: Boolean;
+  AND?: FieldTypesWhereInput[] | FieldTypesWhereInput;
+  OR?: FieldTypesWhereInput[] | FieldTypesWhereInput;
+  NOT?: FieldTypesWhereInput[] | FieldTypesWhereInput;
+}
+
+export interface FieldTypesCreateOneInput {
+  create?: FieldTypesCreateInput;
+  connect?: FieldTypesWhereUniqueInput;
+}
+
+export interface RecordsUpsertWithoutFieldValuesInput {
+  update: RecordsUpdateWithoutFieldValuesDataInput;
+  create: RecordsCreateWithoutFieldValuesInput;
+}
+
+export interface FieldTypesCreateInput {
+  name: String;
+  isArray?: Boolean;
+  isPrimitive?: Boolean;
+}
+
+export interface FieldsUpdateWithoutFieldValuesDataInput {
+  name?: String;
+  fieldTypeId?: FieldTypesUpdateOneRequiredInput;
+  tableId?: TablesUpdateOneRequiredWithoutFieldsInput;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface TablesCreateOneWithoutFieldsInput {
+  create?: TablesCreateWithoutFieldsInput;
+  connect?: TablesWhereUniqueInput;
+}
+
+export interface TablesSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: TablesWhereInput;
+  AND?: TablesSubscriptionWhereInput[] | TablesSubscriptionWhereInput;
+  OR?: TablesSubscriptionWhereInput[] | TablesSubscriptionWhereInput;
+  NOT?: TablesSubscriptionWhereInput[] | TablesSubscriptionWhereInput;
+}
+
+export interface TablesCreateWithoutFieldsInput {
+  name: String;
+  baseId: BasesCreateOneWithoutTablesInput;
+  records?: RecordsCreateManyWithoutTableIdInput;
+}
+
+export interface FieldValuesWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  fieldId?: FieldsWhereInput;
+  recordId?: RecordsWhereInput;
+  AND?: FieldValuesWhereInput[] | FieldValuesWhereInput;
+  OR?: FieldValuesWhereInput[] | FieldValuesWhereInput;
+  NOT?: FieldValuesWhereInput[] | FieldValuesWhereInput;
+}
+
+export interface BasesCreateOneWithoutTablesInput {
+  create?: BasesCreateWithoutTablesInput;
+  connect?: BasesWhereUniqueInput;
+}
+
+export interface FieldValuesSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: FieldValuesWhereInput;
+  AND?: FieldValuesSubscriptionWhereInput[] | FieldValuesSubscriptionWhereInput;
+  OR?: FieldValuesSubscriptionWhereInput[] | FieldValuesSubscriptionWhereInput;
+  NOT?: FieldValuesSubscriptionWhereInput[] | FieldValuesSubscriptionWhereInput;
+}
+
+export interface BasesCreateWithoutTablesInput {
+  name: String;
+}
+
+export interface BasesSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: BasesWhereInput;
+  AND?: BasesSubscriptionWhereInput[] | BasesSubscriptionWhereInput;
+  OR?: BasesSubscriptionWhereInput[] | BasesSubscriptionWhereInput;
+  NOT?: BasesSubscriptionWhereInput[] | BasesSubscriptionWhereInput;
+}
+
+export interface FieldsCreateManyWithoutTableIdInput {
+  create?: FieldsCreateWithoutTableIdInput[] | FieldsCreateWithoutTableIdInput;
+  connect?: FieldsWhereUniqueInput[] | FieldsWhereUniqueInput;
+}
+
+export interface BasesWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  tables_every?: TablesWhereInput;
+  tables_some?: TablesWhereInput;
+  tables_none?: TablesWhereInput;
+  AND?: BasesWhereInput[] | BasesWhereInput;
+  OR?: BasesWhereInput[] | BasesWhereInput;
+  NOT?: BasesWhereInput[] | BasesWhereInput;
+}
+
+export interface FieldsCreateWithoutTableIdInput {
+  name: String;
+  fieldTypeId: FieldTypesCreateOneInput;
+  fieldValues?: FieldValuesCreateManyWithoutFieldIdInput;
+  width?: Int;
+  typeOptions?: Json;
 }
 
 export interface UserUpdateInput {
@@ -135,11 +660,190 @@ export interface UserUpdateInput {
   passwordDigest?: String;
 }
 
-export interface UserUpdateManyMutationInput {
-  firstName?: String;
-  lastName?: String;
+export interface FieldValuesCreateManyWithoutFieldIdInput {
+  create?:
+    | FieldValuesCreateWithoutFieldIdInput[]
+    | FieldValuesCreateWithoutFieldIdInput;
+  connect?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+}
+
+export interface TablesUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface FieldValuesCreateWithoutFieldIdInput {
+  recordId: RecordsCreateOneWithoutFieldValuesInput;
+  value?: Json;
+}
+
+export interface TablesWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  baseId?: BasesWhereInput;
+  records_every?: RecordsWhereInput;
+  records_some?: RecordsWhereInput;
+  records_none?: RecordsWhereInput;
+  fields_every?: FieldsWhereInput;
+  fields_some?: FieldsWhereInput;
+  fields_none?: FieldsWhereInput;
+  AND?: TablesWhereInput[] | TablesWhereInput;
+  OR?: TablesWhereInput[] | TablesWhereInput;
+  NOT?: TablesWhereInput[] | TablesWhereInput;
+}
+
+export interface RecordsCreateOneWithoutFieldValuesInput {
+  create?: RecordsCreateWithoutFieldValuesInput;
+  connect?: RecordsWhereUniqueInput;
+}
+
+export interface TablesCreateInput {
+  name: String;
+  baseId: BasesCreateOneWithoutTablesInput;
+  records?: RecordsCreateManyWithoutTableIdInput;
+  fields?: FieldsCreateManyWithoutTableIdInput;
+}
+
+export interface RecordsCreateWithoutFieldValuesInput {
+  tableId: TablesCreateOneWithoutRecordsInput;
+}
+
+export type FieldValuesWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+}>;
+
+export interface TablesCreateOneWithoutRecordsInput {
+  create?: TablesCreateWithoutRecordsInput;
+  connect?: TablesWhereUniqueInput;
+}
+
+export interface FieldsUpdateManyMutationInput {
+  name?: String;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface TablesCreateWithoutRecordsInput {
+  name: String;
+  baseId: BasesCreateOneWithoutTablesInput;
+  fields?: FieldsCreateManyWithoutTableIdInput;
+}
+
+export type FieldsWhereUniqueInput = AtLeastOne<{
+  id: UUID;
+}>;
+
+export interface BasesUpdateInput {
+  name?: String;
+  tables?: TablesUpdateManyWithoutBaseIdInput;
+}
+
+export interface FieldValuesUpdateManyMutationInput {
+  value?: Json;
+}
+
+export interface TablesUpdateManyWithoutBaseIdInput {
+  create?: TablesCreateWithoutBaseIdInput[] | TablesCreateWithoutBaseIdInput;
+  delete?: TablesWhereUniqueInput[] | TablesWhereUniqueInput;
+  connect?: TablesWhereUniqueInput[] | TablesWhereUniqueInput;
+  set?: TablesWhereUniqueInput[] | TablesWhereUniqueInput;
+  disconnect?: TablesWhereUniqueInput[] | TablesWhereUniqueInput;
+  update?:
+    | TablesUpdateWithWhereUniqueWithoutBaseIdInput[]
+    | TablesUpdateWithWhereUniqueWithoutBaseIdInput;
+  upsert?:
+    | TablesUpsertWithWhereUniqueWithoutBaseIdInput[]
+    | TablesUpsertWithWhereUniqueWithoutBaseIdInput;
+  deleteMany?: TablesScalarWhereInput[] | TablesScalarWhereInput;
+  updateMany?:
+    | TablesUpdateManyWithWhereNestedInput[]
+    | TablesUpdateManyWithWhereNestedInput;
+}
+
+export type RecordsWhereUniqueInput = AtLeastOne<{
+  id: UUID;
+}>;
+
+export interface TablesUpdateWithWhereUniqueWithoutBaseIdInput {
+  where: TablesWhereUniqueInput;
+  data: TablesUpdateWithoutBaseIdDataInput;
+}
+
+export interface FieldTypesUpdateManyMutationInput {
+  name?: String;
+  isArray?: Boolean;
+  isPrimitive?: Boolean;
+}
+
+export interface TablesUpdateWithoutBaseIdDataInput {
+  name?: String;
+  records?: RecordsUpdateManyWithoutTableIdInput;
+  fields?: FieldsUpdateManyWithoutTableIdInput;
+}
+
+export type TablesWhereUniqueInput = AtLeastOne<{
+  id: UUID;
+}>;
+
+export interface RecordsUpdateManyWithoutTableIdInput {
+  create?:
+    | RecordsCreateWithoutTableIdInput[]
+    | RecordsCreateWithoutTableIdInput;
+  delete?: RecordsWhereUniqueInput[] | RecordsWhereUniqueInput;
+  connect?: RecordsWhereUniqueInput[] | RecordsWhereUniqueInput;
+  set?: RecordsWhereUniqueInput[] | RecordsWhereUniqueInput;
+  disconnect?: RecordsWhereUniqueInput[] | RecordsWhereUniqueInput;
+  update?:
+    | RecordsUpdateWithWhereUniqueWithoutTableIdInput[]
+    | RecordsUpdateWithWhereUniqueWithoutTableIdInput;
+  upsert?:
+    | RecordsUpsertWithWhereUniqueWithoutTableIdInput[]
+    | RecordsUpsertWithWhereUniqueWithoutTableIdInput;
+  deleteMany?: RecordsScalarWhereInput[] | RecordsScalarWhereInput;
+}
+
+export interface TablesUpdateManyDataInput {
+  name?: String;
+}
+
+export interface FieldsUpsertWithWhereUniqueWithoutTableIdInput {
+  where: FieldsWhereUniqueInput;
+  update: FieldsUpdateWithoutTableIdDataInput;
+  create: FieldsCreateWithoutTableIdInput;
+}
+
+export type UserWhereUniqueInput = AtLeastOne<{
+  id: UUID;
   email?: String;
-  passwordDigest?: String;
+}>;
+
+export interface RecordsUpdateWithoutTableIdDataInput {
+  fieldValues?: FieldValuesUpdateManyWithoutRecordIdInput;
 }
 
 export interface UserWhereInput {
@@ -218,6 +922,490 @@ export interface UserWhereInput {
   NOT?: UserWhereInput[] | UserWhereInput;
 }
 
+export interface FieldValuesUpdateManyWithoutRecordIdInput {
+  create?:
+    | FieldValuesCreateWithoutRecordIdInput[]
+    | FieldValuesCreateWithoutRecordIdInput;
+  delete?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  connect?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  set?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  disconnect?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  update?:
+    | FieldValuesUpdateWithWhereUniqueWithoutRecordIdInput[]
+    | FieldValuesUpdateWithWhereUniqueWithoutRecordIdInput;
+  upsert?:
+    | FieldValuesUpsertWithWhereUniqueWithoutRecordIdInput[]
+    | FieldValuesUpsertWithWhereUniqueWithoutRecordIdInput;
+  deleteMany?: FieldValuesScalarWhereInput[] | FieldValuesScalarWhereInput;
+  updateMany?:
+    | FieldValuesUpdateManyWithWhereNestedInput[]
+    | FieldValuesUpdateManyWithWhereNestedInput;
+}
+
+export interface FieldsUpdateManyDataInput {
+  name?: String;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface FieldValuesUpdateWithWhereUniqueWithoutRecordIdInput {
+  where: FieldValuesWhereUniqueInput;
+  data: FieldValuesUpdateWithoutRecordIdDataInput;
+}
+
+export interface FieldsScalarWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  width?: Int;
+  width_not?: Int;
+  width_in?: Int[] | Int;
+  width_not_in?: Int[] | Int;
+  width_lt?: Int;
+  width_lte?: Int;
+  width_gt?: Int;
+  width_gte?: Int;
+  AND?: FieldsScalarWhereInput[] | FieldsScalarWhereInput;
+  OR?: FieldsScalarWhereInput[] | FieldsScalarWhereInput;
+  NOT?: FieldsScalarWhereInput[] | FieldsScalarWhereInput;
+}
+
+export interface FieldValuesUpdateWithoutRecordIdDataInput {
+  fieldId?: FieldsUpdateOneRequiredWithoutFieldValuesInput;
+  value?: Json;
+}
+
+export interface BasesCreateInput {
+  name: String;
+  tables?: TablesCreateManyWithoutBaseIdInput;
+}
+
+export interface FieldValuesUpsertWithWhereUniqueWithoutFieldIdInput {
+  where: FieldValuesWhereUniqueInput;
+  update: FieldValuesUpdateWithoutFieldIdDataInput;
+  create: FieldValuesCreateWithoutFieldIdInput;
+}
+
+export interface TablesCreateWithoutBaseIdInput {
+  name: String;
+  records?: RecordsCreateManyWithoutTableIdInput;
+  fields?: FieldsCreateManyWithoutTableIdInput;
+}
+
+export interface FieldsWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  fieldTypeId?: FieldTypesWhereInput;
+  fieldValues_every?: FieldValuesWhereInput;
+  fieldValues_some?: FieldValuesWhereInput;
+  fieldValues_none?: FieldValuesWhereInput;
+  tableId?: TablesWhereInput;
+  width?: Int;
+  width_not?: Int;
+  width_in?: Int[] | Int;
+  width_not_in?: Int[] | Int;
+  width_lt?: Int;
+  width_lte?: Int;
+  width_gt?: Int;
+  width_gte?: Int;
+  AND?: FieldsWhereInput[] | FieldsWhereInput;
+  OR?: FieldsWhereInput[] | FieldsWhereInput;
+  NOT?: FieldsWhereInput[] | FieldsWhereInput;
+}
+
+export interface RecordsCreateWithoutTableIdInput {
+  fieldValues?: FieldValuesCreateManyWithoutRecordIdInput;
+}
+
+export interface FieldTypesUpdateOneRequiredInput {
+  create?: FieldTypesCreateInput;
+  update?: FieldTypesUpdateDataInput;
+  upsert?: FieldTypesUpsertNestedInput;
+  connect?: FieldTypesWhereUniqueInput;
+}
+
+export interface FieldValuesCreateWithoutRecordIdInput {
+  fieldId: FieldsCreateOneWithoutFieldValuesInput;
+  value?: Json;
+}
+
+export interface FieldTypesUpdateDataInput {
+  name?: String;
+  isArray?: Boolean;
+  isPrimitive?: Boolean;
+}
+
+export interface FieldsCreateWithoutFieldValuesInput {
+  name: String;
+  fieldTypeId: FieldTypesCreateOneInput;
+  tableId: TablesCreateOneWithoutFieldsInput;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface FieldTypesUpsertNestedInput {
+  update: FieldTypesUpdateDataInput;
+  create: FieldTypesCreateInput;
+}
+
+export interface RecordsSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: RecordsWhereInput;
+  AND?: RecordsSubscriptionWhereInput[] | RecordsSubscriptionWhereInput;
+  OR?: RecordsSubscriptionWhereInput[] | RecordsSubscriptionWhereInput;
+  NOT?: RecordsSubscriptionWhereInput[] | RecordsSubscriptionWhereInput;
+}
+
+export interface TablesUpdateOneRequiredWithoutFieldsInput {
+  create?: TablesCreateWithoutFieldsInput;
+  update?: TablesUpdateWithoutFieldsDataInput;
+  upsert?: TablesUpsertWithoutFieldsInput;
+  connect?: TablesWhereUniqueInput;
+}
+
+export interface FieldTypesSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: FieldTypesWhereInput;
+  AND?: FieldTypesSubscriptionWhereInput[] | FieldTypesSubscriptionWhereInput;
+  OR?: FieldTypesSubscriptionWhereInput[] | FieldTypesSubscriptionWhereInput;
+  NOT?: FieldTypesSubscriptionWhereInput[] | FieldTypesSubscriptionWhereInput;
+}
+
+export interface TablesUpdateWithoutFieldsDataInput {
+  name?: String;
+  baseId?: BasesUpdateOneRequiredWithoutTablesInput;
+  records?: RecordsUpdateManyWithoutTableIdInput;
+}
+
+export interface UserUpdateManyMutationInput {
+  firstName?: String;
+  lastName?: String;
+  email?: String;
+  passwordDigest?: String;
+}
+
+export interface BasesUpdateOneRequiredWithoutTablesInput {
+  create?: BasesCreateWithoutTablesInput;
+  update?: BasesUpdateWithoutTablesDataInput;
+  upsert?: BasesUpsertWithoutTablesInput;
+  connect?: BasesWhereUniqueInput;
+}
+
+export type FieldTypesWhereUniqueInput = AtLeastOne<{
+  id: ID_Input;
+  name?: String;
+}>;
+
+export interface BasesUpdateWithoutTablesDataInput {
+  name?: String;
+}
+
+export interface RecordsUpdateInput {
+  tableId?: TablesUpdateOneRequiredWithoutRecordsInput;
+  fieldValues?: FieldValuesUpdateManyWithoutRecordIdInput;
+}
+
+export interface BasesUpsertWithoutTablesInput {
+  update: BasesUpdateWithoutTablesDataInput;
+  create: BasesCreateWithoutTablesInput;
+}
+
+export interface FieldsUpdateInput {
+  name?: String;
+  fieldTypeId?: FieldTypesUpdateOneRequiredInput;
+  fieldValues?: FieldValuesUpdateManyWithoutFieldIdInput;
+  tableId?: TablesUpdateOneRequiredWithoutFieldsInput;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface TablesUpsertWithoutFieldsInput {
+  update: TablesUpdateWithoutFieldsDataInput;
+  create: TablesCreateWithoutFieldsInput;
+}
+
+export interface FieldValuesUpdateInput {
+  fieldId?: FieldsUpdateOneRequiredWithoutFieldValuesInput;
+  recordId?: RecordsUpdateOneRequiredWithoutFieldValuesInput;
+  value?: Json;
+}
+
+export interface FieldsUpsertWithoutFieldValuesInput {
+  update: FieldsUpdateWithoutFieldValuesDataInput;
+  create: FieldsCreateWithoutFieldValuesInput;
+}
+
+export interface FieldTypesUpdateInput {
+  name?: String;
+  isArray?: Boolean;
+  isPrimitive?: Boolean;
+}
+
+export interface FieldValuesUpsertWithWhereUniqueWithoutRecordIdInput {
+  where: FieldValuesWhereUniqueInput;
+  update: FieldValuesUpdateWithoutRecordIdDataInput;
+  create: FieldValuesCreateWithoutRecordIdInput;
+}
+
+export interface TablesUpdateManyWithWhereNestedInput {
+  where: TablesScalarWhereInput;
+  data: TablesUpdateManyDataInput;
+}
+
+export interface FieldValuesScalarWhereInput {
+  id?: ID_Input;
+  id_not?: ID_Input;
+  id_in?: ID_Input[] | ID_Input;
+  id_not_in?: ID_Input[] | ID_Input;
+  id_lt?: ID_Input;
+  id_lte?: ID_Input;
+  id_gt?: ID_Input;
+  id_gte?: ID_Input;
+  id_contains?: ID_Input;
+  id_not_contains?: ID_Input;
+  id_starts_with?: ID_Input;
+  id_not_starts_with?: ID_Input;
+  id_ends_with?: ID_Input;
+  id_not_ends_with?: ID_Input;
+  AND?: FieldValuesScalarWhereInput[] | FieldValuesScalarWhereInput;
+  OR?: FieldValuesScalarWhereInput[] | FieldValuesScalarWhereInput;
+  NOT?: FieldValuesScalarWhereInput[] | FieldValuesScalarWhereInput;
+}
+
+export interface TablesUpsertWithWhereUniqueWithoutBaseIdInput {
+  where: TablesWhereUniqueInput;
+  update: TablesUpdateWithoutBaseIdDataInput;
+  create: TablesCreateWithoutBaseIdInput;
+}
+
+export interface FieldValuesUpdateManyWithWhereNestedInput {
+  where: FieldValuesScalarWhereInput;
+  data: FieldValuesUpdateManyDataInput;
+}
+
+export interface RecordsCreateManyWithoutTableIdInput {
+  create?:
+    | RecordsCreateWithoutTableIdInput[]
+    | RecordsCreateWithoutTableIdInput;
+  connect?: RecordsWhereUniqueInput[] | RecordsWhereUniqueInput;
+}
+
+export interface FieldValuesUpdateManyDataInput {
+  value?: Json;
+}
+
+export interface FieldsCreateOneWithoutFieldValuesInput {
+  create?: FieldsCreateWithoutFieldValuesInput;
+  connect?: FieldsWhereUniqueInput;
+}
+
+export interface RecordsUpsertWithWhereUniqueWithoutTableIdInput {
+  where: RecordsWhereUniqueInput;
+  update: RecordsUpdateWithoutTableIdDataInput;
+  create: RecordsCreateWithoutTableIdInput;
+}
+
+export interface FieldsSubscriptionWhereInput {
+  mutation_in?: MutationType[] | MutationType;
+  updatedFields_contains?: String;
+  updatedFields_contains_every?: String[] | String;
+  updatedFields_contains_some?: String[] | String;
+  node?: FieldsWhereInput;
+  AND?: FieldsSubscriptionWhereInput[] | FieldsSubscriptionWhereInput;
+  OR?: FieldsSubscriptionWhereInput[] | FieldsSubscriptionWhereInput;
+  NOT?: FieldsSubscriptionWhereInput[] | FieldsSubscriptionWhereInput;
+}
+
+export interface RecordsScalarWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  AND?: RecordsScalarWhereInput[] | RecordsScalarWhereInput;
+  OR?: RecordsScalarWhereInput[] | RecordsScalarWhereInput;
+  NOT?: RecordsScalarWhereInput[] | RecordsScalarWhereInput;
+}
+
+export interface UserCreateInput {
+  firstName: String;
+  lastName: String;
+  email: String;
+  passwordDigest: String;
+}
+
+export interface FieldsUpdateManyWithoutTableIdInput {
+  create?: FieldsCreateWithoutTableIdInput[] | FieldsCreateWithoutTableIdInput;
+  delete?: FieldsWhereUniqueInput[] | FieldsWhereUniqueInput;
+  connect?: FieldsWhereUniqueInput[] | FieldsWhereUniqueInput;
+  set?: FieldsWhereUniqueInput[] | FieldsWhereUniqueInput;
+  disconnect?: FieldsWhereUniqueInput[] | FieldsWhereUniqueInput;
+  update?:
+    | FieldsUpdateWithWhereUniqueWithoutTableIdInput[]
+    | FieldsUpdateWithWhereUniqueWithoutTableIdInput;
+  upsert?:
+    | FieldsUpsertWithWhereUniqueWithoutTableIdInput[]
+    | FieldsUpsertWithWhereUniqueWithoutTableIdInput;
+  deleteMany?: FieldsScalarWhereInput[] | FieldsScalarWhereInput;
+  updateMany?:
+    | FieldsUpdateManyWithWhereNestedInput[]
+    | FieldsUpdateManyWithWhereNestedInput;
+}
+
+export interface RecordsCreateInput {
+  tableId: TablesCreateOneWithoutRecordsInput;
+  fieldValues?: FieldValuesCreateManyWithoutRecordIdInput;
+}
+
+export interface FieldsUpdateWithWhereUniqueWithoutTableIdInput {
+  where: FieldsWhereUniqueInput;
+  data: FieldsUpdateWithoutTableIdDataInput;
+}
+
+export interface FieldValuesCreateInput {
+  fieldId: FieldsCreateOneWithoutFieldValuesInput;
+  recordId: RecordsCreateOneWithoutFieldValuesInput;
+  value?: Json;
+}
+
+export interface FieldsUpdateWithoutTableIdDataInput {
+  name?: String;
+  fieldTypeId?: FieldTypesUpdateOneRequiredInput;
+  fieldValues?: FieldValuesUpdateManyWithoutFieldIdInput;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface TablesScalarWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  name?: String;
+  name_not?: String;
+  name_in?: String[] | String;
+  name_not_in?: String[] | String;
+  name_lt?: String;
+  name_lte?: String;
+  name_gt?: String;
+  name_gte?: String;
+  name_contains?: String;
+  name_not_contains?: String;
+  name_starts_with?: String;
+  name_not_starts_with?: String;
+  name_ends_with?: String;
+  name_not_ends_with?: String;
+  AND?: TablesScalarWhereInput[] | TablesScalarWhereInput;
+  OR?: TablesScalarWhereInput[] | TablesScalarWhereInput;
+  NOT?: TablesScalarWhereInput[] | TablesScalarWhereInput;
+}
+
+export interface FieldValuesUpdateManyWithoutFieldIdInput {
+  create?:
+    | FieldValuesCreateWithoutFieldIdInput[]
+    | FieldValuesCreateWithoutFieldIdInput;
+  delete?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  connect?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  set?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  disconnect?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+  update?:
+    | FieldValuesUpdateWithWhereUniqueWithoutFieldIdInput[]
+    | FieldValuesUpdateWithWhereUniqueWithoutFieldIdInput;
+  upsert?:
+    | FieldValuesUpsertWithWhereUniqueWithoutFieldIdInput[]
+    | FieldValuesUpsertWithWhereUniqueWithoutFieldIdInput;
+  deleteMany?: FieldValuesScalarWhereInput[] | FieldValuesScalarWhereInput;
+  updateMany?:
+    | FieldValuesUpdateManyWithWhereNestedInput[]
+    | FieldValuesUpdateManyWithWhereNestedInput;
+}
+
+export interface TablesCreateManyWithoutBaseIdInput {
+  create?: TablesCreateWithoutBaseIdInput[] | TablesCreateWithoutBaseIdInput;
+  connect?: TablesWhereUniqueInput[] | TablesWhereUniqueInput;
+}
+
+export interface FieldValuesUpdateWithWhereUniqueWithoutFieldIdInput {
+  where: FieldValuesWhereUniqueInput;
+  data: FieldValuesUpdateWithoutFieldIdDataInput;
+}
+
 export interface UserSubscriptionWhereInput {
   mutation_in?: MutationType[] | MutationType;
   updatedFields_contains?: String;
@@ -229,36 +1417,105 @@ export interface UserSubscriptionWhereInput {
   NOT?: UserSubscriptionWhereInput[] | UserSubscriptionWhereInput;
 }
 
-export type UserWhereUniqueInput = AtLeastOne<{
-  id: UUID;
-  email?: String;
-}>;
+export interface FieldValuesUpdateWithoutFieldIdDataInput {
+  recordId?: RecordsUpdateOneRequiredWithoutFieldValuesInput;
+  value?: Json;
+}
+
+export interface TablesUpdateInput {
+  name?: String;
+  baseId?: BasesUpdateOneRequiredWithoutTablesInput;
+  records?: RecordsUpdateManyWithoutTableIdInput;
+  fields?: FieldsUpdateManyWithoutTableIdInput;
+}
+
+export interface RecordsUpdateOneRequiredWithoutFieldValuesInput {
+  create?: RecordsCreateWithoutFieldValuesInput;
+  update?: RecordsUpdateWithoutFieldValuesDataInput;
+  upsert?: RecordsUpsertWithoutFieldValuesInput;
+  connect?: RecordsWhereUniqueInput;
+}
+
+export interface BasesUpdateManyMutationInput {
+  name?: String;
+}
+
+export interface TablesUpsertWithoutRecordsInput {
+  update: TablesUpdateWithoutRecordsDataInput;
+  create: TablesCreateWithoutRecordsInput;
+}
+
+export interface TablesUpdateWithoutRecordsDataInput {
+  name?: String;
+  baseId?: BasesUpdateOneRequiredWithoutTablesInput;
+  fields?: FieldsUpdateManyWithoutTableIdInput;
+}
+
+export interface TablesUpdateOneRequiredWithoutRecordsInput {
+  create?: TablesCreateWithoutRecordsInput;
+  update?: TablesUpdateWithoutRecordsDataInput;
+  upsert?: TablesUpsertWithoutRecordsInput;
+  connect?: TablesWhereUniqueInput;
+}
+
+export interface RecordsUpdateWithoutFieldValuesDataInput {
+  tableId?: TablesUpdateOneRequiredWithoutRecordsInput;
+}
+
+export interface FieldsUpdateManyWithWhereNestedInput {
+  where: FieldsScalarWhereInput;
+  data: FieldsUpdateManyDataInput;
+}
+
+export interface FieldsCreateInput {
+  name: String;
+  fieldTypeId: FieldTypesCreateOneInput;
+  fieldValues?: FieldValuesCreateManyWithoutFieldIdInput;
+  tableId: TablesCreateOneWithoutFieldsInput;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface RecordsWhereInput {
+  id?: UUID;
+  id_not?: UUID;
+  id_in?: UUID[] | UUID;
+  id_not_in?: UUID[] | UUID;
+  id_lt?: UUID;
+  id_lte?: UUID;
+  id_gt?: UUID;
+  id_gte?: UUID;
+  id_contains?: UUID;
+  id_not_contains?: UUID;
+  id_starts_with?: UUID;
+  id_not_starts_with?: UUID;
+  id_ends_with?: UUID;
+  id_not_ends_with?: UUID;
+  tableId?: TablesWhereInput;
+  fieldValues_every?: FieldValuesWhereInput;
+  fieldValues_some?: FieldValuesWhereInput;
+  fieldValues_none?: FieldValuesWhereInput;
+  AND?: RecordsWhereInput[] | RecordsWhereInput;
+  OR?: RecordsWhereInput[] | RecordsWhereInput;
+  NOT?: RecordsWhereInput[] | RecordsWhereInput;
+}
+
+export interface FieldValuesCreateManyWithoutRecordIdInput {
+  create?:
+    | FieldValuesCreateWithoutRecordIdInput[]
+    | FieldValuesCreateWithoutRecordIdInput;
+  connect?: FieldValuesWhereUniqueInput[] | FieldValuesWhereUniqueInput;
+}
 
 export interface NodeNode {
   id: ID_Output;
-}
-
-export interface AggregateUser {
-  count: Int;
-}
-
-export interface AggregateUserPromise
-  extends Promise<AggregateUser>,
-    Fragmentable {
-  count: () => Promise<Int>;
-}
-
-export interface AggregateUserSubscription
-  extends Promise<AsyncIterator<AggregateUser>>,
-    Fragmentable {
-  count: () => Promise<AsyncIterator<Int>>;
 }
 
 export interface UserPreviousValues {
   id: UUID;
   firstName: String;
   lastName: String;
-  email?: String;
+  email: String;
   passwordDigest: String;
 }
 
@@ -282,6 +1539,95 @@ export interface UserPreviousValuesSubscription
   passwordDigest: () => Promise<AsyncIterator<String>>;
 }
 
+export interface FieldTypesEdge {
+  node: FieldTypes;
+  cursor: String;
+}
+
+export interface FieldTypesEdgePromise
+  extends Promise<FieldTypesEdge>,
+    Fragmentable {
+  node: <T = FieldTypesPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FieldTypesEdgeSubscription
+  extends Promise<AsyncIterator<FieldTypesEdge>>,
+    Fragmentable {
+  node: <T = FieldTypesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface RecordsPreviousValues {
+  id: UUID;
+}
+
+export interface RecordsPreviousValuesPromise
+  extends Promise<RecordsPreviousValues>,
+    Fragmentable {
+  id: () => Promise<UUID>;
+}
+
+export interface RecordsPreviousValuesSubscription
+  extends Promise<AsyncIterator<RecordsPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+}
+
+export interface FieldTypesConnection {
+  pageInfo: PageInfo;
+  edges: FieldTypesEdge[];
+}
+
+export interface FieldTypesConnectionPromise
+  extends Promise<FieldTypesConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FieldTypesEdge>>() => T;
+  aggregate: <T = AggregateFieldTypesPromise>() => T;
+}
+
+export interface FieldTypesConnectionSubscription
+  extends Promise<AsyncIterator<FieldTypesConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FieldTypesEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFieldTypesSubscription>() => T;
+}
+
+export interface BasesEdge {
+  node: Bases;
+  cursor: String;
+}
+
+export interface BasesEdgePromise extends Promise<BasesEdge>, Fragmentable {
+  node: <T = BasesPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface BasesEdgeSubscription
+  extends Promise<AsyncIterator<BasesEdge>>,
+    Fragmentable {
+  node: <T = BasesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface AggregateBases {
+  count: Int;
+}
+
+export interface AggregateBasesPromise
+  extends Promise<AggregateBases>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateBasesSubscription
+  extends Promise<AsyncIterator<AggregateBases>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
 export interface UserEdge {
   node: User;
   cursor: String;
@@ -299,30 +1645,23 @@ export interface UserEdgeSubscription
   cursor: () => Promise<AsyncIterator<String>>;
 }
 
-export interface User {
+export interface TablesPreviousValues {
   id: UUID;
-  firstName: String;
-  lastName: String;
-  email?: String;
-  passwordDigest: String;
+  name: String;
 }
 
-export interface UserPromise extends Promise<User>, Fragmentable {
+export interface TablesPreviousValuesPromise
+  extends Promise<TablesPreviousValues>,
+    Fragmentable {
   id: () => Promise<UUID>;
-  firstName: () => Promise<String>;
-  lastName: () => Promise<String>;
-  email: () => Promise<String>;
-  passwordDigest: () => Promise<String>;
+  name: () => Promise<String>;
 }
 
-export interface UserSubscription
-  extends Promise<AsyncIterator<User>>,
+export interface TablesPreviousValuesSubscription
+  extends Promise<AsyncIterator<TablesPreviousValues>>,
     Fragmentable {
   id: () => Promise<AsyncIterator<UUID>>;
-  firstName: () => Promise<AsyncIterator<String>>;
-  lastName: () => Promise<AsyncIterator<String>>;
-  email: () => Promise<AsyncIterator<String>>;
-  passwordDigest: () => Promise<AsyncIterator<String>>;
+  name: () => Promise<AsyncIterator<String>>;
 }
 
 export interface UserSubscriptionPayload {
@@ -350,27 +1689,6 @@ export interface UserSubscriptionPayloadSubscription
   previousValues: <T = UserPreviousValuesSubscription>() => T;
 }
 
-export interface UserConnection {
-  pageInfo: PageInfo;
-  edges: UserEdge[];
-}
-
-export interface UserConnectionPromise
-  extends Promise<UserConnection>,
-    Fragmentable {
-  pageInfo: <T = PageInfoPromise>() => T;
-  edges: <T = FragmentableArray<UserEdge>>() => T;
-  aggregate: <T = AggregateUserPromise>() => T;
-}
-
-export interface UserConnectionSubscription
-  extends Promise<AsyncIterator<UserConnection>>,
-    Fragmentable {
-  pageInfo: <T = PageInfoSubscription>() => T;
-  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
-  aggregate: <T = AggregateUserSubscription>() => T;
-}
-
 export interface PageInfo {
   hasNextPage: Boolean;
   hasPreviousPage: Boolean;
@@ -394,6 +1712,742 @@ export interface PageInfoSubscription
   endCursor: () => Promise<AsyncIterator<String>>;
 }
 
+export interface AggregateTables {
+  count: Int;
+}
+
+export interface AggregateTablesPromise
+  extends Promise<AggregateTables>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateTablesSubscription
+  extends Promise<AsyncIterator<AggregateTables>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface BasesConnection {
+  pageInfo: PageInfo;
+  edges: BasesEdge[];
+}
+
+export interface BasesConnectionPromise
+  extends Promise<BasesConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<BasesEdge>>() => T;
+  aggregate: <T = AggregateBasesPromise>() => T;
+}
+
+export interface BasesConnectionSubscription
+  extends Promise<AsyncIterator<BasesConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<BasesEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateBasesSubscription>() => T;
+}
+
+export interface TablesConnection {
+  pageInfo: PageInfo;
+  edges: TablesEdge[];
+}
+
+export interface TablesConnectionPromise
+  extends Promise<TablesConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<TablesEdge>>() => T;
+  aggregate: <T = AggregateTablesPromise>() => T;
+}
+
+export interface TablesConnectionSubscription
+  extends Promise<AsyncIterator<TablesConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<TablesEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateTablesSubscription>() => T;
+}
+
+export interface TablesSubscriptionPayload {
+  mutation: MutationType;
+  node: Tables;
+  updatedFields: String[];
+  previousValues: TablesPreviousValues;
+}
+
+export interface TablesSubscriptionPayloadPromise
+  extends Promise<TablesSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = TablesPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = TablesPreviousValuesPromise>() => T;
+}
+
+export interface TablesSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<TablesSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = TablesSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = TablesPreviousValuesSubscription>() => T;
+}
+
+export interface Tables {
+  id: UUID;
+  name: String;
+}
+
+export interface TablesPromise extends Promise<Tables>, Fragmentable {
+  id: () => Promise<UUID>;
+  name: () => Promise<String>;
+  baseId: <T = BasesPromise>() => T;
+  records: <T = FragmentableArray<Records>>(
+    args?: {
+      where?: RecordsWhereInput;
+      orderBy?: RecordsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  fields: <T = FragmentableArray<Fields>>(
+    args?: {
+      where?: FieldsWhereInput;
+      orderBy?: FieldsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface TablesSubscription
+  extends Promise<AsyncIterator<Tables>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  name: () => Promise<AsyncIterator<String>>;
+  baseId: <T = BasesSubscription>() => T;
+  records: <T = Promise<AsyncIterator<RecordsSubscription>>>(
+    args?: {
+      where?: RecordsWhereInput;
+      orderBy?: RecordsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  fields: <T = Promise<AsyncIterator<FieldsSubscription>>>(
+    args?: {
+      where?: FieldsWhereInput;
+      orderBy?: FieldsOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface Bases {
+  id: UUID;
+  name: String;
+}
+
+export interface BasesPromise extends Promise<Bases>, Fragmentable {
+  id: () => Promise<UUID>;
+  name: () => Promise<String>;
+  tables: <T = FragmentableArray<Tables>>(
+    args?: {
+      where?: TablesWhereInput;
+      orderBy?: TablesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface BasesSubscription
+  extends Promise<AsyncIterator<Bases>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  name: () => Promise<AsyncIterator<String>>;
+  tables: <T = Promise<AsyncIterator<TablesSubscription>>>(
+    args?: {
+      where?: TablesWhereInput;
+      orderBy?: TablesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface RecordsEdge {
+  node: Records;
+  cursor: String;
+}
+
+export interface RecordsEdgePromise extends Promise<RecordsEdge>, Fragmentable {
+  node: <T = RecordsPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface RecordsEdgeSubscription
+  extends Promise<AsyncIterator<RecordsEdge>>,
+    Fragmentable {
+  node: <T = RecordsSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface BasesSubscriptionPayload {
+  mutation: MutationType;
+  node: Bases;
+  updatedFields: String[];
+  previousValues: BasesPreviousValues;
+}
+
+export interface BasesSubscriptionPayloadPromise
+  extends Promise<BasesSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = BasesPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = BasesPreviousValuesPromise>() => T;
+}
+
+export interface BasesSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<BasesSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = BasesSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = BasesPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateFields {
+  count: Int;
+}
+
+export interface AggregateFieldsPromise
+  extends Promise<AggregateFields>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFieldsSubscription
+  extends Promise<AsyncIterator<AggregateFields>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface BasesPreviousValues {
+  id: UUID;
+  name: String;
+}
+
+export interface BasesPreviousValuesPromise
+  extends Promise<BasesPreviousValues>,
+    Fragmentable {
+  id: () => Promise<UUID>;
+  name: () => Promise<String>;
+}
+
+export interface BasesPreviousValuesSubscription
+  extends Promise<AsyncIterator<BasesPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  name: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FieldsConnection {
+  pageInfo: PageInfo;
+  edges: FieldsEdge[];
+}
+
+export interface FieldsConnectionPromise
+  extends Promise<FieldsConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FieldsEdge>>() => T;
+  aggregate: <T = AggregateFieldsPromise>() => T;
+}
+
+export interface FieldsConnectionSubscription
+  extends Promise<AsyncIterator<FieldsConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FieldsEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFieldsSubscription>() => T;
+}
+
+export interface FieldTypes {
+  id: ID_Output;
+  name: String;
+  isArray?: Boolean;
+  isPrimitive?: Boolean;
+}
+
+export interface FieldTypesPromise extends Promise<FieldTypes>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  isArray: () => Promise<Boolean>;
+  isPrimitive: () => Promise<Boolean>;
+}
+
+export interface FieldTypesSubscription
+  extends Promise<AsyncIterator<FieldTypes>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  isArray: () => Promise<AsyncIterator<Boolean>>;
+  isPrimitive: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface FieldValuesEdge {
+  node: FieldValues;
+  cursor: String;
+}
+
+export interface FieldValuesEdgePromise
+  extends Promise<FieldValuesEdge>,
+    Fragmentable {
+  node: <T = FieldValuesPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FieldValuesEdgeSubscription
+  extends Promise<AsyncIterator<FieldValuesEdge>>,
+    Fragmentable {
+  node: <T = FieldValuesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FieldTypesSubscriptionPayload {
+  mutation: MutationType;
+  node: FieldTypes;
+  updatedFields: String[];
+  previousValues: FieldTypesPreviousValues;
+}
+
+export interface FieldTypesSubscriptionPayloadPromise
+  extends Promise<FieldTypesSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FieldTypesPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FieldTypesPreviousValuesPromise>() => T;
+}
+
+export interface FieldTypesSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FieldTypesSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FieldTypesSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FieldTypesPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateFieldTypes {
+  count: Int;
+}
+
+export interface AggregateFieldTypesPromise
+  extends Promise<AggregateFieldTypes>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFieldTypesSubscription
+  extends Promise<AsyncIterator<AggregateFieldTypes>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface FieldTypesPreviousValues {
+  id: ID_Output;
+  name: String;
+  isArray?: Boolean;
+  isPrimitive?: Boolean;
+}
+
+export interface FieldTypesPreviousValuesPromise
+  extends Promise<FieldTypesPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  name: () => Promise<String>;
+  isArray: () => Promise<Boolean>;
+  isPrimitive: () => Promise<Boolean>;
+}
+
+export interface FieldTypesPreviousValuesSubscription
+  extends Promise<AsyncIterator<FieldTypesPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  name: () => Promise<AsyncIterator<String>>;
+  isArray: () => Promise<AsyncIterator<Boolean>>;
+  isPrimitive: () => Promise<AsyncIterator<Boolean>>;
+}
+
+export interface UserConnection {
+  pageInfo: PageInfo;
+  edges: UserEdge[];
+}
+
+export interface UserConnectionPromise
+  extends Promise<UserConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<UserEdge>>() => T;
+  aggregate: <T = AggregateUserPromise>() => T;
+}
+
+export interface UserConnectionSubscription
+  extends Promise<AsyncIterator<UserConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<UserEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateUserSubscription>() => T;
+}
+
+export interface Fields {
+  id: UUID;
+  name: String;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface FieldsPromise extends Promise<Fields>, Fragmentable {
+  id: () => Promise<UUID>;
+  name: () => Promise<String>;
+  fieldTypeId: <T = FieldTypesPromise>() => T;
+  fieldValues: <T = FragmentableArray<FieldValues>>(
+    args?: {
+      where?: FieldValuesWhereInput;
+      orderBy?: FieldValuesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  tableId: <T = TablesPromise>() => T;
+  width: () => Promise<Int>;
+  typeOptions: () => Promise<Json>;
+}
+
+export interface FieldsSubscription
+  extends Promise<AsyncIterator<Fields>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  name: () => Promise<AsyncIterator<String>>;
+  fieldTypeId: <T = FieldTypesSubscription>() => T;
+  fieldValues: <T = Promise<AsyncIterator<FieldValuesSubscription>>>(
+    args?: {
+      where?: FieldValuesWhereInput;
+      orderBy?: FieldValuesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+  tableId: <T = TablesSubscription>() => T;
+  width: () => Promise<AsyncIterator<Int>>;
+  typeOptions: () => Promise<AsyncIterator<Json>>;
+}
+
+export interface TablesEdge {
+  node: Tables;
+  cursor: String;
+}
+
+export interface TablesEdgePromise extends Promise<TablesEdge>, Fragmentable {
+  node: <T = TablesPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface TablesEdgeSubscription
+  extends Promise<AsyncIterator<TablesEdge>>,
+    Fragmentable {
+  node: <T = TablesSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FieldValuesSubscriptionPayload {
+  mutation: MutationType;
+  node: FieldValues;
+  updatedFields: String[];
+  previousValues: FieldValuesPreviousValues;
+}
+
+export interface FieldValuesSubscriptionPayloadPromise
+  extends Promise<FieldValuesSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FieldValuesPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FieldValuesPreviousValuesPromise>() => T;
+}
+
+export interface FieldValuesSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FieldValuesSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FieldValuesSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FieldValuesPreviousValuesSubscription>() => T;
+}
+
+export interface AggregateRecords {
+  count: Int;
+}
+
+export interface AggregateRecordsPromise
+  extends Promise<AggregateRecords>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateRecordsSubscription
+  extends Promise<AsyncIterator<AggregateRecords>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface FieldValuesPreviousValues {
+  id: ID_Output;
+  value?: Json;
+}
+
+export interface FieldValuesPreviousValuesPromise
+  extends Promise<FieldValuesPreviousValues>,
+    Fragmentable {
+  id: () => Promise<ID_Output>;
+  value: () => Promise<Json>;
+}
+
+export interface FieldValuesPreviousValuesSubscription
+  extends Promise<AsyncIterator<FieldValuesPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  value: () => Promise<AsyncIterator<Json>>;
+}
+
+export interface FieldsEdge {
+  node: Fields;
+  cursor: String;
+}
+
+export interface FieldsEdgePromise extends Promise<FieldsEdge>, Fragmentable {
+  node: <T = FieldsPromise>() => T;
+  cursor: () => Promise<String>;
+}
+
+export interface FieldsEdgeSubscription
+  extends Promise<AsyncIterator<FieldsEdge>>,
+    Fragmentable {
+  node: <T = FieldsSubscription>() => T;
+  cursor: () => Promise<AsyncIterator<String>>;
+}
+
+export interface FieldValues {
+  id: ID_Output;
+  value?: Json;
+}
+
+export interface FieldValuesPromise extends Promise<FieldValues>, Fragmentable {
+  id: () => Promise<ID_Output>;
+  fieldId: <T = FieldsPromise>() => T;
+  recordId: <T = RecordsPromise>() => T;
+  value: () => Promise<Json>;
+}
+
+export interface FieldValuesSubscription
+  extends Promise<AsyncIterator<FieldValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<ID_Output>>;
+  fieldId: <T = FieldsSubscription>() => T;
+  recordId: <T = RecordsSubscription>() => T;
+  value: () => Promise<AsyncIterator<Json>>;
+}
+
+export interface FieldValuesConnection {
+  pageInfo: PageInfo;
+  edges: FieldValuesEdge[];
+}
+
+export interface FieldValuesConnectionPromise
+  extends Promise<FieldValuesConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<FieldValuesEdge>>() => T;
+  aggregate: <T = AggregateFieldValuesPromise>() => T;
+}
+
+export interface FieldValuesConnectionSubscription
+  extends Promise<AsyncIterator<FieldValuesConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<FieldValuesEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateFieldValuesSubscription>() => T;
+}
+
+export interface User {
+  id: UUID;
+  firstName: String;
+  lastName: String;
+  email: String;
+  passwordDigest: String;
+}
+
+export interface UserPromise extends Promise<User>, Fragmentable {
+  id: () => Promise<UUID>;
+  firstName: () => Promise<String>;
+  lastName: () => Promise<String>;
+  email: () => Promise<String>;
+  passwordDigest: () => Promise<String>;
+}
+
+export interface UserSubscription
+  extends Promise<AsyncIterator<User>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  firstName: () => Promise<AsyncIterator<String>>;
+  lastName: () => Promise<AsyncIterator<String>>;
+  email: () => Promise<AsyncIterator<String>>;
+  passwordDigest: () => Promise<AsyncIterator<String>>;
+}
+
+export interface RecordsSubscriptionPayload {
+  mutation: MutationType;
+  node: Records;
+  updatedFields: String[];
+  previousValues: RecordsPreviousValues;
+}
+
+export interface RecordsSubscriptionPayloadPromise
+  extends Promise<RecordsSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = RecordsPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = RecordsPreviousValuesPromise>() => T;
+}
+
+export interface RecordsSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<RecordsSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = RecordsSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = RecordsPreviousValuesSubscription>() => T;
+}
+
+export interface Records {
+  id: UUID;
+}
+
+export interface RecordsPromise extends Promise<Records>, Fragmentable {
+  id: () => Promise<UUID>;
+  tableId: <T = TablesPromise>() => T;
+  fieldValues: <T = FragmentableArray<FieldValues>>(
+    args?: {
+      where?: FieldValuesWhereInput;
+      orderBy?: FieldValuesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface RecordsSubscription
+  extends Promise<AsyncIterator<Records>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  tableId: <T = TablesSubscription>() => T;
+  fieldValues: <T = Promise<AsyncIterator<FieldValuesSubscription>>>(
+    args?: {
+      where?: FieldValuesWhereInput;
+      orderBy?: FieldValuesOrderByInput;
+      skip?: Int;
+      after?: String;
+      before?: String;
+      first?: Int;
+      last?: Int;
+    }
+  ) => T;
+}
+
+export interface FieldsPreviousValues {
+  id: UUID;
+  name: String;
+  width?: Int;
+  typeOptions?: Json;
+}
+
+export interface FieldsPreviousValuesPromise
+  extends Promise<FieldsPreviousValues>,
+    Fragmentable {
+  id: () => Promise<UUID>;
+  name: () => Promise<String>;
+  width: () => Promise<Int>;
+  typeOptions: () => Promise<Json>;
+}
+
+export interface FieldsPreviousValuesSubscription
+  extends Promise<AsyncIterator<FieldsPreviousValues>>,
+    Fragmentable {
+  id: () => Promise<AsyncIterator<UUID>>;
+  name: () => Promise<AsyncIterator<String>>;
+  width: () => Promise<AsyncIterator<Int>>;
+  typeOptions: () => Promise<AsyncIterator<Json>>;
+}
+
+export interface FieldsSubscriptionPayload {
+  mutation: MutationType;
+  node: Fields;
+  updatedFields: String[];
+  previousValues: FieldsPreviousValues;
+}
+
+export interface FieldsSubscriptionPayloadPromise
+  extends Promise<FieldsSubscriptionPayload>,
+    Fragmentable {
+  mutation: () => Promise<MutationType>;
+  node: <T = FieldsPromise>() => T;
+  updatedFields: () => Promise<String[]>;
+  previousValues: <T = FieldsPreviousValuesPromise>() => T;
+}
+
+export interface FieldsSubscriptionPayloadSubscription
+  extends Promise<AsyncIterator<FieldsSubscriptionPayload>>,
+    Fragmentable {
+  mutation: () => Promise<AsyncIterator<MutationType>>;
+  node: <T = FieldsSubscription>() => T;
+  updatedFields: () => Promise<AsyncIterator<String[]>>;
+  previousValues: <T = FieldsPreviousValuesSubscription>() => T;
+}
+
 export interface BatchPayload {
   count: Long;
 }
@@ -410,30 +2464,85 @@ export interface BatchPayloadSubscription
   count: () => Promise<AsyncIterator<Long>>;
 }
 
+export interface AggregateUser {
+  count: Int;
+}
+
+export interface AggregateUserPromise
+  extends Promise<AggregateUser>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateUserSubscription
+  extends Promise<AsyncIterator<AggregateUser>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface AggregateFieldValues {
+  count: Int;
+}
+
+export interface AggregateFieldValuesPromise
+  extends Promise<AggregateFieldValues>,
+    Fragmentable {
+  count: () => Promise<Int>;
+}
+
+export interface AggregateFieldValuesSubscription
+  extends Promise<AsyncIterator<AggregateFieldValues>>,
+    Fragmentable {
+  count: () => Promise<AsyncIterator<Int>>;
+}
+
+export interface RecordsConnection {
+  pageInfo: PageInfo;
+  edges: RecordsEdge[];
+}
+
+export interface RecordsConnectionPromise
+  extends Promise<RecordsConnection>,
+    Fragmentable {
+  pageInfo: <T = PageInfoPromise>() => T;
+  edges: <T = FragmentableArray<RecordsEdge>>() => T;
+  aggregate: <T = AggregateRecordsPromise>() => T;
+}
+
+export interface RecordsConnectionSubscription
+  extends Promise<AsyncIterator<RecordsConnection>>,
+    Fragmentable {
+  pageInfo: <T = PageInfoSubscription>() => T;
+  edges: <T = Promise<AsyncIterator<RecordsEdgeSubscription>>>() => T;
+  aggregate: <T = AggregateRecordsSubscription>() => T;
+}
+
 /*
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31) and 2^31 - 1. 
 */
 export type Int = number;
 
 /*
-The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+The `Boolean` scalar type represents `true` or `false`.
 */
-export type ID_Input = string | number;
-export type ID_Output = string;
-
-export type UUID = string;
+export type Boolean = boolean;
 
 /*
 The `String` scalar type represents textual data, represented as UTF-8 character sequences. The String type is most often used by GraphQL to represent free-form human-readable text.
 */
 export type String = string;
 
-/*
-The `Boolean` scalar type represents `true` or `false`.
-*/
-export type Boolean = boolean;
-
 export type Long = string;
+
+export type UUID = string;
+
+export type Json = any;
+
+/*
+The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type appears in a JSON response as a String; however, it is not intended to be human-readable. When expected as an input type, any string (such as `"4"`) or integer (such as `4`) input value will be accepted as an ID.
+*/
+export type ID_Input = string | number;
+export type ID_Output = string;
 
 /**
  * Model Metadata
@@ -442,6 +2551,30 @@ export type Long = string;
 export const models: Model[] = [
   {
     name: "User",
+    embedded: false
+  },
+  {
+    name: "Bases",
+    embedded: false
+  },
+  {
+    name: "Tables",
+    embedded: false
+  },
+  {
+    name: "Fields",
+    embedded: false
+  },
+  {
+    name: "FieldTypes",
+    embedded: false
+  },
+  {
+    name: "Records",
+    embedded: false
+  },
+  {
+    name: "FieldValues",
     embedded: false
   }
 ];
