@@ -14,6 +14,10 @@ module.exports = {
         id: '1',
         name: 'Extraction',
         templateId: 1,
+        properties: `{ action: data-extraction }`,
+        description: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur mattis tellus non ornare ullamcorper. Duis ultrices, nisi quis maximus laoreet, eros velit sollicitudin enim, quis tincidunt risus sem id elit. Fusce eget lacus vitae dolor aliquet tristique ac ut mi. Duis sed nibh velit. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Donec convallis, ligula sit amet semper varius, risus arcu rutrum urna, accumsan malesuada mi libero in nisi. Phasellus sed nulla mollis urna varius dictum. Phasellus convallis dui ut eros semper, non volutpat eros pretium. Ut leo quam, vulputate nec leo nec, vulputate iaculis orci.
+
+Pellentesque quis mauris tellus. In vulputate gravida mi, non vestibulum quam consequat id. Aenean dictum felis non auctor fringilla. Maecenas elit lacus, iaculis ut odio id, egestas consectetur augue. Nulla iaculis augue ultricies, interdum magna nec, mollis nisi. Sed malesuada porta sagittis. Pellentesque eu vulputate lectus. Pellentesque augue est, laoreet vel condimentum at, laoreet sed dolor. Pellentesque eros velit, dictum sed fermentum ut, varius id turpis. Donec vestibulum ligula ac massa consectetur cursus. Pellentesque venenatis quam velit, id volutpat leo accumsan vel. Praesent ligula ante, volutpat molestie sapien at, aliquam tristique tortor. Vivamus ut nunc justo. Aliquam erat volutpat. Phasellus risus sapien, gravida id molestie nec, accumsan varius purus.`,
         createdAt: '2018-12-24T04:09:06.024Z',
         updatedAt: '2018-12-24T04:09:06.024Z',
       },
