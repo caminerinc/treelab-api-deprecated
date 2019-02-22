@@ -14,14 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.JSONB,
     },
-    properties: {
-      allowNull: false,
-      type: DataTypes.JSONB,
-    },
-    templateId: {
-      allowNull: false,
-      type: DataTypes.INTEGER,
-    },
   });
   return Templates;
 };
