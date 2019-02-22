@@ -3,6 +3,7 @@ const socketIo = require('../../lib/socketIo');
 const fldValController = require('../controllers/fieldValues');
 // TODO: @Derek remove the import of resolver table from here
 const tblController = require('../controllers/tables');
+const budsController = require('../controllers/buds');
 const { checkKeyExists } = require('../util/helper');
 const { error, Status, ECodes } = require('../util/error');
 const { sequelize } = require('../models/index');
@@ -97,5 +98,12 @@ module.exports = {
         });
       }
     }
+  },
+
+  async createBud(ctx) {
+    const params = ctx.request.body;
+    checkKeyExists(params, 'appId');
+    await sequelize.transaction(() => budsController.generate(params.appId));
+    ctx.body = { message: 'success' };
   },
 };

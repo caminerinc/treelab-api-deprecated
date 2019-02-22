@@ -1,4 +1,3 @@
-const { pick } = require('lodash');
 const appsController = require('../controllers/apps');
 
 module.exports = {
