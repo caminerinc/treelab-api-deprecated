@@ -42,6 +42,10 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'fieldTypeId',
       as: 'types',
     });
+    Fields.hasOne(models.FieldPositions, {
+      foreignKey: 'siblingId',
+      as: 'fieldPosition',
+    });
   };
   return Fields;
 };

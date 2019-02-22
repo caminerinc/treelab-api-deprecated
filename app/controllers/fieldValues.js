@@ -127,7 +127,11 @@ module.exports = {
     return fldValQueries.getValuesByFieldId(fieldId);
   },
 
-  bulkUpdateToNumber(fieldId, records) {
-    return fldValQueries.bulkUpdateToNumber(fieldId, records);
+  bulkUpdate(fieldId, records) {
+    return fldValQueries.bulkUpdate(fieldId, records);
+  },
+
+  getValuesWithRecords(fieldId, recordIds) {
+    return fldValQueries.getValuesWithRecords(fieldId, recordIds);
   },
 };

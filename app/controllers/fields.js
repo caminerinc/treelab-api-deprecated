@@ -75,48 +75,102 @@ const createReferenceField = async (params, createdField) => {
 };
 
 const convertFieldValues = async params => {
-  //TODO number can not be saved as string in jsonb field
-  if (params.field.types.name === params.type) {
-    if (
-      params.type === 'number' &&
-      params.field.typeOptions.precision !== params.typeOptions.precision
-    ) {
-      return await changeToNumber(params);
-    } else {
-      return;
-    }
+  const fromTypes = params.field.types;
+  const toTypes = await getByName(params.type);
+  if (fromTypes.name === toTypes.name) {
+    return;
   } else {
-    const targetTypes = await getByName(params.type);
-    if (params.field.types.isPrimitive) {
-      if (params.type === 'number') {
-        return await changeToNumber(params);
-      } else if (targetTypes.isPrimitive) {
-        return;
-      }
+    const values = await fldValController.getValuesByFieldId(params.field.id);
+    if (!values.length) return;
+    if (fromTypes.isPrimitive && toTypes.name === 'number') {
+      return await primeToNumber(params, values);
+    } else if (fromTypes.name === 'reference' && toTypes.name === 'text') {
+      return await referenceToText(params, values);
+    } else if (fromTypes.name === 'multilineText' && toTypes.name === 'text') {
+      return await multilineTextToText(params, values);
+    } else if (fromTypes.name === 'text' && toTypes.name === 'multilineText') {
+      return;
+    } else if (fromTypes.name === 'number' && toTypes.isPrimitive) {
+      return await numberToPrime(params, values);
+    } else {
+      error(Status.Forbidden, ECodes.UNSUPPORTED_TYPE_CONVERSION, params.type);
     }
   }
-  error(Status.Forbidden, ECodes.UNSUPPORTED_TYPE_CONVERSION, params.type);
 };
 
-const changeToNumber = async params => {
+const numberToPrime = async (params, values) => {
+  values = values.map(i => {
+    return {
+      id: i.id,
+      value:
+        i.value !== null
+          ? i.value.toFixed(params.field.typeOptions.precision).toString()
+          : null,
+    };
+  });
+  return await fldValController.bulkUpdate(params.field.id, values);
+};
+
+const multilineTextToText = async (params, values) => {
+  values = values.map(i => {
+    return {
+      id: i.id,
+      value: i.value !== null ? i.value.replace(/\\n/g, ' ') : null,
+    };
+  });
+  return await fldValController.bulkUpdate(params.field.id, values);
+};
+
+const referenceToText = async (params, values) => {
+  const tblController = require('../controllers/tables');
+  const primaryFieldId = (await tblController.getPrimaryField(
+    params.field.typeOptions.referenceTableId,
+  )).id;
+  let recordIds = {};
+  values.forEach(i => {
+    if (i.value) {
+      i.value.forEach(j => {
+        recordIds[j.referenceRowId] = '';
+      });
+    }
+  });
+  const convertValues = await fldValController.getValuesWithRecords(
+    primaryFieldId,
+    Object.keys(recordIds),
+  );
+  convertValues.forEach(i => {
+    recordIds[i.recordId] = i.value;
+  });
+  values = values.map(i => {
+    return {
+      id: i.id,
+      value:
+        i.value !== null
+          ? i.value
+              .reduce((s, j) => {
+                return (s += recordIds[j.referenceRowId] + ', ');
+              }, '')
+              .slice(0, -1)
+          : null,
+    };
+  });
+  return await fldValController.bulkUpdate(params.field.id, values);
+};
+
+const primeToNumber = async (params, values) => {
   checkKeyExists(params, 'typeOptions');
   checkKeyExists(params.typeOptions, 'precision');
-  let values = await fldValController.getValuesByFieldId(params.fieldId);
-  let precision = parseInt(params.typeOptions.precision);
-  precision = isNaN(precision) || precision === null ? 1 : precision;
   values = values.map(i => {
     const _value =
       i.value !== null
-        ? parseFloat(i.value.toString().replace(/[^0-9\+.-]/g, '')).toFixed(
-            precision,
-          )
+        ? parseFloat(i.value.toString().replace(/[^0-9\+.-]/g, ''))
         : null;
     return {
       id: i.id,
       value: isNaN(_value) ? null : _value,
     };
   });
-  return await fldValController.bulkUpdateToNumber(params.fieldId, values);
+  return await fldValController.bulkUpdate(params.field.id, values);
 };
 
 module.exports = {
@@ -170,9 +224,25 @@ module.exports = {
   },
 
   async delete(id) {
-    // TODO handle reference fieldTypes
-    // TODO can not delete first column
-    await checkField(id);
+    const field = await checkField(id);
+    if (field.fieldPosition && field.fieldPosition.position === 1)
+      error(Status.Forbidden, ECodes.UNDELETABLE_PRIMARY_FIELD);
+
+    if (field.types.name === 'reference') {
+      const referenceField = await checkField(
+        field.typeOptions.referenceColumnId,
+      );
+      const updatedFields = {
+        fieldTypeId: await checkType('text'),
+        typeOptions: null,
+      };
+      await fldQueries.update(
+        updatedFields,
+        field.typeOptions.referenceColumnId,
+      );
+      const _params = { type: 'text', field: referenceField };
+      await convertFieldValues(_params);
+    }
     await fldQueries.destroy(id);
   },
 

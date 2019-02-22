@@ -113,4 +113,23 @@ module.exports = {
   bulkCreate(records) {
     return Tables.bulkCreate(records);
   },
+
+  getPrimaryField(tableId) {
+    return FieldPositions.findOne({
+      attributes: [
+        [sequelize.col('field.name'), 'fieldName'],
+        [sequelize.col('field.id'), 'id'],
+      ],
+      where: { parentId: tableId },
+      include: [
+        {
+          attributes: [],
+          model: Fields,
+          as: 'field',
+        },
+      ],
+      order: [['position', 'asc']],
+      limit: 1,
+    });
+  },
 };

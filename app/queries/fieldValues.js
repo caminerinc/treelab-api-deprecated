@@ -44,14 +44,27 @@ module.exports = {
     });
   },
 
-  bulkUpdateToNumber(fieldId, records) {
+  bulkUpdate(fieldId, records) {
     let sql = `update "FieldValues" set "value" = case`;
-    let values = [];
     records.forEach(i => {
-      sql += ` when "id" = ${i.id} then ?`;
-      values.push(i.value);
+      let value = null;
+      if (i.value !== null) {
+        if (typeof i.value === 'string') {
+          value = `'"${i.value}"'`;
+        } else {
+          value = `'${i.value}'`;
+        }
+      }
+      sql += ` when "id" = ${i.id} then ${value}`;
     });
     sql += ` else "value" end where "fieldId" = '${fieldId}'`;
-    return sequelize.query(sql, { replacements: values });
+    return sequelize.query(sql);
+  },
+
+  getValuesWithRecords(fieldId, recordIds) {
+    return FieldValues.findAll({
+      attributes: ['fieldId', 'recordId', 'value'],
+      where: { fieldId, recordId: { $in: recordIds } },
+    });
   },
 };
