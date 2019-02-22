@@ -6,13 +6,13 @@ const {
 } = require('../models');
 
 module.exports = {
-  create(name) {
-    return Bases.create({ name });
+  create({ name, icon, color }) {
+    return Bases.create({ name, icon, color });
   },
 
   getAll() {
     return Bases.findAll({
-      attributes: ['id', 'name'],
+      attributes: ['id', 'name', 'icon', 'color'],
       include: [
         {
           model: TablePositions,
