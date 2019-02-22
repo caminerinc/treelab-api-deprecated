@@ -1,4 +1,8 @@
 const ECodes = {
+  TMPL_NOT_FOUND: {
+    code: 'TMPL_NOT_FOUND',
+    message: 'Template could not be found.',
+  },
   UNSUPPORTED_TYPE_CONVERSION: {
     code: 'UNSUPPORTED_TYPE_CONVERSION',
     message: 'Unsupported type conversion.',

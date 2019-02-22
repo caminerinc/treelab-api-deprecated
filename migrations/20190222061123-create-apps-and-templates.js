@@ -13,7 +13,7 @@ module.exports = {
           type: Sequelize.STRING,
         },
         description: {
-          type: Sequelize.STRING,
+          type: Sequelize.TEXT,
         },
         properties: {
           type: Sequelize.JSONB,

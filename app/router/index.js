@@ -11,6 +11,7 @@ const posResolver = require('../resolvers/positions');
 const fldTypesResolver = require('../resolvers/fieldTypes');
 const budsResolver = require('../resolvers/buds');
 const appsResolver = require('../resolvers/apps');
+const tmplResolver = require('../resolvers/templates');
 
 // App
 router.get('/api/public/health-check', ctx => {
@@ -61,6 +62,9 @@ router.post('/api/execute-bud', budsResolver.executeBud);
 
 //Apps
 router.get('/api/apps', appsResolver.getAll);
+
+//Templates
+router.post('/api/create-base-with-template', tmplResolver.generate);
 
 //Users
 router.get('/api/users', usrResolver.getAll);

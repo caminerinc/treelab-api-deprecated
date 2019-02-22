@@ -11,15 +11,12 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
     },
     description: {
-      allowNull: false,
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
     },
     properties: {
-      allowNull: false,
       type: DataTypes.JSONB,
     },
     templateId: {
-      allowNull: false,
       type: DataTypes.INTEGER,
     },
   });

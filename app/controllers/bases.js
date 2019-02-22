@@ -34,4 +34,8 @@ module.exports = {
   delete(baseId) {
     return bseQueries.destroy(baseId);
   },
+
+  createBaseOnly(name) {
+    return bseQueries.create(name);
+  },
 };
