@@ -1,4 +1,8 @@
 const ECodes = {
+  UNDELETABLE_PRIMARY_FIELD: {
+    code: 'UNDELETABLE_PRIMARY_FIELD',
+    message: 'Primary field could not be deleted.',
+  },
   UNSUPPORTED_TYPE_CONVERSION: {
     code: 'UNSUPPORTED_TYPE_CONVERSION',
     message: 'Unsupported type conversion.',

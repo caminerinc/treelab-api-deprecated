@@ -276,4 +276,8 @@ module.exports = {
     await posController.bulkCreate(recPosRecords, POSITION_TYPE.RECORD);
     return { tableSchemas };
   },
+
+  getPrimaryField(tableId) {
+    return tblQueries.getPrimaryField(tableId);
+  },
 };

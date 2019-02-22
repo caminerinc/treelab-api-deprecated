@@ -81,7 +81,7 @@ const convertFieldValues = async params => {
       params.type === 'number' &&
       params.field.typeOptions.precision !== params.typeOptions.precision
     ) {
-      return await changeToNumber(params);
+      return await toNumber(params);
     } else {
       return;
     }
@@ -89,19 +89,63 @@ const convertFieldValues = async params => {
     const targetTypes = await getByName(params.type);
     if (params.field.types.isPrimitive) {
       if (params.type === 'number') {
-        return await changeToNumber(params);
+        return await toNumber(params);
       } else if (targetTypes.isPrimitive) {
         return;
+      }
+    }
+    if (params.field.types.name === 'reference') {
+      if (params.type === 'text') {
+        return await referenceToText(params);
       }
     }
   }
   error(Status.Forbidden, ECodes.UNSUPPORTED_TYPE_CONVERSION, params.type);
 };
 
-const changeToNumber = async params => {
+const referenceToText = async params => {
+  const fieldId = params.field.typeOptions.referenceColumnId;
+  let values = await fldValController.getValuesByFieldId(fieldId);
+  if (!values.length) return;
+  const tblController = require('../controllers/tables');
+  const primaryFieldId = (await tblController.getPrimaryField(
+    params.field.tableId,
+  )).id;
+  let recordIds = {};
+  values.forEach(i => {
+    if (i.value) {
+      i.value.forEach(j => {
+        recordIds[j.referenceRowId] = '';
+      });
+    }
+  });
+  const convertValues = await fldValController.getValuesWithRecords(
+    primaryFieldId,
+    Object.keys(recordIds),
+  );
+  convertValues.forEach(i => {
+    recordIds[i.recordId] = i.value;
+  });
+  values = values.map(i => {
+    return {
+      id: i.id,
+      value: i.value
+        ? i.value
+            .reduce((s, j) => {
+              return (s += recordIds[j.referenceRowId] + ',');
+            }, '')
+            .slice(0, -1)
+        : null,
+    };
+  });
+  return await fldValController.bulkUpdate(fieldId, values);
+};
+
+const toNumber = async params => {
   checkKeyExists(params, 'typeOptions');
   checkKeyExists(params.typeOptions, 'precision');
   let values = await fldValController.getValuesByFieldId(params.fieldId);
+  if (!values.length) return;
   let precision = parseInt(params.typeOptions.precision);
   precision = isNaN(precision) || precision === null ? 1 : precision;
   values = values.map(i => {
@@ -116,7 +160,7 @@ const changeToNumber = async params => {
       value: isNaN(_value) ? null : _value,
     };
   });
-  return await fldValController.bulkUpdateToNumber(params.fieldId, values);
+  return await fldValController.bulkUpdate(params.fieldId, values);
 };
 
 module.exports = {
@@ -170,9 +214,22 @@ module.exports = {
   },
 
   async delete(id) {
-    // TODO handle reference fieldTypes
-    // TODO can not delete first column
-    await checkField(id);
+    const field = await checkField(id);
+    if (field.fieldPosition && field.fieldPosition.position === 1)
+      error(Status.Forbidden, ECodes.UNDELETABLE_PRIMARY_FIELD);
+
+    if (field.types.name === 'reference') {
+      const updatedFields = {
+        fieldTypeId: await checkType('text'),
+        typeOptions: null,
+      };
+      await fldQueries.update(
+        updatedFields,
+        field.typeOptions.referenceColumnId,
+      );
+      const _params = { type: 'text', field };
+      await convertFieldValues(_params);
+    }
     await fldQueries.destroy(id);
   },
 

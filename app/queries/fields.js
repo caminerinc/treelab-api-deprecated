@@ -1,4 +1,4 @@
-const { sequelize, Fields, FieldTypes } = require('../models');
+const { sequelize, Fields, FieldTypes, FieldPositions } = require('../models');
 
 module.exports = {
   create(params) {
@@ -14,6 +14,11 @@ module.exports = {
           model: FieldTypes,
           as: 'types',
           attributes: { exclude: ['updatedAt', 'createdAt'] },
+        },
+        {
+          model: FieldPositions,
+          as: 'fieldPosition',
+          attributes: ['position'],
         },
       ],
     });
