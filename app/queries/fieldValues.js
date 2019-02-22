@@ -47,7 +47,14 @@ module.exports = {
   bulkUpdate(fieldId, records) {
     let sql = `update "FieldValues" set "value" = case`;
     records.forEach(i => {
-      const value = i.value === null ? null : `'"${i.value}"'`;
+      let value = null;
+      if (i.value !== null) {
+        if (typeof i.value === 'string') {
+          value = `'"${i.value}"'`;
+        } else {
+          value = `'${i.value}'`;
+        }
+      }
       sql += ` when "id" = ${i.id} then ${value}`;
     });
     sql += ` else "value" end where "fieldId" = '${fieldId}'`;
