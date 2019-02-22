@@ -84,7 +84,9 @@ const adaptCreateTable = ({ table, fields }) => ({
     {
       name: table.name,
       id: table.id,
-      columns: fields.map(i => pick(i, ['id', 'name', 'typeOptions', 'type'])),
+      columns: fields.map(i =>
+        pick(i.data, ['id', 'name', 'typeOptions', 'type']),
+      ),
     },
   ],
 });
