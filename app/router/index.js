@@ -23,6 +23,7 @@ router.get('/api/bases', bseResolver.getAll);
 router.get('/api/base/:baseId', bseResolver.getOne);
 router.post('/api/base', bseResolver.create);
 router.delete('/api/base/:baseId', bseResolver.delete);
+router.get('/api/buds', bseResolver.getAllBuds);
 
 // Table
 router.get('/api/tables/:baseId', tblResolver.getAll);

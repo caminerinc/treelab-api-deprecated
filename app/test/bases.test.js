@@ -43,6 +43,17 @@ describe('bases模块', function() {
         });
     });
   });
+  describe('getBuds', function() {
+    it('ok', function(done) {
+      chai
+        .request('http://localhost:8000')
+        .get('/api/buds')
+        .end((err, res) => {
+          res.should.have.status(200);
+          done();
+        });
+    });
+  });
   describe('getBase', function() {
     it('ok', function(done) {
       chai

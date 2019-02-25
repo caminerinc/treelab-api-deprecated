@@ -26,6 +26,9 @@ module.exports = {
           attributes: ['position'],
         },
       ],
+      where: {
+        budId: null,
+      },
       order: [[sequelize.col('tablePositions.position'), 'asc']],
       order: [[sequelize.col('pos.position'), 'asc']],
     });
@@ -40,5 +43,29 @@ module.exports = {
 
   destroy(id) {
     return Bases.destroy({ where: { id } });
+  },
+
+  getAllBuds() {
+    return Bases.findAll({
+      attributes: ['id', 'name', 'budId'],
+      include: [
+        {
+          model: TablePositions,
+          as: 'tablePositions',
+          attributes: ['siblingId', 'position'],
+          required: false,
+        },
+        {
+          model: BasePositions,
+          as: 'pos',
+          attributes: ['position'],
+        },
+      ],
+      where: {
+        budId: { $not: null },
+      },
+      order: [[sequelize.col('tablePositions.position'), 'asc']],
+      order: [[sequelize.col('pos.position'), 'asc']],
+    });
   },
 };
