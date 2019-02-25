@@ -1,3 +1,4 @@
+const { pick } = require('lodash');
 const { checkKeyExists } = require('../util/helper');
 const bseController = require('../controllers/bases');
 const socketIo = require('../../lib/socketIo');
@@ -5,8 +6,7 @@ const { sequelize } = require('../models/index');
 
 const adaptBases = bases =>
   bases.map(base => ({
-    id: base.id,
-    name: base.name,
+    ...pick(base, ['id', 'name', 'budId']),
     primaryTableId: base.tablePositions[0]
       ? base.tablePositions[0].siblingId
       : null,
@@ -47,5 +47,10 @@ module.exports = {
     checkKeyExists(params, 'baseId');
     bseController.delete(params.baseId);
     ctx.body = { message: 'success' };
+  },
+
+  async getAllBuds(ctx) {
+    const result = await bseController.getAllBuds();
+    ctx.body = { bases: adaptBases(result) };
   },
 };

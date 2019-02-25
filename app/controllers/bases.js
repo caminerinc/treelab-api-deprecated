@@ -29,6 +29,7 @@ module.exports = {
   getAll() {
     return bseQueries.getAll();
   },
+
   getOne,
 
   delete(baseId) {
@@ -37,5 +38,9 @@ module.exports = {
 
   createBaseOnly(params) {
     return bseQueries.create(params);
+  },
+
+  getAllBuds() {
+    return bseQueries.getAllBuds();
   },
 };
