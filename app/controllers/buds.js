@@ -1,7 +1,6 @@
 const budsQueries = require('../queries/buds');
 const tmplController = require('../controllers/templates');
 const appController = require('../controllers/apps');
-const { error, Status, ECodes } = require('../util/error');
 
 module.exports = {
   create(params) {
@@ -15,13 +14,6 @@ module.exports = {
       appId,
       properties: app.properties,
     });
-    const baseId = await tmplController.generate(app.templateId, bud.id);
-    return { budId: bud.id, baseId };
-  },
-
-  async getOne(budId) {
-    const bud = await budsQueries.getOne(budId);
-    if (!bud) error(null, ECodes.BUD_NOT_FOUND);
-    return bud;
+    await tmplController.generate(app.templateId, bud.id);
   },
 };

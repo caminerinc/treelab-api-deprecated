@@ -28,10 +28,6 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'parentId',
       as: 'tablePositions',
     });
-    Bases.belongsTo(models.Buds, {
-      foreignKey: 'budId',
-      as: 'bud',
-    });
   };
   return Bases;
 };

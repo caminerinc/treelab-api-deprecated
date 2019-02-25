@@ -16,11 +16,5 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.JSONB,
     },
   });
-  Buds.associate = function(models) {
-    Buds.belongsTo(models.Apps, {
-      foreignKey: 'appId',
-      as: 'app',
-    });
-  };
   return Buds;
 };

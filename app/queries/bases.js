@@ -68,19 +68,4 @@ module.exports = {
       order: [[sequelize.col('pos.position'), 'asc']],
     });
   },
-
-  getOneBud(id) {
-    return Bases.findOne({
-      attributes: ['id', 'name', 'budId'],
-      include: [
-        {
-          model: TablePositions,
-          as: 'tablePositions',
-          attributes: ['siblingId', 'position'],
-          required: false,
-        },
-      ],
-      where: { id },
-    });
-  },
 };

@@ -61,7 +61,6 @@ router.get('/api/fieldTypes', fldTypesResolver.getAll);
 //Buds
 router.post('/api/execute-bud', budsResolver.executeBud);
 router.post('/api/bud', budsResolver.createBud);
-router.get('/api/bud/:budId', budsResolver.getOneBud);
 
 //Apps
 router.get('/api/apps', appsResolver.getAll);

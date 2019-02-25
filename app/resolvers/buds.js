@@ -103,16 +103,7 @@ module.exports = {
   async createBud(ctx) {
     const params = ctx.request.body;
     checkKeyExists(params, 'appId');
-    const result = await sequelize.transaction(() =>
-      budsController.generate(params.appId),
-    );
-    ctx.body = result;
-  },
-
-  async getOneBud(ctx) {
-    const budId = ctx.params.budId;
-    checkKeyExists(ctx.params, 'budId');
-    const bud = await budsController.getOne(budId);
-    ctx.body = bud;
+    await sequelize.transaction(() => budsController.generate(params.appId));
+    ctx.body = { message: 'success' };
   },
 };
