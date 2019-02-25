@@ -12,7 +12,7 @@ const getOne = async id => {
 
 module.exports = {
   async create(params) {
-    const base = await bseQueries.create(params.name);
+    const base = await bseQueries.create(params);
     const table = await tblController.createNewTableSet({
       baseId: base.id,
       name: 'Table 1',
@@ -35,7 +35,7 @@ module.exports = {
     return bseQueries.destroy(baseId);
   },
 
-  createBaseOnly(name) {
-    return bseQueries.create(name);
+  createBaseOnly(params) {
+    return bseQueries.create(params);
   },
 };

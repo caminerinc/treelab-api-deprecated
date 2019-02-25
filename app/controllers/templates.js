@@ -4,10 +4,12 @@ const bseController = require('../controllers/bases');
 const { error, Status, ECodes } = require('../util/error');
 
 module.exports = {
-  async generate(tmplId) {
+  async generate(tmplId, budId) {
     const tmpl = await tmplQueries.getOne(tmplId);
     if (!tmpl) error(Status.Forbidden, ECodes.TMPL_NOT_FOUND);
-    const base = await bseController.createBaseOnly(tmpl.name);
+    let params = { name: tmpl.name };
+    if (budId) params.budId = budId;
+    const base = await bseController.createBaseOnly(params);
     await tblController.bulkTables(base.id, tmpl.data);
   },
 };

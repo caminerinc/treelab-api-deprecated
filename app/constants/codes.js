@@ -1,4 +1,8 @@
 const ECodes = {
+  APP_NOT_FOUND: {
+    code: 'APP_NOT_FOUND',
+    message: 'App could not be found.',
+  },
   TMPL_NOT_FOUND: {
     code: 'TMPL_NOT_FOUND',
     message: 'Template could not be found.',

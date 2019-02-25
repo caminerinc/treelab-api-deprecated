@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       type: DataTypes.STRING,
     },
+    budId: {
+      type: DataTypes.UUID,
+    },
   });
   Bases.associate = function(models) {
     Bases.hasMany(models.Tables, {

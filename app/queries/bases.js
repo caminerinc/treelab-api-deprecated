@@ -6,8 +6,8 @@ const {
 } = require('../models');
 
 module.exports = {
-  create(name) {
-    return Bases.create({ name });
+  create(params) {
+    return Bases.create(params);
   },
 
   getAll() {
