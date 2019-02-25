@@ -11,5 +11,6 @@ module.exports = {
     if (budId) params.budId = budId;
     const base = await bseController.createBaseOnly(params);
     await tblController.bulkTables(base.id, tmpl.data);
+    return base.id;
   },
 };
