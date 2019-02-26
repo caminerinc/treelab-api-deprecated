@@ -1,5 +1,6 @@
 const {
   Bases,
+  Buds,
   BasePositions,
   TablePositions,
   sequelize,
@@ -36,8 +37,15 @@ module.exports = {
 
   getOne(id) {
     return Bases.findOne({
-      attributes: ['id', 'name', 'createdAt'],
+      attributes: ['id', 'name'],
       where: { id },
+      include: [
+        {
+          model: Buds,
+          as: 'bud',
+          attributes: { exclude: ['updatedAt', 'createdAt'] },
+        },
+      ],
     });
   },
 
@@ -47,7 +55,7 @@ module.exports = {
 
   getAllBuds() {
     return Bases.findAll({
-      attributes: ['id', 'name', 'budId'],
+      attributes: ['id', 'name'],
       include: [
         {
           model: TablePositions,
