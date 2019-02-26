@@ -34,7 +34,9 @@ module.exports = {
     const baseId = ctx.request.body.baseId || ctx.params.baseId;
     if (!baseId) error(null, ECodes.REQUIRED, 'baseId');
     const base = await bseController.getOne(baseId);
-    ctx.body = base;
+    let result = base.toJSON();
+    if (!result.bud) delete result.bud;
+    ctx.body = result;
   },
 
   async getAll(ctx) {
