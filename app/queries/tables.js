@@ -113,4 +113,11 @@ module.exports = {
   bulkCreate(records) {
     return Tables.bulkCreate(records);
   },
+
+  getTableNames(baseId) {
+    return Tables.findAll({
+      attributes: ['name'],
+      where: { baseId },
+    });
+  },
 };
