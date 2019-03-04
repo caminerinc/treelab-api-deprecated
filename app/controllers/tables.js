@@ -6,7 +6,7 @@ const fldController = require('../controllers/fields');
 const fldValController = require('../controllers/fieldValues');
 const { POSITION_TYPE } = require('../constants/app');
 const { error, Status, ECodes } = require('../util/error');
-const { checkKeyExists, trim } = require('../util/helper');
+const { checkKeyExists, trim, getUniqueName } = require('../util/helper');
 const { checkType } = require('../util/fieldTypes');
 
 const checkTable = async id => {
@@ -20,16 +20,6 @@ const checkNameWithinBase = async (baseId, name) => {
   await bseController.getOne(baseId);
   const table = await tblQueries.getTableByBaseAndName(baseId, name);
   if (table) error(Status.Forbidden, ECodes.TABLE_NAME_EXIST, name);
-};
-
-const getUniqueTableName = async (baseId, tableName, index = 0) => {
-  let newTableName = index ? `${tableName} (${index})` : tableName;
-  const table = await tblQueries.getTableByBaseAndName(baseId, newTableName);
-  if (table) {
-    index++;
-    return await getUniqueTableName(baseId, tableName, index);
-  }
-  return newTableName;
 };
 
 module.exports = {
@@ -116,11 +106,13 @@ module.exports = {
     let tblFvFlag = [];
     let tblFldFlag = [];
     let tableSchemas = [];
+    const tableNamesResult = await tblQueries.getTableNames(baseId);
+    const tableNames = tableNamesResult.map(i => i.name.toLowerCase());
     for (const table of tables) {
       checkKeyExists(table, 'name', 'fields');
       table.name = trim(table.name);
       if (table.name === '') error(null, ECodes.TABLE_NAME_EMPTY);
-      table.name = await getUniqueTableName(baseId, table.name);
+      table.name = getUniqueName(tableNames, table.name);
       tblRecords.push({ baseId, name: table.name });
       const tableNum = tblRecords.length;
       fldRecords[tableNum - 1] = [];
@@ -129,16 +121,19 @@ module.exports = {
       let tblFvNum = 0;
       let index = 0;
       let tableSchema = { name: table.name, id: null, columns: [] };
+      let fieldNames = [];
       for (const field of table.fields) {
         let tblRows = 0;
         checkKeyExists(field, 'name', 'type', 'typeOptions', 'values');
         field.name = trim(field.name);
         if (field.name === '') field.name = 'Unknown Field ' + ++index;
+        field.name = getUniqueName(fieldNames, field.name);
         fldRecords[tableNum - 1].push({
           name: field.name,
           fieldTypeId: await checkType(field.type),
           typeOptions: field.typeOptions,
         });
+        fieldNames.push(field.name.toLowerCase());
         const fvLen = field.values.length;
         tblFvNum += fvLen;
         if (fvLen > tblMaxRows) {
@@ -194,10 +189,6 @@ module.exports = {
       tableSchemas[i].id = tblResults[i].id;
       for (let j = 0; j < fldRecords[i].length; j++) {
         fldRecords[i][j].tableId = tblResults[i].id;
-        await fldController.checkFieldByTableAndName(
-          tblResults[i].id,
-          fldRecords[i][j].name,
-        );
         fldPosRecords.push({
           parentId: tblResults[i].id,
           siblingId: null,

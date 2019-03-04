@@ -1,23 +1,23 @@
 const { checkKeyExists } = require('../util/helper');
 const posController = require('../controllers/positions');
 const socketIo = require('../../lib/socketIo');
-const { error, Status, ECodes } = require('../util/error');
+const { sequelize } = require('../models/index');
+const { POSITION_TYPE } = require('../constants/app');
 
 const changePosition = async ctx => {
   const params = ctx.request.body;
   checkKeyExists(
     params,
-    'originalPositions',
+    'originalPosition',
     'targetPosition',
     'parentId',
     'type',
   );
-  if (params.originalPositions.length === 0)
-    error(null, ECodes.ORIGINAL_POSITIONS_MISSING);
-  if (!(params.targetPosition > 1)) error(null, ECodes.ILLEGAL_TARGET_POSITION);
-  if (!Array.isArray(params.originalPositions))
-    params.originalPositions = [params.originalPositions];
-  await posController.changePosition(params);
+  params.originalPosition = parseInt(params.originalPosition);
+  params.targetPosition = parseInt(params.targetPosition);
+  if (!(params.originalPosition > 0) || !(params.targetPosition > 0))
+    error(Status.Forbidden, ECodes.ILLEGAL_POSITION);
+  await sequelize.transaction(() => posController.changePosition(params));
   ctx.body = { message: 'success' };
   socketIo.sync({
     op: 'changePosition',

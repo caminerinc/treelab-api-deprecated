@@ -91,13 +91,13 @@ const ECodes = {
     code: 'BULK_COPY_PARAMS_ERROR',
     message: 'SourceColumnConfigs and sourceCellValues2dArray must be array.',
   },
-  ORIGINAL_POSITIONS_MISSING: {
-    code: 'ORIGINAL_POSITIONS_MISSING',
-    message: 'OriginalPositions can not be empty.',
+  UNSUPPORTED_POSITION_TYPE: {
+    code: 'UNSUPPORTED_POSITION_TYPE',
+    message: 'Unsupported position type.',
   },
-  ILLEGAL_TARGET_POSITION: {
-    code: 'ILLEGAL_TARGET_POSITION',
-    message: 'Illegal targetPosition.',
+  ILLEGAL_POSITION: {
+    code: 'ILLEGAL_POSITION',
+    message: 'Illegal position.',
   },
   USER_NOT_FOUND: {
     code: 'USER_NOT_FOUND',

@@ -44,9 +44,19 @@ const trim = str => {
   return str.toString().replace(/(^\s*)|(\s*$)/g, '');
 };
 
+const getUniqueName = (names, name, index = 0) => {
+  let newName = index ? `${name} (${index})` : name;
+  if (names.indexOf(newName.toLowerCase()) !== -1) {
+    index++;
+    return getUniqueName(names, name, index);
+  }
+  return newName;
+};
+
 module.exports = {
   load,
   sha1,
   checkKeyExists,
   trim,
+  getUniqueName,
 };
