@@ -52,8 +52,8 @@ router.delete('/api/array-field-item', fldValResolver.deleteArrayValue);
 // TODO fix bulk copy
 // router.post('/api/bulk-copy-field-value', resolveBulkCopyFieldValue);
 
-// //Position
-// router.put('/api/change-position', posResolver.changePosition);
+//Position
+router.put('/api/change-position', posResolver.changePosition);
 
 //FieldTypes
 router.get('/api/fieldTypes', fldTypesResolver.getAll);
